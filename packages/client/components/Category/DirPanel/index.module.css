@@ -1,0 +1,32 @@
+.panel {
+  display: flex;
+  margin: 6px 0;
+  cursor: pointer;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #e1fcfc;
+  width: calc(25% - 9px);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.panel:not(:nth-of-type(4n)) {
+  margin-right: 12px;
+}
+
+.panel:hover {
+  background: #b4f8f8;
+  transform: scale(.98, .98);
+}
+
+.icon {
+  margin: 0 5px;
+}
+
+.icon svg {
+  width: 20px;
+  height: 100%;
+}
+
+.title {
+  margin: 0 5px;
+}

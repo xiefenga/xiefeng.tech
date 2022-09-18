@@ -1,0 +1,12 @@
+node_modules
+
+# client
+.next
+
+tsconfig.tsbuildinfo
+
+.env.local
+
+dirs.json
+
+files.json
