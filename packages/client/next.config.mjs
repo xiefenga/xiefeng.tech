@@ -1,5 +1,10 @@
-import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { resolve, join } from 'node:path'
 import gen from './utils/gen.mjs'
+
+const __filename = fileURLToPath(import.meta.url)
+
+const __dirname = join(__filename, '../')
 
 const sourceDir = process.env.NODE_ENV === 'development'
   ? process.env.sourceDir
