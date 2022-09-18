@@ -1,14 +1,12 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@types/markdown-navbar': ^1.4.0
   '@types/node': 18.7.15
   '@types/nprogress': ^0.2.0
   '@types/react': 18.0.18
   '@types/react-dom': 18.0.6
   eslint: 8.23.0
   eslint-config-next: 12.2.5
-  markdown-navbar: ^1.4.3
   next: 12.2.5
   nprogress: ^0.2.0
   react: 18.2.0
@@ -19,7 +17,6 @@ specifiers:
   undici: ^5.10.0
 
 dependencies:
-  markdown-navbar: 1.4.3
   next: 12.2.5_biqbaboplfbrettd7655fr4n2y
   nprogress: 0.2.0
   react: 18.2.0
@@ -29,7 +26,6 @@ dependencies:
   undici: 5.10.0
 
 devDependencies:
-  '@types/markdown-navbar': 1.4.0
   '@types/node': 18.7.15
   '@types/nprogress': 0.2.0
   '@types/react': 18.0.18

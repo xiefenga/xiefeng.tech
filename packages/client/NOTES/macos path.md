@@ -1,0 +1,1 @@
+https://stackoverflow.com/questions/15872666/how-to-remove-entry-from-path-on-mac
