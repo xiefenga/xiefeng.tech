@@ -3,6 +3,8 @@ node_modules
 # client
 .next
 
+out 
+
 tsconfig.tsbuildinfo
 
 .env.local
