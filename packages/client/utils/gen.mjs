@@ -7,14 +7,14 @@ function genFileJson(fullpath, filename, sourceDir, stats) {
   const dir = resolve('/', path, '..')
 
   const {
-    birthtimeMs: birthtime,
+    birthtimeMs: birthTime,
     ctimeMs: updateTime,
     size
   } = stats
 
   const meta = {
     size,
-    birthtime,
+    birthTime,
     updateTime,
   }
   return {

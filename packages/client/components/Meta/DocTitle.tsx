@@ -5,10 +5,12 @@ interface DocTitleProp {
   title: string
 }
 
+const siteName = '0x1461a0'.toUpperCase()
+
 const DocTitle: React.FC<DocTitleProp> = (props) => {
   const title = props.title === '/'
-    ? '0x1461a0'
-    : `${props.title} | 0x1461a0`
+    ? siteName
+    : `${props.title} | ${siteName}`
   return (
     <Head>
       <title>{title}</title>

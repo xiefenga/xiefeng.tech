@@ -1,4 +1,5 @@
 import React from 'react'
+import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -8,19 +9,19 @@ interface ProseItemProp {
 }
 
 const ProseItem: React.FC<ProseItemProp> = (props) => {
-  const { title, meta: { updateTime } } = props
-  const current = Date.now()
-  const offset = current - updateTime
-  const days = offset / (24 * 60 * 60 * 1000)
-  const months = days / 30
-  const years = days / 365
-  const renderTime = () => {
-    return years >= 1
-      ? [Math.floor(years), 'years']
-      : months >= 1
-        ? [Math.floor(months), 'months']
-        : [Math.floor(days), 'days']
-  }
+  const { title, meta: { birthTime, updateTime } } = props
+  // const current = Date.now()
+  // const offset = current - updateTime
+  // const days = offset / (24 * 60 * 60 * 1000)
+  // const months = days / 30
+  // const years = days / 365
+  // const renderTime = () => {
+  //   return years >= 1
+  //     ? [Math.floor(years), 'years']
+  //     : months >= 1
+  //       ? [Math.floor(months), 'months']
+  //       : [Math.floor(days), 'days']
+  // }
 
   const router = useRouter()
 
@@ -32,8 +33,9 @@ const ProseItem: React.FC<ProseItemProp> = (props) => {
         </Link>
       </div>
       <div className='text-sm opacity-50 border-t border-[#ddd] pt-1'>
-        <span>{new Date(props.meta.birthtime).toLocaleDateString()}</span>
-        <span>{new Date(props.meta.updateTime).toLocaleDateString()}</span>
+        <span>Post: {dayjs(birthTime).format('YYYY.MM.DD')}</span>
+        <span className='font-bold'>·</span>
+        <span>Update: {dayjs(updateTime).format('YYYY.MM.DD')}</span>
       </div>
     </div>
   )

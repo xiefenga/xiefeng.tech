@@ -10,7 +10,7 @@ const sourceDir = process.env.NODE_ENV === 'development'
   ? process.env.sourceDir
   : resolve(__dirname, './NOTES')
 
-const { dirs, files } = process.env._NODE_ENV === 'ssr_server'
+const { dirs, files } = process.env.P_NODE_ENV === 'ssr_server'
   ? {}
   : await gen(sourceDir)
 

@@ -1,4 +1,5 @@
 import React from 'react'
+import dayjs from 'dayjs'
 import getConfig from 'next/config'
 import { readFile } from 'node:fs/promises'
 import type { NextPage, GetStaticPropsContext, GetStaticPathsResult } from 'next'
@@ -12,44 +13,79 @@ import { cssModules } from '@/utils/styles'
 import DocTitle from '@/components/Meta/DocTitle'
 import styles from '@/styles/article.module.css'
 import type { DirJson, FileJson } from '@/utils/files'
+import Back2Previous from '@/components/Back2Previous'
+
 const {
-  articleTitle,
   articleContent,
   articleContainer,
 } = cssModules(styles)
 
-
-interface PageProps {
-  article: {
-    title: string
-    content: string
-  }
+interface ArticleDetailProps {
   title: string
-  articles: Article[]
-  dirs: DirJson[]
+  content: string
+  meta: any
 }
 
-const ArticleDetail: NextPage<PageProps> = (props) => {
-  const { article, dirs, articles, title } = props
-
-  if (article) {
-    const { title, content } = article
-    return (
-      <React.Fragment>
-        <DocTitle title={title} />
-        <TOC source={content} />
-        <Back2Top />
-        <div className={articleContainer}>
-          <h1 data-title className={articleTitle}>{title}</h1>
-          <Markdown className={articleContent} article={content} />
-        </div>
-      </React.Fragment>
-    )
-  }
+const ArticleDetail: React.FC<ArticleDetailProps> = props => {
+  const { title, content, meta } = props
   return (
     <React.Fragment>
-      <DocTitle title={title} />
-      <NotesDir dirs={dirs} articles={articles} />
+      <TOC source={content} />
+      <Back2Top />
+      <div className={articleContainer}>
+        <div className='mb-8'>
+          <h1 data-title className='mb-0'>{title}</h1>
+          <p className='opacity-50 !-mt-2'>
+            <span>Post: {dayjs(meta.birthTime).format('YYYY.MM.DD')}</span>
+            <span className='font-bold'>·</span>
+            <span>Update: {dayjs(meta.updateTime).format('YYYY.MM.DD')}</span>
+          </p>
+        </div>
+        <Markdown className={articleContent} article={content} />
+        <Back2Previous />
+      </div>
+    </React.Fragment>
+  )
+}
+
+interface PageProps {
+  article?: {
+    title: string
+    content: string
+    meta: any
+  }
+  metaTitle: string
+  articles?: Article[]
+  dirs?: DirJson[]
+}
+
+
+const NotesPage: NextPage<PageProps> = (props) => {
+  const { article, dirs, articles, metaTitle } = props
+
+  const renderPage = () => {
+    if (article) {
+      const { title, content, meta } = article
+      return (
+        <ArticleDetail
+          meta={meta}
+          title={title}
+          content={content}
+        />
+      )
+    }
+    return (
+      <NotesDir
+        dirs={dirs}
+        articles={articles}
+      />
+    )
+  }
+
+  return (
+    <React.Fragment>
+      <DocTitle title={metaTitle} />
+      {renderPage()}
     </React.Fragment>
   )
 }
@@ -72,7 +108,7 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
   if (!param || param.length === 0) {
     return {
       props: {
-        title: 'notes',
+        metaTitle: 'notes',
         dirs: dirs.filter(dir => dir.dir === '/'),
         articles: files.filter(file => file.filename.endsWith('.md') && file.dir === '/').map(file => ({ title: file.filename.split('.')[0], ...file }))
       }
@@ -92,12 +128,14 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
 
   if (fileJson) {
     const content = await readFile(fileJson.fullpath, 'utf-8')
-
+    const title = param.at(-1)
     return {
       props: {
+        metaTitle: title,
         article: {
           title: param.at(-1),
-          content
+          content,
+          meta: fileJson.meta
         }
       }
     }
@@ -107,7 +145,7 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
 
     return {
       props: {
-        title: dirJson.dirname,
+        metaTitle: dirJson.dirname,
         articles,
         dirs: floders
       }
@@ -144,6 +182,6 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult<{} | { para
   }
 }
 
-export default ArticleDetail
+export default NotesPage
 
 
