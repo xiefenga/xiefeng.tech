@@ -1,0 +1,126 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>Drag API | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#原生拖放" data-target-id="h1-原生拖放-0">原生拖放</a><ul><li><a href="#拖放事件" data-target-id="h2-拖放事件-0">拖放事件</a></li><li><a href="#可拖动能力" data-target-id="h2-可拖动能力-1">可拖动能力</a></li><li><a href="#放置目标" data-target-id="h2-放置目标-2">放置目标</a></li></ul></li><li><a href="#数据传输" data-target-id="h1-数据传输-1">数据传输</a><ul><li><a href="#存取数据" data-target-id="h2-存取数据-3">存取数据</a></li><li><a href="#存取过程" data-target-id="h2-存取过程-4">存取过程</a></li><li><a href="#文件传输" data-target-id="h2-文件传输-5">文件传输</a></li><li><a href="#数据列表" data-target-id="h2-数据列表-6">数据列表</a></li><li><a href="#拖动行为" data-target-id="h2-拖动行为-7">拖动行为</a></li></ul></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">Drag API</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>原生拖放</h1>
+<p>IE4 最早在网页中为 JavaScript 引入了对拖放功能的支持，HTML5 在 IE 的拖放实现基础上标准化了拖放功能</p>
+<p>拖放最有意思的可能就是可以跨窗格、跨浏览器容器，有时候甚至可以跨应用程序拖动元素</p>
+<h2>拖放事件</h2>
+<p>拖放事件几乎可以让开发者控制拖放操作的方方面面，有的事件在被拖放元素上触发，有的事件则在放置目标上触发。</p>
+<p>在某个元素被拖动时，会按顺序触发以下事件：</p>
+<ol>
+<li><code>dragstart</code></li>
+<li><code>drag</code></li>
+<li><code>dragend</code></li>
+</ol>
+<p><code>dragstart</code> 和 <code>dragend</code> 只会在拖动开始和结束时触发一次，在拖动过程中 <code>drag</code> 事件会一直触发</p>
+<p>在把元素拖动到一个有效的放置目标上时，目标会依次触发以下事件：</p>
+<ol>
+<li><code>dragenter</code></li>
+<li><code>dragover</code></li>
+<li><code>dragleave</code> 或 <code>drop</code></li>
+</ol>
+<p><code>dragenter</code> 和 <code>dragleave</code> 只会在拖动元素进入和离开目标时触发一次，<code>dragover</code> 会在进入目标元素之后拖动元素只要还在拖动就会一直触发，<code>drap</code> 事件在将拖动元素在目标中释放时触发。</p>
+<h2>可拖动能力</h2>
+<p>默认情况下，图片、链接和文本是可拖动的，文本只有在被选中后才可以拖动，而图片和链接在任意时候都是可以拖动的。</p>
+<p>HTML5 在所有 HTML 元素上规定了一个 <code>draggable</code> 属性， 表示元素是否可以拖动。</p>
+<p>图片和链接的 <code>draggable</code> 属性自动被设置为 <code>true</code>，而其他所有元素此属性的默认值为 <code>false</code>。</p>
+<p>如果想让其他元素可拖动，或者不允许图片和链接被拖动，都可以设置这个属性。</p>
+<pre><code class="language-html">&lt;!-- 禁止拖动图片 --&gt;
+&lt;img src=&quot;smile.gif&quot; draggable=&quot;false&quot; alt=&quot;Smiley face&quot;&gt;
+&lt;!-- 让元素可以拖动 --&gt;
+&lt;div draggable=&quot;true&quot;&gt;...&lt;/div&gt;
+</code></pre>
+<h2>放置目标</h2>
+<p>虽然所有元素都支持放置目标事件，但是元素默认也是不允许放置的。</p>
+<p>如果把元素拖动到不允许放置的 目标上，无论用户动作是什么都不会触发 drop 事件</p>
+<p>通过覆盖 <code>dragenter</code> 和 <code>dragover</code> 事件的默认行为，可以把任何元素转换为有效的放置目标</p>
+<pre><code class="language-javascript">const target = document.querySelector(&quot;.droptarget&quot;)
+
+target.ondragover= e =&gt; e.preventDefault()
+
+target.ondragenter = e =&gt; e.preventDefault()
+</code></pre>
+<p>有的浏览器对放置事件有默认行为（Firefox 默认会导航放置的目标URL，如果无效则会导致错误），最好也取消该事件的默认行为：</p>
+<pre><code class="language-javascript">droptarget.addEventListener(&quot;drop&quot;, (event) =&gt; {
+    event.preventDefault()
+}) 
+</code></pre>
+<h1>数据传输</h1>
+<p>简单的拖放并没有实际意义，在拖动过程中往往需要传递数据</p>
+<p>event 对象上暴露了 <code>dataTransfer</code> 对象，用于从被拖动元素向放置目标传递数据</p>
+<p>该对象是 IE 引入，原本支持的数据类型为：&quot;text&quot;、&quot;URL&quot;，HTML5 已经将其扩展为允许任何 MIME 类型</p>
+<p>为向后兼容 HTML5 还会继续支持&quot;text&quot;和&quot;URL&quot;，但它们会分别被映射到&quot;text/plain&quot;和&quot;text/uri-list&quot;</p>
+<p>dataTransfer 对象有两个主要方法：<code>getData()</code> 和 <code>setData()</code></p>
+<h2>存取数据</h2>
+<p>通过 <code>setData</code> 方法可以向目标元素传递数据</p>
+<p>第一个参数为数据类型（可以是自定义也可以是 MIME），第二个参数为数据，两个都是字符串。</p>
+<pre><code class="language-javascript">e.dataTransfer.setData(&quot;text&quot;, &quot;some text&quot;)
+</code></pre>
+<p>dataTransfer 对象实际上可以包含每种 MIME 类型的一个值，也就是说同时保存文本和 URL，两者不会相互覆盖</p>
+<pre><code class="language-javascript">e.dataTransfer.setData(&quot;text&quot;, &quot;some text&quot;)
+e.dataTransfer.setData(&quot;url&quot;, &quot;https://xiefeng.tech&quot;)
+</code></pre>
+<p>通过 <code>getData</code> 方法可以取出存储在 dataTransfer 中的数据</p>
+<p>传递需要的类型即可取出数据，如果不存在该类型的数据则返回空字符串</p>
+<p><code>dataTransfer.types</code> 中包括所有通过 <code>setData</code> 设置的类型，该数组中的类型都是 MIME 类型格式</p>
+<pre><code class="language-javascript">e.dataTransfer.getData(&quot;text&quot;)
+</code></pre>
+<p>存储为文本和 URL 的数据有一个区别：数据作为 URL 存储时会被作为网页中的一个链接，放到另一个窗口中会导航</p>
+<h2>存取过程</h2>
+<ul>
+<li>在从文本框拖动文本时，浏览器会调用 setData 并将拖动的文本以&quot;text&quot;格式存储起来</li>
+<li>在拖动链接或图片时，浏览器会调用 setData 并把 URL 存储起来</li>
+<li>也可以在 <code>dragstart</code> 事件中手动调用 setData 存储自定义数据。</li>
+</ul>
+<p>当数据被放置在目标上时，可以使用 getData 获取这些数据</p>
+<p>存储在 dataTransfer 对象中的数据只能在 <code>drop</code> 事件中读取，如果没有取得这些数据，dataTransfer 对象就会被销毁，数据也会丢失</p>
+<h2>文件传输</h2>
+<p>通过 <code>dataTransfer.files</code> 可以得到拖拽进来的外部文件列表，该属性是一个 FileList 对象，使用该对象可以直接得到 File 对象</p>
+<pre><code class="language-javascript">dragtarget.addEventListener(&#x27;drop&#x27;, e =&gt; {
+  e.preventDefault()
+  console.log(e.dataTransfer.files)
+})
+</code></pre>
+<p><img src="https://oss.xiefeng.tech/images/20210911152402.png" alt=""/></p>
+<h2>数据列表</h2>
+<p><code>dataTransfer.items</code> 是一个包含所有拖动数据列表的 <code>DataTransferItemList</code> 对象（类数组）</p>
+<p>拖动没有传递数据则该属性为空，只有通过 <code>setData</code> 传递数据了才会有值，默认网页中文本、图片和链接默认都会传递数据</p>
+<p>浏览器外部的文件拖入也会传递一些文件数据</p>
+<p><code>DataTransferItemList</code> 对象的每一个成员都是一个 <code>DataTransferItem</code> 类型对象，<code>DataTransferItem</code> 描述了一个拖拽项：</p>
+<ul>
+<li><code>kind</code>：拖拽项的种类，<code>string</code> 或 <code>file</code></li>
+<li><code>type</code>：拖拽项的类型，一般是一个MIME 类型</li>
+</ul>
+<p><img src="https://oss.xiefeng.tech/images/20210911153520.png" alt=""/></p>
+<p><code>DataTransferItem</code> 具有一些方法：</p>
+<ul>
+<li><code>getAsFile</code>：对于通过外部传递的文件，可以通过该方法的到 File 对象，当拖拽项不是一个文件时返回 <code>null</code></li>
+<li><code>getAsString</code>：使用拖拽项的字符串作为参数执行指定回调函数</li>
+</ul>
+<pre><code class="language-javascript">const file = e.dataTransfer.items[0].getAsFile()
+
+e.dataTransfer.items[0].getAsString(str =&gt; console.log(str))	// text data
+</code></pre>
+<h2>拖动行为</h2>
+<p>dataTransfer 对象不仅可以用于实现简单的数据传输，还可以用于确定能够对被拖动元素和放置目标执行什么操作</p>
+<p>dataTransfer 提供了两个属性：dropEffect 与 effectAllowed 实现该功能</p>
+<p>dropEffect 告诉浏览器允许哪种放置行为：</p>
+<ul>
+<li><code>none</code>：被拖动元素不能放到这里，这是除文本框之外所有元素的默认值</li>
+<li><code>move</code>：被拖动元素应该移动到放置目标</li>
+<li><code>copy</code>：被拖动元素应该复制到放置目标</li>
+<li><code>link</code>：表示放置目标会导航到被拖动元素（仅在它是 URL 的情况下）</li>
+</ul>
+<p>在把元素拖动到放置目标上时，每种值都会导致显示一种不同的光标，但是是否导致光标示意的动作还要取决于开发者</p>
+<p>也就是如果没有代码参与，则没有什么会自动移动、复制或链接，只会变光标</p>
+<p>dropEffect 需要在放置目标的 ondragenter 事件处理程序中设置</p>
+<pre><code class="language-javascript">dragtarget.addEventListener(&#x27;dragenter&#x27;, (event) =&gt; {
+  event.preventDefault()
+  event.dataTransfer.dropEffect = &#x27;move&#x27;
+})
+</code></pre>
+<p>需要同时设置 effectAllowed，dropEffect 才会有用，该属性需要在 ondragstart 事件处理程序中设置</p>
+<p>effectAllowed 表示对被拖动元素是否允许 dropEffect：</p>
+<ul>
+<li><code>none</code>：被拖动元素上没有允许的操作</li>
+<li>......</li>
+<li><code>all</code>：允许所有 dropEffect</li>
+</ul>
+<p>这两个属性只能改变浏览器的一些默认行为，具体的功能实现还是需要自己实现</p><div><a href="/notes/JavaScript/Web%20api">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"Drag API","article":{"title":"Drag API","content":"# 原生拖放\r\n\r\nIE4 最早在网页中为 JavaScript 引入了对拖放功能的支持，HTML5 在 IE 的拖放实现基础上标准化了拖放功能\r\n\r\n拖放最有意思的可能就是可以跨窗格、跨浏览器容器，有时候甚至可以跨应用程序拖动元素\r\n\r\n## 拖放事件\r\n\r\n拖放事件几乎可以让开发者控制拖放操作的方方面面，有的事件在被拖放元素上触发，有的事件则在放置目标上触发。\r\n\r\n在某个元素被拖动时，会按顺序触发以下事件： \r\n\r\n1. `dragstart`\r\n2. `drag`\r\n3. `dragend`\r\n\r\n`dragstart` 和 `dragend` 只会在拖动开始和结束时触发一次，在拖动过程中 `drag` 事件会一直触发\r\n\r\n在把元素拖动到一个有效的放置目标上时，目标会依次触发以下事件：\r\n\r\n1. `dragenter`\r\n2.  `dragover`\r\n3. `dragleave` 或 `drop`\r\n\r\n`dragenter` 和 `dragleave` 只会在拖动元素进入和离开目标时触发一次，`dragover` 会在进入目标元素之后拖动元素只要还在拖动就会一直触发，`drap` 事件在将拖动元素在目标中释放时触发。\r\n\r\n## 可拖动能力\r\n\r\n默认情况下，图片、链接和文本是可拖动的，文本只有在被选中后才可以拖动，而图片和链接在任意时候都是可以拖动的。\r\n\r\nHTML5 在所有 HTML 元素上规定了一个 `draggable` 属性， 表示元素是否可以拖动。\r\n\r\n图片和链接的 `draggable` 属性自动被设置为 `true`，而其他所有元素此属性的默认值为 `false`。\r\n\r\n如果想让其他元素可拖动，或者不允许图片和链接被拖动，都可以设置这个属性。\r\n\r\n```html\r\n\u003c!-- 禁止拖动图片 --\u003e\r\n\u003cimg src=\"smile.gif\" draggable=\"false\" alt=\"Smiley face\"\u003e\r\n\u003c!-- 让元素可以拖动 --\u003e\r\n\u003cdiv draggable=\"true\"\u003e...\u003c/div\u003e\r\n```\r\n\r\n## 放置目标\r\n\r\n虽然所有元素都支持放置目标事件，但是元素默认也是不允许放置的。\r\n\r\n如果把元素拖动到不允许放置的 目标上，无论用户动作是什么都不会触发 drop 事件\r\n\r\n通过覆盖 `dragenter` 和 `dragover` 事件的默认行为，可以把任何元素转换为有效的放置目标\r\n\r\n```javascript\r\nconst target = document.querySelector(\".droptarget\")\r\n\r\ntarget.ondragover= e =\u003e e.preventDefault()\r\n\r\ntarget.ondragenter = e =\u003e e.preventDefault()\r\n```\r\n\r\n有的浏览器对放置事件有默认行为（Firefox 默认会导航放置的目标URL，如果无效则会导致错误），最好也取消该事件的默认行为：\r\n\r\n```javascript\r\ndroptarget.addEventListener(\"drop\", (event) =\u003e {\r\n    event.preventDefault()\r\n}) \r\n```\r\n\r\n# 数据传输\r\n\r\n简单的拖放并没有实际意义，在拖动过程中往往需要传递数据\r\n\r\nevent 对象上暴露了 `dataTransfer` 对象，用于从被拖动元素向放置目标传递数据\r\n\r\n该对象是 IE 引入，原本支持的数据类型为：\"text\"、\"URL\"，HTML5 已经将其扩展为允许任何 MIME 类型\r\n\r\n为向后兼容 HTML5 还会继续支持\"text\"和\"URL\"，但它们会分别被映射到\"text/plain\"和\"text/uri-list\"\r\n\r\ndataTransfer 对象有两个主要方法：`getData()` 和 `setData()`\r\n\r\n## 存取数据\r\n\r\n通过 `setData` 方法可以向目标元素传递数据\r\n\r\n第一个参数为数据类型（可以是自定义也可以是 MIME），第二个参数为数据，两个都是字符串。\r\n\r\n```javascript\r\ne.dataTransfer.setData(\"text\", \"some text\")\r\n```\r\n\r\ndataTransfer 对象实际上可以包含每种 MIME 类型的一个值，也就是说同时保存文本和 URL，两者不会相互覆盖\r\n\r\n```javascript\r\ne.dataTransfer.setData(\"text\", \"some text\")\r\ne.dataTransfer.setData(\"url\", \"https://xiefeng.tech\")\r\n```\r\n\r\n通过 `getData` 方法可以取出存储在 dataTransfer 中的数据\r\n\r\n传递需要的类型即可取出数据，如果不存在该类型的数据则返回空字符串\r\n\r\n`dataTransfer.types` 中包括所有通过 `setData` 设置的类型，该数组中的类型都是 MIME 类型格式\r\n\r\n```javascript\r\ne.dataTransfer.getData(\"text\")\r\n```\r\n\r\n存储为文本和 URL 的数据有一个区别：数据作为 URL 存储时会被作为网页中的一个链接，放到另一个窗口中会导航\r\n\r\n## 存取过程\r\n\r\n- 在从文本框拖动文本时，浏览器会调用 setData 并将拖动的文本以\"text\"格式存储起来\r\n- 在拖动链接或图片时，浏览器会调用 setData 并把 URL 存储起来\r\n- 也可以在 `dragstart` 事件中手动调用 setData 存储自定义数据。\r\n\r\n当数据被放置在目标上时，可以使用 getData 获取这些数据\r\n\r\n存储在 dataTransfer 对象中的数据只能在 `drop` 事件中读取，如果没有取得这些数据，dataTransfer 对象就会被销毁，数据也会丢失\r\n\r\n## 文件传输\r\n\r\n通过 `dataTransfer.files` 可以得到拖拽进来的外部文件列表，该属性是一个 FileList 对象，使用该对象可以直接得到 File 对象\r\n\r\n```javascript\r\ndragtarget.addEventListener('drop', e =\u003e {\r\n  e.preventDefault()\r\n  console.log(e.dataTransfer.files)\r\n})\r\n```\r\n\r\n![](https://oss.xiefeng.tech/images/20210911152402.png)\r\n\r\n## 数据列表\r\n\r\n`dataTransfer.items` 是一个包含所有拖动数据列表的 `DataTransferItemList` 对象（类数组）\r\n\r\n拖动没有传递数据则该属性为空，只有通过 `setData` 传递数据了才会有值，默认网页中文本、图片和链接默认都会传递数据\r\n\r\n浏览器外部的文件拖入也会传递一些文件数据\r\n\r\n`DataTransferItemList` 对象的每一个成员都是一个 `DataTransferItem` 类型对象，`DataTransferItem` 描述了一个拖拽项：\r\n\r\n- `kind`：拖拽项的种类，`string` 或 `file`\r\n- `type`：拖拽项的类型，一般是一个MIME 类型\r\n\r\n![](https://oss.xiefeng.tech/images/20210911153520.png)\r\n\r\n`DataTransferItem` 具有一些方法：\r\n\r\n- `getAsFile`：对于通过外部传递的文件，可以通过该方法的到 File 对象，当拖拽项不是一个文件时返回 `null`\r\n- `getAsString`：使用拖拽项的字符串作为参数执行指定回调函数\r\n\r\n```javascript\r\nconst file = e.dataTransfer.items[0].getAsFile()\r\n\r\ne.dataTransfer.items[0].getAsString(str =\u003e console.log(str))\t// text data\r\n```\r\n\r\n## 拖动行为\r\n\r\ndataTransfer 对象不仅可以用于实现简单的数据传输，还可以用于确定能够对被拖动元素和放置目标执行什么操作\r\n\r\ndataTransfer 提供了两个属性：dropEffect 与 effectAllowed 实现该功能\r\n\r\ndropEffect 告诉浏览器允许哪种放置行为：\r\n\r\n- `none`：被拖动元素不能放到这里，这是除文本框之外所有元素的默认值\r\n- `move`：被拖动元素应该移动到放置目标\r\n- `copy`：被拖动元素应该复制到放置目标\r\n- `link`：表示放置目标会导航到被拖动元素（仅在它是 URL 的情况下）\r\n\r\n在把元素拖动到放置目标上时，每种值都会导致显示一种不同的光标，但是是否导致光标示意的动作还要取决于开发者\r\n\r\n也就是如果没有代码参与，则没有什么会自动移动、复制或链接，只会变光标\r\n\r\ndropEffect 需要在放置目标的 ondragenter 事件处理程序中设置\r\n\r\n```javascript\r\ndragtarget.addEventListener('dragenter', (event) =\u003e {\r\n  event.preventDefault()\r\n  event.dataTransfer.dropEffect = 'move'\r\n})\r\n```\r\n\r\n需要同时设置 effectAllowed，dropEffect 才会有用，该属性需要在 ondragstart 事件处理程序中设置\r\n\r\neffectAllowed 表示对被拖动元素是否允许 dropEffect：\r\n\r\n- `none`：被拖动元素上没有允许的操作\r\n- ......\r\n- `all`：允许所有 dropEffect\r\n\r\n这两个属性只能改变浏览器的一些默认行为，具体的功能实现还是需要自己实现\r\n","meta":{"size":7681,"birthTime":1663496641397.8096,"updateTime":1663496641397.9766}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["JavaScript","Web api","Drag API"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

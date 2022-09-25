@@ -1,0 +1,183 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>性能优化 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#构建性能" data-target-id="h2-构建性能-0">构建性能</a><ul><li><a href="#减少解析" data-target-id="h3-减少解析-0">减少解析</a></li><li><a href="#限制loader" data-target-id="h3-限制loader-1">限制loader</a></li><li><a href="#缓存loader" data-target-id="h3-缓存loader-2">缓存loader</a></li><li><a href="#loader多线程" data-target-id="h3-loader多线程-3">loader多线程</a></li></ul></li><li><a href="#传输性能" data-target-id="h2-传输性能-1">传输性能</a><ul><li><a href="#手动分包" data-target-id="h3-手动分包-4">手动分包</a><ul><li><a href="#打包公共模块" data-target-id="h4-打包公共模块-0">打包公共模块</a></li><li><a href="#使用公共模块" data-target-id="h4-使用公共模块-1">使用公共模块</a></li><li><a href="#打包结果" data-target-id="h4-打包结果-2">打包结果</a></li></ul></li><li><a href="#自动分包" data-target-id="h3-自动分包-5">自动分包</a><ul><li><a href="#分包过程" data-target-id="h4-分包过程-3">分包过程</a></li><li><a href="#分包策略" data-target-id="h4-分包策略-4">分包策略</a></li><li><a href="#原理" data-target-id="h4-原理-5">原理</a></li></ul></li></ul></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">性能优化</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h2>构建性能</h2>
+<p>构建性能指的是在<strong>开发阶段</strong>的构建速度，优化的目标是：降低从打包开始，到代码效果呈现所经过的时间</p>
+<p>构建主要就是一个计算密集的任务，所以提升构建性能的主要思路就是减少不必要的计算和提高计算速度</p>
+<h3>减少解析</h3>
+<p>模块解析包括：抽象语法树分析、依赖分析、模块语法替换</p>
+<ul>
+<li>如果某个模块不做解析，该模块经过loader处理后的代码就是最终代码</li>
+<li>如果没有 loader 对该模块进行处理，该模块的源码就是最终打包结果的代码</li>
+</ul>
+<p>通过配置 <code>module.noParse</code> 可以让一些已经打包好的第三方库不做没有必要的解析，比如：jQuery</p>
+<h3>限制loader</h3>
+<p>对于一些模块，可以不使用某些 loader 进行处理，减少不必要的处理</p>
+<p>例如：对于打包好的或者本身就是使用 es5 书写的库可以不使用 <code>babel-loader</code></p>
+<p>通过 <code>module.rule.exclude</code> 或 <code>module.rule.include</code> 限制使用 loader 的模块：</p>
+<pre><code class="language-javascript">module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: &quot;babel-loader&quot;
+      }
+    ]
+  }
+}
+</code></pre>
+<h3>缓存loader</h3>
+<p>loader 的运行中包含一个 <code>pitch</code> 过程，可以决定是否使用后序的 loader</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/20210205121058.png" alt=""/></p>
+<p>某个文件内容不变，经过相同的 loader 解析后，结果基本上是不会发生变化的</p>
+<p>可以将 loader 的解析结果保存下来，让后续的解析直接使用保存的结果，<code>cache-loader</code> 可以实现这样的功能</p>
+<pre><code class="language-javascript">module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: [&#x27;cache-loader&#x27;, ...loaders]
+      },
+    ],
+  },
+};
+</code></pre>
+<h3>loader多线程</h3>
+<p>通过 <code>thread-loader</code> 开启一个线程池，它会把后续的 loader 放到线程池的线程中运行，以提高构建效率</p>
+<p>由于后续的 loader 会放到新的线程中，所以后续的 loader 有一些限制：</p>
+<ul>
+<li>使用 webpack api 生成文件</li>
+<li>无法使用自定义的 plugin api</li>
+<li>无法访问 webpack options</li>
+</ul>
+<p>开启和管理线程需要消耗时间，在小型项目中使用 <code>thread-loader</code> 反而会增加构建时间</p>
+<h2>传输性能</h2>
+<p>传输性能指的是打包后的代码传输到浏览器所经过的时间，优化传输性能时需要考虑：</p>
+<ul>
+<li>总传输量</li>
+<li>文件数量</li>
+<li>浏览器缓存</li>
+</ul>
+<h3>手动分包</h3>
+<p>手动分包的思路：</p>
+<ol>
+<li>单独打包公共模块，将其打包成动态链接库，并生成资源清单</li>
+<li>在页面手动引入公共模块</li>
+<li>入口模块正常打包，打包时如果发现模块中使用了资源清单中描述的模块则不会引入模块代码</li>
+</ol>
+<h4>打包公共模块</h4>
+<ol>
+<li>
+<p>单独打包公共模块，并暴露变量名</p>
+<pre><code class="language-javascript">// webpack.dll.config.js
+module.exports = {
+  mode: &quot;production&quot;,
+  entry: {
+    jquery: [&quot;jquery&quot;],
+    lodash: [&quot;lodash&quot;]
+  },
+  output: {
+    filename: &quot;dll/[name].js&quot;,
+    library: &quot;[name]&quot;
+  }
+}
+</code></pre>
+</li>
+<li>
+<p>生成资源清单</p>
+<pre><code class="language-javascript">// webpack.dll.config.js
+module.exports = {
+  plugins: [
+    new webpack.DllPlugin({
+      path: path.resolve(__dirname, &quot;dll&quot;, &quot;[name].manifest.json&quot;), //资源清单的保存位置
+      name: &quot;[name]&quot;//资源清单中，暴露的变量名
+    })
+  ]
+}
+</code></pre>
+</li>
+</ol>
+<h4>使用公共模块</h4>
+<ol>
+<li>
+<p>在页面中手动引入公共模块</p>
+<pre><code class="language-html">&lt;script src=&quot;./dll/jquery.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;./dll/lodash.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+</li>
+<li>
+<p>使用 <code>DllReferencePlugin</code> 控制普通模块的打包结果</p>
+<pre><code class="language-javascript">module.exports = {
+  plugins:[
+    new webpack.DllReferencePlugin({
+      manifest: require(&quot;./dll/jquery.manifest.json&quot;)
+    }),
+    new webpack.DllReferencePlugin({
+      manifest: require(&quot;./dll/lodash.manifest.json&quot;)
+    })
+  ]
+}
+</code></pre>
+</li>
+</ol>
+<h4>打包结果</h4>
+<p>在资源清单中出现的模块，源码不会出现在打包结果当中</p>
+<pre><code class="language-javascript">(function(modules){
+  //...
+})({
+  &quot;./src/index.js&quot;:
+  function(module, exports, __webpack_require__){
+    var $ = __webpack_require__(&quot;./node_modules/jquery/index.js&quot;)
+    var _ = __webpack_require__(&quot;./node_modules/lodash/index.js&quot;)
+    _.isArray($(&quot;.red&quot;));
+  },
+  &quot;./node_modules/jquery/index.js&quot;:
+  function(module, exports, __webpack_require__){
+    module.exports = jquery;
+  },
+  &quot;./node_modules/lodash/index.js&quot;:
+  function(module, exports, __webpack_require__){
+    module.exports = lodash;
+  }
+})
+</code></pre>
+<h3>自动分包</h3>
+<p>自动分包是从<strong>实际的角度</strong>出发，从一个更加<strong>宏观的角度</strong>来控制分包，而一般不对具体哪个包要分出去进行控制</p>
+<p>自动分包不仅方便，而且更加贴合实际的开发需要，使用自动分包关键是要配置一个合理的<strong>分包策略</strong></p>
+<p>webpack 会按照分包策略自动的进行分包，不需要额外的插件</p>
+<h4>分包过程</h4>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/20210205134035.png" alt=""/></p>
+<ul>
+<li>分包策略决定了 webpack 如何分包</li>
+<li>分包时 webpack 会开启一个<strong>新的chunk</strong>，对分离的模块进行打包</li>
+<li>打包结果中，公共的部分被提取出来形成了一个单独的文件，它是新 chunk 的产物</li>
+</ul>
+<h4>分包策略</h4>
+<p>分包策略有其默认的配置，我们只需要轻微的改动，即可应对大部分分包场景</p>
+<p>webpack提供了 <code>optimization.splitChunks</code> 配置项，用于配置一些优化信息：</p>
+<ul>
+<li>chunks：需要应用分包策略的 chunk<!-- -->
+<ul>
+<li>all: 对于所有的chunk都要应用分包策略</li>
+<li>async：仅针对异步chunk应用分包策略，默认值</li>
+<li>initial：仅针对普通chunk应用分包策略</li>
+</ul>
+</li>
+<li>maxSize：控制包的最大字节数，如果某个包超过了该值，则 webpack 会尽可能的将其分离成多个包<!-- -->
+<ul>
+<li>分包的<strong>基础单位是模块</strong>，如果一个完整的模块超过了该体积，它是无法做到再切割的</li>
+<li>该配置看上去很美妙，实际意义其实不大，因为分包的目的是<strong>提取大量的公共代码</strong>，从而减少总体积和充分利用浏览器缓存</li>
+</ul>
+</li>
+</ul>
+<h4>原理</h4>
+<p>自动分包的原理其实并不复杂，主要经过以下步骤：</p>
+<ol>
+<li>检查每个chunk编译的结果</li>
+<li>根据分包策略，找到那些满足策略的模块</li>
+<li>根据分包策略，生成新的chunk打包这些模块（代码有所变化）</li>
+<li>把打包出去的模块从原始包中移除，并修正原始包代码</li>
+</ol>
+<p>在代码层面，有以下变动</p>
+<ol>
+<li>分包的代码中，加入一个全局变量，类型为数组，其中包含公共模块的代码</li>
+<li>原始包的代码中，使用数组中的公共代码</li>
+</ol><div><a href="/notes/JavaScript/Webpack">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"性能优化","article":{"title":"性能优化","content":"## 构建性能\n\n构建性能指的是在**开发阶段**的构建速度，优化的目标是：降低从打包开始，到代码效果呈现所经过的时间\n\n构建主要就是一个计算密集的任务，所以提升构建性能的主要思路就是减少不必要的计算和提高计算速度\n\n### 减少解析\n\n模块解析包括：抽象语法树分析、依赖分析、模块语法替换\n\n- 如果某个模块不做解析，该模块经过loader处理后的代码就是最终代码\n- 如果没有 loader 对该模块进行处理，该模块的源码就是最终打包结果的代码\n\n通过配置 `module.noParse` 可以让一些已经打包好的第三方库不做没有必要的解析，比如：jQuery\n\n### 限制loader\n\n对于一些模块，可以不使用某些 loader 进行处理，减少不必要的处理\n\n例如：对于打包好的或者本身就是使用 es5 书写的库可以不使用 `babel-loader`\n\n通过 `module.rule.exclude` 或 `module.rule.include` 限制使用 loader 的模块：\n\n```javascript\nmodule.exports = {\n  module: {\n    rules: [\n      {\n        test: /\\.js$/,\n        exclude: /node_modules/,\n        use: \"babel-loader\"\n      }\n    ]\n  }\n}\n```\n\n### 缓存loader\n\nloader 的运行中包含一个 `pitch` 过程，可以决定是否使用后序的 loader\n\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/20210205121058.png)\n\n某个文件内容不变，经过相同的 loader 解析后，结果基本上是不会发生变化的\n\n可以将 loader 的解析结果保存下来，让后续的解析直接使用保存的结果，`cache-loader` 可以实现这样的功能\n\n```javascript\nmodule.exports = {\n  module: {\n    rules: [\n      {\n        test: /\\.js$/,\n        use: ['cache-loader', ...loaders]\n      },\n    ],\n  },\n};\n```\n\n### loader多线程\n\n通过 `thread-loader` 开启一个线程池，它会把后续的 loader 放到线程池的线程中运行，以提高构建效率\n\n由于后续的 loader 会放到新的线程中，所以后续的 loader 有一些限制：\n\n- 使用 webpack api 生成文件\n- 无法使用自定义的 plugin api\n- 无法访问 webpack options\n\n开启和管理线程需要消耗时间，在小型项目中使用 `thread-loader` 反而会增加构建时间\n\n## 传输性能\n\n传输性能指的是打包后的代码传输到浏览器所经过的时间，优化传输性能时需要考虑：\n\n- 总传输量\n- 文件数量\n- 浏览器缓存\n\n### 手动分包\n\n手动分包的思路：\n\n1. 单独打包公共模块，将其打包成动态链接库，并生成资源清单\n2. 在页面手动引入公共模块\n3. 入口模块正常打包，打包时如果发现模块中使用了资源清单中描述的模块则不会引入模块代码\n\n#### 打包公共模块\n\n1. 单独打包公共模块，并暴露变量名\n\n   ```javascript\n   // webpack.dll.config.js\n   module.exports = {\n     mode: \"production\",\n     entry: {\n       jquery: [\"jquery\"],\n       lodash: [\"lodash\"]\n     },\n     output: {\n       filename: \"dll/[name].js\",\n       library: \"[name]\"\n     }\n   }\n   ```\n\n2. 生成资源清单\n\n   ```javascript\n   // webpack.dll.config.js\n   module.exports = {\n     plugins: [\n       new webpack.DllPlugin({\n         path: path.resolve(__dirname, \"dll\", \"[name].manifest.json\"), //资源清单的保存位置\n         name: \"[name]\"//资源清单中，暴露的变量名\n       })\n     ]\n   }\n   ```\n\n#### 使用公共模块\n\n1. 在页面中手动引入公共模块\n\n   ```html\n   \u003cscript src=\"./dll/jquery.js\"\u003e\u003c/script\u003e\n   \u003cscript src=\"./dll/lodash.js\"\u003e\u003c/script\u003e\n   ```\n\n2. 使用 `DllReferencePlugin` 控制普通模块的打包结果\n\n   ```javascript\n   module.exports = {\n     plugins:[\n       new webpack.DllReferencePlugin({\n         manifest: require(\"./dll/jquery.manifest.json\")\n       }),\n       new webpack.DllReferencePlugin({\n         manifest: require(\"./dll/lodash.manifest.json\")\n       })\n     ]\n   }\n   ```\n\n#### 打包结果\n\n在资源清单中出现的模块，源码不会出现在打包结果当中\n\n```javascript\n(function(modules){\n  //...\n})({\n  \"./src/index.js\":\n  function(module, exports, __webpack_require__){\n    var $ = __webpack_require__(\"./node_modules/jquery/index.js\")\n    var _ = __webpack_require__(\"./node_modules/lodash/index.js\")\n    _.isArray($(\".red\"));\n  },\n  \"./node_modules/jquery/index.js\":\n  function(module, exports, __webpack_require__){\n    module.exports = jquery;\n  },\n  \"./node_modules/lodash/index.js\":\n  function(module, exports, __webpack_require__){\n    module.exports = lodash;\n  }\n})\n```\n\n### 自动分包\n\n自动分包是从**实际的角度**出发，从一个更加**宏观的角度**来控制分包，而一般不对具体哪个包要分出去进行控制\n\n自动分包不仅方便，而且更加贴合实际的开发需要，使用自动分包关键是要配置一个合理的**分包策略**\n\nwebpack 会按照分包策略自动的进行分包，不需要额外的插件\n\n#### 分包过程\n\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/20210205134035.png)\n\n- 分包策略决定了 webpack 如何分包\n- 分包时 webpack 会开启一个**新的chunk**，对分离的模块进行打包\n- 打包结果中，公共的部分被提取出来形成了一个单独的文件，它是新 chunk 的产物\n\n#### 分包策略\n\n分包策略有其默认的配置，我们只需要轻微的改动，即可应对大部分分包场景\n\nwebpack提供了 `optimization.splitChunks` 配置项，用于配置一些优化信息：\n\n- chunks：需要应用分包策略的 chunk\n  - all: 对于所有的chunk都要应用分包策略\n  - async：仅针对异步chunk应用分包策略，默认值\n  - initial：仅针对普通chunk应用分包策略\n- maxSize：控制包的最大字节数，如果某个包超过了该值，则 webpack 会尽可能的将其分离成多个包\n  - 分包的**基础单位是模块**，如果一个完整的模块超过了该体积，它是无法做到再切割的\n  - 该配置看上去很美妙，实际意义其实不大，因为分包的目的是**提取大量的公共代码**，从而减少总体积和充分利用浏览器缓存\n\n#### 原理\n\n自动分包的原理其实并不复杂，主要经过以下步骤：\n\n1. 检查每个chunk编译的结果\n2. 根据分包策略，找到那些满足策略的模块\n3. 根据分包策略，生成新的chunk打包这些模块（代码有所变化）\n4. 把打包出去的模块从原始包中移除，并修正原始包代码\n\n在代码层面，有以下变动\n\n1. 分包的代码中，加入一个全局变量，类型为数组，其中包含公共模块的代码\n2. 原始包的代码中，使用数组中的公共代码\n","meta":{"size":6641,"birthTime":1663496641403.19,"updateTime":1663496641403.3142}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["JavaScript","Webpack","性能优化"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

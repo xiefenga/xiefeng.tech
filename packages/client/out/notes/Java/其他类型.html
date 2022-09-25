@@ -1,0 +1,97 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>其他类型 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#包装类" data-target-id="h1-包装类-0">包装类</a></li><li><a href="#字符串" data-target-id="h1-字符串-1">字符串</a><ul><li><a href="#字符串常量池" data-target-id="h2-字符串常量池-0">字符串常量池</a></li><li><a href="#intern" data-target-id="h2-intern-1">intern</a></li><li><a href="#StringBuilder" data-target-id="h2-StringBuilder-2">StringBuilder</a></li></ul></li><li><a href="#枚举" data-target-id="h1-枚举-2">枚举</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">其他类型</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>包装类</h1>
+<p>对比引用类型，基本类型存在一些缺陷：</p>
+<ul>
+<li>无法表示不存在的值（<code>null</code> 值）</li>
+<li>不能利用面向对象的方式去操作基本类型（比如直接用基本类型调用方法）</li>
+<li>当方法参数是引用类型时，基本类型无法传递</li>
+</ul>
+<p>数字类型的包装类（<code>Byte</code>、<code>Short</code>、<code>Integer</code>、<code>Long</code>、<code>Float</code>、<code>Double</code>）最终都继承自 <code>java.lang.Number</code></p>
+<p>自动装箱：Java 编译器会自动将基本类型转换为包装类（调用静态方法 <code>valueOf</code>）</p>
+<p>自动拆箱：Java 编译器会自动将包装类转换为基本类型（调用实例方法 <code>xxxValue</code> 方法，例如 <code>intValue</code>）</p>
+<ul>
+<li>包装类的判等，不要使用 <code>==</code>、<code>!=</code> 运算符，应该使用 <code>equals</code> 方法</li>
+<li><code>IntegerCache</code> 这个内部类中缓存了 [-128, 127] 范围的 <code>Integer</code> 对象</li>
+<li>使用 <code>Integer.valueOf</code> 方法会优先去 <code>IntegerCache</code> 缓存中获取 <code>Integer</code> 对象</li>
+<li><strong>基本类型数组</strong> 与 <strong>包装类数组</strong> 之间是不能自动装箱、拆箱的</li>
+</ul>
+<h1>字符串</h1>
+<p>Java 中用 <code>java.lang.String</code> 类代表字符串</p>
+<ul>
+<li>底层使用 <code>char[]</code> 存储字符数据，从 Java 9 开始，底层使用 <code>byte[]</code> 存储字符数据</li>
+<li>所有字符串字面量（比如 <code>&quot;ABC&quot;</code>）都是 <code>String</code> 类的实例</li>
+<li><code>String</code> 对象一旦创建完毕，它的字符内容是不可以修改的</li>
+</ul>
+<h2>字符串常量池</h2>
+<p>Java 中有个字符串常量池（String Constant Pool，简称 SCP）</p>
+<ul>
+<li>当遇到<strong>字符串字面量</strong>时，会去查看 SCP<!-- -->
+<ul>
+<li>如果 SCP 中存在与字面量内容一样的字符串对象 A 时，就返回 A</li>
+<li>否则，创建一个新的字符串对象 D，并加入到 SCP 中，返回 D</li>
+</ul>
+</li>
+<li>字符串常量池从 Java 7 开始属于堆空间的一部分（以前放在方法区）</li>
+</ul>
+<h2>intern</h2>
+<ul>
+<li>
+<p>如果 SCP 中存在与 A <strong>内容一样</strong>的字符串对象 C 时，就返回 C</p>
+</li>
+<li>
+<p>否则，将 A 加入到 SCP 中，返回 A</p>
+</li>
+</ul>
+<pre><code class="language-java">String s1 = String.format(&quot;%d%d%d&quot;, 1, 2, 3);
+String s2 = String.format(&quot;%d%d%d&quot;, 1, 2, 3);
+String s3 = s1.intern();
+String s4 = s2.intern();
+String s5 = &quot;123&quot;;
+System.out.println(s1 == s2); // false
+System.out.println(s1 == s3); // true
+System.out.println(s1 == s4); // true
+System.out.println(s1 == s5); // true
+</code></pre>
+<h2>StringBuilder</h2>
+<p>在进行大量字符串的改动操作时（比如拼接、替换）：</p>
+<ul>
+<li>使用 String 会非常消耗内存、降低程序性能</li>
+<li>使用 <code>StringBuilder</code> 可以节省内存、提高程序性能</li>
+</ul>
+<p>StringBuilder 的常用方法有：<code>append</code>、<code>insert</code>、<code>delete</code>、<code>replace</code>、<code>reverse</code>等</p>
+<h1>枚举</h1>
+<p>如果一个变量的取值只可能是固定的几个值，可以考虑使用枚举类型</p>
+<ul>
+<li>枚举由一组预定义的常量构成，每个常量都是一个该类型的变量</li>
+<li>枚举的本质是类，所有枚举类型最终都隐式继承自 <code>java.lang.Enum</code></li>
+<li>枚举定义完常量后，可以再定义成员变量、方法等内容，常量之间通过 <code>,</code> 分隔，最后一个常量需要使用 <code>;</code></li>
+<li>枚举的构造方法权限必须是 无修饰符 或者 <code>private</code></li>
+<li>Java 会主动调用构造方法初始化每一个常量，你不能主动调用构造方法</li>
+</ul>
+<pre><code class="language-java">public enum Season {
+    SPRING(&quot;spring&quot;),
+    SUMMER(&quot;summer&quot;),
+    FALL(&quot;fall&quot;),
+    WINTER(&quot;winter&quot;);
+
+    private String name;
+
+    private  Season(String name) {
+        this.name = name;
+    }
+}
+
+Season s = Season.SUMMER;
+</code></pre>
+<p>枚举就相当于：</p>
+<pre><code class="language-java">public class Season {
+    public static final Season SPRING = new Season(&quot;spring&quot;);
+    public static final Season SUMMER = new Season(&quot;summer&quot;);
+    public static final Season FALL = new Season(&quot;fall&quot;);
+    public static final Season WINTER = new Season(&quot;winter&quot;);
+    private String name;
+
+    private  Season(String name) {
+        this.name = name;
+    }
+}
+</code></pre><div><a href="/notes/Java">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"其他类型","article":{"title":"其他类型","content":"# 包装类\r\n\r\n对比引用类型，基本类型存在一些缺陷：\r\n\r\n- 无法表示不存在的值（`null` 值）\r\n- 不能利用面向对象的方式去操作基本类型（比如直接用基本类型调用方法）\r\n- 当方法参数是引用类型时，基本类型无法传递\r\n\r\n数字类型的包装类（`Byte`、`Short`、`Integer`、`Long`、`Float`、`Double`）最终都继承自 `java.lang.Number`\r\n\r\n自动装箱：Java 编译器会自动将基本类型转换为包装类（调用静态方法 `valueOf`）\r\n\r\n自动拆箱：Java 编译器会自动将包装类转换为基本类型（调用实例方法 `xxxValue` 方法，例如 `intValue`）\r\n\r\n- 包装类的判等，不要使用 `==`、`!=` 运算符，应该使用 `equals` 方法\r\n- `IntegerCache` 这个内部类中缓存了 [-128, 127] 范围的 `Integer` 对象\r\n- 使用 `Integer.valueOf` 方法会优先去 `IntegerCache` 缓存中获取 `Integer` 对象\r\n- **基本类型数组** 与 **包装类数组** 之间是不能自动装箱、拆箱的\r\n\r\n# 字符串\r\n\r\nJava 中用 `java.lang.String` 类代表字符串\r\n\r\n- 底层使用 `char[]` 存储字符数据，从 Java 9 开始，底层使用 `byte[]` 存储字符数据\r\n- 所有字符串字面量（比如 `\"ABC\"`）都是 `String` 类的实例\r\n- `String` 对象一旦创建完毕，它的字符内容是不可以修改的\r\n\r\n## 字符串常量池\r\n\r\nJava 中有个字符串常量池（String Constant Pool，简称 SCP）\r\n\r\n- 当遇到**字符串字面量**时，会去查看 SCP\r\n\t- 如果 SCP 中存在与字面量内容一样的字符串对象 A 时，就返回 A\r\n\t- 否则，创建一个新的字符串对象 D，并加入到 SCP 中，返回 D\r\n- 字符串常量池从 Java 7 开始属于堆空间的一部分（以前放在方法区）\r\n\r\n## intern\r\n\r\n- 如果 SCP 中存在与 A **内容一样**的字符串对象 C 时，就返回 C\r\n\r\n- 否则，将 A 加入到 SCP 中，返回 A\r\n\r\n```java\r\nString s1 = String.format(\"%d%d%d\", 1, 2, 3);\r\nString s2 = String.format(\"%d%d%d\", 1, 2, 3);\r\nString s3 = s1.intern();\r\nString s4 = s2.intern();\r\nString s5 = \"123\";\r\nSystem.out.println(s1 == s2); // false\r\nSystem.out.println(s1 == s3); // true\r\nSystem.out.println(s1 == s4); // true\r\nSystem.out.println(s1 == s5); // true\r\n```\r\n\r\n## StringBuilder\r\n\r\n在进行大量字符串的改动操作时（比如拼接、替换）：\r\n\r\n- 使用 String 会非常消耗内存、降低程序性能\r\n- 使用 `StringBuilder` 可以节省内存、提高程序性能\r\n\r\nStringBuilder 的常用方法有：`append`、`insert`、`delete`、`replace`、`reverse`等\r\n\r\n# 枚举\r\n\r\n如果一个变量的取值只可能是固定的几个值，可以考虑使用枚举类型\r\n\r\n- 枚举由一组预定义的常量构成，每个常量都是一个该类型的变量\r\n- 枚举的本质是类，所有枚举类型最终都隐式继承自 `java.lang.Enum`\r\n- 枚举定义完常量后，可以再定义成员变量、方法等内容，常量之间通过 `,` 分隔，最后一个常量需要使用 `;`\r\n- 枚举的构造方法权限必须是 无修饰符 或者 `private`\r\n- Java 会主动调用构造方法初始化每一个常量，你不能主动调用构造方法\r\n\r\n```java\r\npublic enum Season {\r\n    SPRING(\"spring\"),\r\n    SUMMER(\"summer\"),\r\n    FALL(\"fall\"),\r\n    WINTER(\"winter\");\r\n\r\n    private String name;\r\n\r\n    private  Season(String name) {\r\n        this.name = name;\r\n    }\r\n}\r\n\r\nSeason s = Season.SUMMER;\r\n```\r\n\r\n枚举就相当于：\r\n\r\n```java\r\npublic class Season {\r\n    public static final Season SPRING = new Season(\"spring\");\r\n    public static final Season SUMMER = new Season(\"summer\");\r\n    public static final Season FALL = new Season(\"fall\");\r\n    public static final Season WINTER = new Season(\"winter\");\r\n    private String name;\r\n\r\n    private  Season(String name) {\r\n        this.name = name;\r\n    }\r\n}\r\n```\r\n\r\n\r\n\r\n","meta":{"size":3856,"birthTime":1663496641380.5962,"updateTime":1663496641380.8022}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["Java","其他类型"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

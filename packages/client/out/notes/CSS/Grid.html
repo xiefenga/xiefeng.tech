@@ -1,0 +1,215 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>Grid | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#概念" data-target-id="h1-概念-0">概念</a><ul><li><a href="#网格线" data-target-id="h2-网格线-0">网格线</a></li></ul></li><li><a href="#容器属性" data-target-id="h1-容器属性-1">容器属性</a><ul><li><a href="#划分行列" data-target-id="h2-划分行列-1">划分行列</a></li><li><a href="#行列间隔" data-target-id="h2-行列间隔-2">行列间隔</a></li><li><a href="#区域" data-target-id="h2-区域-3">区域</a></li><li><a href="#排列" data-target-id="h2-排列-4">排列</a><ul><li><a href="#项目排列" data-target-id="h3-项目排列-0">项目排列</a></li><li><a href="#区域排列" data-target-id="h3-区域排列-1">区域排列</a></li></ul></li><li><a href="#自动生成的行列" data-target-id="h2-自动生成的行列-5">自动生成的行列</a></li><li><a href="#简写" data-target-id="h2-简写-6">简写</a></li></ul></li><li><a href="#项目属性" data-target-id="h1-项目属性-2">项目属性</a><ul><li><a href="#位置" data-target-id="h2-位置-7">位置</a></li><li><a href="#排列" data-target-id="h2-排列-8">排列</a></li></ul></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">Grid</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>概念</h1>
+<p>Flex 布局是轴线布局，只能指定&quot;项目&quot;针对轴线的位置，可以看作是<strong>一维布局</strong>。</p>
+<p>Grid 布局则是将容器划分成&quot;行&quot;和&quot;列&quot;，产生单元格，然后指定&quot;项目所在&quot;的单元格，可以看作是<strong>二维布局</strong>。</p>
+<p>和 Flex 相同，采用 Grid 布局的元素称为容器，内部的子元素为项目。</p>
+<h2>网格线</h2>
+<p>Grid 布局通过<strong>网格线</strong>将容器划分成行和列的单元格，水平网格线划分出行，垂直网格线划分出列。</p>
+<p><code>n</code> 行有 <code>n + 1</code> 根水平网格线，<code>m</code> 列有 <code>m + 1</code> 根垂直网格线</p>
+<h1>容器属性</h1>
+<p>类似于 Flex 布局，通过 <code>display: grid</code> / <code>display:inline-grid</code> 使用 Grid 布局。</p>
+<h2>划分行列</h2>
+<ul>
+<li><code>grid-template-rows</code>：分别定义每一行的行高</li>
+<li><code>grid-template-columns</code>：分别定义每一列的列宽</li>
+</ul>
+<p>给多少个值就会有多少将容器分为多少行/列：</p>
+<pre><code class="language-html">&lt;div class=&quot;box&quot;&gt;
+    &lt;div class=&quot;item item-1&quot;&gt;1&lt;/div&gt;
+    &lt;div class=&quot;item item-2&quot;&gt;2&lt;/div&gt;
+    ...
+    &lt;div class=&quot;item item-8&quot;&gt;8&lt;/div&gt;
+    &lt;div class=&quot;item item-9&quot;&gt;9&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<pre><code class="language-css">.box {
+    display: grid;
+    grid-template-columns: 50px 50px 50px;
+    grid-template-rows: 50px 50px 50px;
+}
+.item {
+    width: 20px;
+    height: 20px;
+    text-align: center;
+}
+</code></pre>
+<p><img src="http://oss.xiefeng.tech/img/20210803162140.png" alt=""/></p>
+<ul>
+<li><code>repeat()</code>：为了减少书写重复的值，可以使用 <code>repeat</code> 函数简化代码</li>
+</ul>
+<pre><code class="language-css">.box {
+    display: grid;
+    grid-template-columns: repeat(3, 50px);
+    grid-template-rows: repeat(3, 50px);
+}
+</code></pre>
+<p><code>repeat</code> 也可以重复某种模式：</p>
+<pre><code class="language-css">grid-template-columns: repeat(2, 100px 20px 80px);
+</code></pre>
+<ul>
+<li><code>auto-fill</code>：让每一行/每一列自动的根据实际情况最多的分出行/列</li>
+</ul>
+<pre><code class="language-css">.box {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 100px);
+}
+</code></pre>
+<ul>
+<li><code>fr</code> 关键字：为了方便表示比例关系，如果两列的宽度分别为<code>1fr</code> 和 <code>2fr</code>，就表示后者是前者的两倍</li>
+</ul>
+<pre><code class="language-css">.box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+</code></pre>
+<ul>
+<li><code>minmax()</code>：产生一个长度范围，表示长度就在这个范围之中</li>
+</ul>
+<p><code>minmax(100px, 1fr)</code>表示列宽不小于 <code>100px</code>，不大于 <code>1fr</code></p>
+<pre><code class="language-css">grid-template-columns: 1fr 1fr minmax(100px, 1fr);
+</code></pre>
+<ul>
+<li><code>auto</code>：浏览器自动计算</li>
+</ul>
+<pre><code class="language-css">grid-template-columns: 100px auto 100px;
+</code></pre>
+<ul>
+<li>网格线的名称</li>
+</ul>
+<p><code>grid-template-columns</code> 和 <code>grid-template-rows</code> 属性里可以使用方括号，指定每一根网格线的名字，方便以后的引用。</p>
+<pre><code class="language-css">.box {
+    display: grid;
+    grid-template-columns: [c1] 100px [c2] 100px [c3] auto [c4];
+    grid-template-rows: [r1] 100px [r2] 100px [r3] auto [r4];
+}
+</code></pre>
+<p><code>grid-template</code>：<code>grid-template-rows</code> 和 <code>grid-template-columns</code> 简写</p>
+<h2>行列间隔</h2>
+<ul>
+<li><code>grid-row-gap</code>：设置行与行的间隔（行间距）</li>
+<li><code>grid-column-gap</code>：设置列与列的间隔（列间距）</li>
+</ul>
+<pre><code class="language-css">.box {
+    grid-row-gap: 20px;
+    grid-column-gap: 20px;
+}
+</code></pre>
+<ul>
+<li><code>grid-gap</code>：<code>grid-column-gap</code> 和 <code>grid-row-gap</code> 的合并简写形式</li>
+</ul>
+<p>第一个值是 <code>grid-row-gap</code>，第二个值是 <code>grid-column-gap</code>，给一个值同时设置两个</p>
+<pre><code class="language-css">grid-gap: 20px;
+</code></pre>
+<h2>区域</h2>
+<p>网格布局允许指定&quot;区域&quot;（area），一个区域由单个或多个单元格组成。<code>grid-template-areas</code>属性用于定义区域</p>
+<pre><code class="language-css">.box {
+    display: grid;
+    grid-template-columns: 100px 100px 100px;
+    grid-template-rows: 100px 100px 100px;
+    grid-template-areas: &#x27;a b c&#x27;
+                         &#x27;d e f&#x27;
+                         &#x27;g h i&#x27;;
+}
+</code></pre>
+<p>多个单元格合并成一个区域的写法：</p>
+<pre><code class="language-css">grid-template-areas: &#x27;a a a&#x27;
+                     &#x27;b b b&#x27;
+                     &#x27;c c c&#x27;;
+</code></pre>
+<h2>排列</h2>
+<h3>项目排列</h3>
+<ul>
+<li><code>justify-items</code>：设置单元格内容的水平位置</li>
+<li><code>align-items</code>：设置单元格内容的垂直位置</li>
+</ul>
+<p>取值：</p>
+<ul>
+<li><code>start</code>：对齐单元格的起始边缘</li>
+<li><code>end</code>：对齐单元格的结束边缘</li>
+<li><code>center</code>：单元格内部居中</li>
+<li><code>stretch</code>：拉伸，占满单元格（默认值）</li>
+</ul>
+<p><img src="https://www.wangbase.com/blogimg/asset/201903/bg2019032516.png" alt=""/></p>
+<ul>
+<li><code>place-items</code>：<code>align-items</code> 和<code>justify-items</code> 的合并简写形式</li>
+</ul>
+<p>第一个值是 <code>align-items</code>，第二个值是 <code>justify-items</code>，传递一个同时设置两个</p>
+<pre><code class="language-css">place-items: start end;
+</code></pre>
+<h3>区域排列</h3>
+<ul>
+<li><code>justify-content</code>：整个内容区域在容器里面的水平位置</li>
+<li><code>align-content</code>：整个内容区域的垂直位置</li>
+</ul>
+<p>取值：<code>start | end | center | stretch | space-around | space-between | space-evenly</code></p>
+<p><img src="https://www.wangbase.com/blogimg/asset/201903/bg2019032519.png" alt=""/></p>
+<h2>自动生成的行列</h2>
+<p>有时候，一些项目的指定位置，在现有网格的外部。比如网格只有3列，但是某一个项目指定在第5行。这时，浏览器会自动生成多余的网格，以便放置项目。</p>
+<p><code>grid-auto-columns</code>属性和<code>grid-auto-rows</code>属性用来设置，浏览器自动创建的多余网格的列宽和行高。它们的写法与<code>grid-template-columns</code>和<code>grid-template-rows</code>完全相同。如果不指定这两个属性，浏览器完全根据单元格内容的大小，决定新增网格的列宽和行高。</p>
+<h2>简写</h2>
+<ul>
+<li><code>grid-template</code>：<code>grid-template-columns</code>、<code>grid-template-rows</code> 和 <code>grid-template-areas</code> 这三个属性的合并简写形式</li>
+<li><code>grid</code>：<code>grid-template-rows</code>、<code>grid-template-columns</code>、<code>grid-template-areas</code>、 <code>grid-auto-rows</code>、<code>grid-auto-columns</code>、<code>grid-auto-flow</code> 这六个属性的合并简写形式</li>
+</ul>
+<h1>项目属性</h1>
+<h2>位置</h2>
+<p>项目的位置是可以指定的，具体方法就是指定项目的四个边框，分别定位在哪根网格线</p>
+<ul>
+<li><code>grid-column-start</code>：左边框所在的垂直网格线</li>
+<li><code>grid-column-end</code>：右边框所在的垂直网格线</li>
+<li><code>grid-row-start</code>：上边框所在的水平网格线</li>
+<li><code>grid-row-end</code>：下边框所在的水平网格线</li>
+</ul>
+<pre><code class="language-css">.item-1 {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
+}
+</code></pre>
+<p>网格线从 1 开始编号，也支持负值，负数表示从反方向倒数第几个</p>
+<p><code>grid-column-start</code> 和 <code>grid-column-end</code> 可以使用 <code>span</code> 关键字表示相对于另一个的位置</p>
+<pre><code class="language-css">.item-1 {
+    grid-column-start: 1;
+    grid-column-end: span 3; /* 表示相对于 start 三个网格线 */
+}
+</code></pre>
+<ul>
+<li>
+<p><code>grid-column</code>：<code>grid-column-start </code>和 <code>grid-column-end</code> 简写形式</p>
+</li>
+<li>
+<p><code>grid-row</code>： <code>grid-row-start</code> 和 <code>grid-row-end</code> 的简写形式</p>
+</li>
+</ul>
+<pre><code class="language-css">.item-1 {
+    grid-column: 1 / 3;
+    grid-row: 1 / 2;
+}
+/* 等同于 */
+.item-1 {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
+}
+</code></pre>
+<p><code>grid-column</code> 也可以可以使用 <code>span</code> 关键字</p>
+<pre><code class="language-css">.item-1 {
+    grid-column: 1 / span 2;
+}
+</code></pre>
+<ul>
+<li><code>grid-area</code>：指定项目放在哪一个区域</li>
+</ul>
+<pre><code class="language-css">.item-1 {
+    grid-area: e;
+}
+</code></pre>
+<p><code>grid-area</code> 属性还可用作 <code>grid-row-start</code>、<code>grid-column-start</code>、<code>grid-row-end</code>、<code>grid-column-end</code> 的合并简写形式</p>
+<pre><code class="language-css">.item {
+    grid-area: &lt;row-start&gt; / &lt;column-start&gt; / &lt;row-end&gt; / &lt;column-end&gt;;
+}
+</code></pre>
+<h2>排列</h2>
+<p><code>justify-self</code>属性设置单元格内容的水平位置（左中右），跟<code>justify-items</code>属性的用法完全一致，但只作用于单个项目。</p>
+<p><code>align-self</code>属性设置单元格内容的垂直位置（上中下），跟<code>align-items</code>属性的用法完全一致，也是只作用于单个项目。</p><div><a href="/notes/CSS">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"Grid","article":{"title":"Grid","content":"# 概念\r\n\r\nFlex 布局是轴线布局，只能指定\"项目\"针对轴线的位置，可以看作是**一维布局**。\r\n\r\nGrid 布局则是将容器划分成\"行\"和\"列\"，产生单元格，然后指定\"项目所在\"的单元格，可以看作是**二维布局**。\r\n\r\n和 Flex 相同，采用 Grid 布局的元素称为容器，内部的子元素为项目。\r\n\r\n## 网格线\r\n\r\nGrid 布局通过**网格线**将容器划分成行和列的单元格，水平网格线划分出行，垂直网格线划分出列。\r\n\r\n`n` 行有 `n + 1` 根水平网格线，`m` 列有 `m + 1` 根垂直网格线\r\n\r\n# 容器属性\r\n\r\n类似于 Flex 布局，通过 `display: grid` / `display:inline-grid` 使用 Grid 布局。\r\n\r\n## 划分行列\r\n\r\n- `grid-template-rows`：分别定义每一行的行高\r\n- `grid-template-columns`：分别定义每一列的列宽\r\n\r\n给多少个值就会有多少将容器分为多少行/列：\r\n\r\n```html\r\n\u003cdiv class=\"box\"\u003e\r\n    \u003cdiv class=\"item item-1\"\u003e1\u003c/div\u003e\r\n    \u003cdiv class=\"item item-2\"\u003e2\u003c/div\u003e\r\n    ...\r\n    \u003cdiv class=\"item item-8\"\u003e8\u003c/div\u003e\r\n    \u003cdiv class=\"item item-9\"\u003e9\u003c/div\u003e\r\n\u003c/div\u003e\r\n```\r\n\r\n```css\r\n.box {\r\n    display: grid;\r\n    grid-template-columns: 50px 50px 50px;\r\n    grid-template-rows: 50px 50px 50px;\r\n}\r\n.item {\r\n    width: 20px;\r\n    height: 20px;\r\n    text-align: center;\r\n}\r\n```\r\n\r\n![](http://oss.xiefeng.tech/img/20210803162140.png)\r\n\r\n- `repeat()`：为了减少书写重复的值，可以使用 `repeat` 函数简化代码\r\n\r\n```css\r\n.box {\r\n    display: grid;\r\n    grid-template-columns: repeat(3, 50px);\r\n    grid-template-rows: repeat(3, 50px);\r\n}\r\n```\r\n\r\n`repeat` 也可以重复某种模式：\r\n\r\n```css\r\ngrid-template-columns: repeat(2, 100px 20px 80px);\r\n```\r\n\r\n- `auto-fill`：让每一行/每一列自动的根据实际情况最多的分出行/列\r\n\r\n```css\r\n.box {\r\n    display: grid;\r\n    grid-template-columns: repeat(auto-fill, 100px);\r\n}\r\n```\r\n\r\n- `fr` 关键字：为了方便表示比例关系，如果两列的宽度分别为`1fr` 和 `2fr`，就表示后者是前者的两倍\r\n\r\n```css\r\n.box {\r\n    display: grid;\r\n    grid-template-columns: 1fr 1fr;\r\n}\r\n```\r\n\r\n- `minmax()`：产生一个长度范围，表示长度就在这个范围之中\r\n\r\n`minmax(100px, 1fr)`表示列宽不小于 `100px`，不大于 `1fr`\r\n\r\n```css\r\ngrid-template-columns: 1fr 1fr minmax(100px, 1fr);\r\n```\r\n\r\n- `auto`：浏览器自动计算\r\n\r\n```css\r\ngrid-template-columns: 100px auto 100px;\r\n```\r\n\r\n- 网格线的名称\r\n\r\n`grid-template-columns` 和 `grid-template-rows` 属性里可以使用方括号，指定每一根网格线的名字，方便以后的引用。\r\n\r\n```css\r\n.box {\r\n    display: grid;\r\n    grid-template-columns: [c1] 100px [c2] 100px [c3] auto [c4];\r\n    grid-template-rows: [r1] 100px [r2] 100px [r3] auto [r4];\r\n}\r\n```\r\n\r\n`grid-template`：`grid-template-rows` 和 `grid-template-columns` 简写\r\n\r\n## 行列间隔\r\n\r\n- `grid-row-gap`：设置行与行的间隔（行间距）\r\n- `grid-column-gap`：设置列与列的间隔（列间距）\r\n\r\n```css\r\n.box {\r\n    grid-row-gap: 20px;\r\n    grid-column-gap: 20px;\r\n}\r\n```\r\n\r\n- `grid-gap`：`grid-column-gap` 和 `grid-row-gap` 的合并简写形式\r\n\r\n第一个值是 `grid-row-gap`，第二个值是 `grid-column-gap`，给一个值同时设置两个\r\n\r\n```css\r\ngrid-gap: 20px;\r\n```\r\n\r\n## 区域\r\n\r\n网格布局允许指定\"区域\"（area），一个区域由单个或多个单元格组成。`grid-template-areas`属性用于定义区域\r\n\r\n```css\r\n.box {\r\n    display: grid;\r\n    grid-template-columns: 100px 100px 100px;\r\n    grid-template-rows: 100px 100px 100px;\r\n    grid-template-areas: 'a b c'\r\n                         'd e f'\r\n                         'g h i';\r\n}\r\n```\r\n\r\n多个单元格合并成一个区域的写法：\r\n\r\n```css\r\ngrid-template-areas: 'a a a'\r\n                     'b b b'\r\n                     'c c c';\r\n```\r\n\r\n## 排列\r\n\r\n### 项目排列\r\n\r\n- `justify-items`：设置单元格内容的水平位置\r\n- `align-items`：设置单元格内容的垂直位置\r\n\r\n取值：\r\n\r\n- `start`：对齐单元格的起始边缘\r\n- `end`：对齐单元格的结束边缘\r\n- `center`：单元格内部居中\r\n- `stretch`：拉伸，占满单元格（默认值）\r\n\r\n![](https://www.wangbase.com/blogimg/asset/201903/bg2019032516.png)\r\n\r\n- `place-items`：`align-items` 和`justify-items` 的合并简写形式\r\n\r\n第一个值是 `align-items`，第二个值是 `justify-items`，传递一个同时设置两个\r\n\r\n```css\r\nplace-items: start end;\r\n```\r\n\r\n### 区域排列\r\n\r\n- `justify-content`：整个内容区域在容器里面的水平位置\r\n- `align-content`：整个内容区域的垂直位置\r\n\r\n取值：`start | end | center | stretch | space-around | space-between | space-evenly`\r\n\r\n![](https://www.wangbase.com/blogimg/asset/201903/bg2019032519.png)\r\n\r\n## 自动生成的行列\r\n\r\n有时候，一些项目的指定位置，在现有网格的外部。比如网格只有3列，但是某一个项目指定在第5行。这时，浏览器会自动生成多余的网格，以便放置项目。\r\n\r\n`grid-auto-columns`属性和`grid-auto-rows`属性用来设置，浏览器自动创建的多余网格的列宽和行高。它们的写法与`grid-template-columns`和`grid-template-rows`完全相同。如果不指定这两个属性，浏览器完全根据单元格内容的大小，决定新增网格的列宽和行高。\r\n\r\n## 简写\r\n\r\n- `grid-template`：`grid-template-columns`、`grid-template-rows` 和 `grid-template-areas` 这三个属性的合并简写形式\r\n- `grid`：`grid-template-rows`、`grid-template-columns`、`grid-template-areas`、 `grid-auto-rows`、`grid-auto-columns`、`grid-auto-flow` 这六个属性的合并简写形式\r\n\r\n# 项目属性\r\n\r\n## 位置\r\n\r\n项目的位置是可以指定的，具体方法就是指定项目的四个边框，分别定位在哪根网格线\r\n\r\n- `grid-column-start`：左边框所在的垂直网格线\r\n- `grid-column-end`：右边框所在的垂直网格线\r\n- `grid-row-start`：上边框所在的水平网格线\r\n- `grid-row-end`：下边框所在的水平网格线\r\n\r\n```css\r\n.item-1 {\r\n    grid-column-start: 1;\r\n    grid-column-end: 3;\r\n    grid-row-start: 1;\r\n    grid-row-end: 2;\r\n}\r\n```\r\n\r\n网格线从 1 开始编号，也支持负值，负数表示从反方向倒数第几个\r\n\r\n`grid-column-start` 和 `grid-column-end` 可以使用 `span` 关键字表示相对于另一个的位置\r\n\r\n```css\r\n.item-1 {\r\n    grid-column-start: 1;\r\n    grid-column-end: span 3; /* 表示相对于 start 三个网格线 */\r\n}\r\n```\r\n\r\n- `grid-column`：`grid-column-start `和 `grid-column-end` 简写形式\r\n\r\n- `grid-row`： `grid-row-start` 和 `grid-row-end` 的简写形式\r\n\r\n```css\r\n.item-1 {\r\n    grid-column: 1 / 3;\r\n    grid-row: 1 / 2;\r\n}\r\n/* 等同于 */\r\n.item-1 {\r\n    grid-column-start: 1;\r\n    grid-column-end: 3;\r\n    grid-row-start: 1;\r\n    grid-row-end: 2;\r\n}\r\n```\r\n\r\n`grid-column` 也可以可以使用 `span` 关键字\r\n\r\n```css\r\n.item-1 {\r\n    grid-column: 1 / span 2;\r\n}\r\n```\r\n\r\n- `grid-area`：指定项目放在哪一个区域\r\n\r\n```css\r\n.item-1 {\r\n    grid-area: e;\r\n}\r\n```\r\n\r\n`grid-area` 属性还可用作 `grid-row-start`、`grid-column-start`、`grid-row-end`、`grid-column-end` 的合并简写形式\r\n\r\n```css\r\n.item {\r\n    grid-area: \u003crow-start\u003e / \u003ccolumn-start\u003e / \u003crow-end\u003e / \u003ccolumn-end\u003e;\r\n}\r\n```\r\n\r\n## 排列\r\n\r\n`justify-self`属性设置单元格内容的水平位置（左中右），跟`justify-items`属性的用法完全一致，但只作用于单个项目。\r\n\r\n`align-self`属性设置单元格内容的垂直位置（上中下），跟`align-items`属性的用法完全一致，也是只作用于单个项目。\r\n\r\n","meta":{"size":7634,"birthTime":1663496641377.0635,"updateTime":1663496641377.373}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["CSS","Grid"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>文件管理 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#文件" data-target-id="h1-文件-0">文件</a><ul><li><a href="#文件属性" data-target-id="h2-文件属性-0">文件属性</a></li><li><a href="#文件操作" data-target-id="h2-文件操作-1">文件操作</a></li></ul></li><li><a href="#文件系统" data-target-id="h1-文件系统-1">文件系统</a><ul><li><a href="#文件系统的实现" data-target-id="h2-文件系统的实现-2">文件系统的实现</a></li><li><a href="#文件系统结构" data-target-id="h2-文件系统结构-3">文件系统结构</a></li></ul></li><li><a href="#目录结构" data-target-id="h1-目录结构-2">目录结构</a><ul><li><a href="#单级目录" data-target-id="h2-单级目录-4">单级目录</a></li><li><a href="#两级目录" data-target-id="h2-两级目录-5">两级目录</a></li><li><a href="#树形目录" data-target-id="h2-树形目录-6">树形目录</a></li><li><a href="#无环图目录" data-target-id="h2-无环图目录-7">无环图目录</a></li></ul></li><li><a href="#文件共享" data-target-id="h1-文件共享-3">文件共享</a><ul><li><a href="#硬链接" data-target-id="h3-硬链接-0">硬链接</a></li><li><a href="#符号链接" data-target-id="h2-符号链接-8">符号链接</a></li></ul></li><li><a href="#文件的物理结构" data-target-id="h1-文件的物理结构-4">文件的物理结构</a><ul><li><a href="#连续分配" data-target-id="h2-连续分配-9">连续分配</a></li><li><a href="#链接分配" data-target-id="h2-链接分配-10">链接分配</a><ul><li><a href="#文件分配表" data-target-id="h3-文件分配表-1">文件分配表</a></li></ul></li><li><a href="#索引分配" data-target-id="h2-索引分配-11">索引分配</a><ul><li><a href="#大文件" data-target-id="h3-大文件-2">大文件</a></li></ul></li></ul></li><li><a href="#空闲空间管理" data-target-id="h1-空闲空间管理-5">空闲空间管理</a><ul><li><a href="#空闲表法" data-target-id="h2-空闲表法-12">空闲表法</a></li><li><a href="#空闲链表法" data-target-id="h2-空闲链表法-13">空闲链表法</a></li><li><a href="#位向量" data-target-id="h2-位向量-14">位向量</a></li><li><a href="#成组链接法" data-target-id="h2-成组链接法-15">成组链接法</a></li></ul></li><li><a href="#磁盘" data-target-id="h1-磁盘-6">磁盘</a><ul><li><a href="#物理结构" data-target-id="h2-物理结构-16">物理结构</a></li><li><a href="#磁盘调度" data-target-id="h2-磁盘调度-17">磁盘调度</a><ul><li><a href="#移臂调度" data-target-id="h3-移臂调度-3">移臂调度</a><ul><li><a href="#先进先出（FCFS）" data-target-id="h4-先进先出（FCFS）-0">先进先出（FCFS）</a></li><li><a href="#最短寻道时间优先（SSTF）" data-target-id="h4-最短寻道时间优先（SSTF）-1">最短寻道时间优先（SSTF）</a></li><li><a href="#扫描调度（SCAN）" data-target-id="h4-扫描调度（SCAN）-2">扫描调度（SCAN）</a><ul><li><a href="#循环扫描（C-SCAN）" data-target-id="h5-循环扫描（C-SCAN）-0">循环扫描（C-SCAN）</a></li><li><a href="#电梯算法" data-target-id="h5-电梯算法-1">电梯算法</a></li><li><a href="#Look 调度" data-target-id="h5-Look 调度-2">Look 调度</a></li></ul></li></ul></li><li><a href="#旋转调度" data-target-id="h3-旋转调度-4">旋转调度</a><ul><li><a href="#循环排序" data-target-id="h4-循环排序-3">循环排序</a></li><li><a href="#优化分布" data-target-id="h4-优化分布-4">优化分布</a></li></ul></li></ul></li><li><a href="#磁盘管理" data-target-id="h2-磁盘管理-18">磁盘管理</a><ul><li><a href="#磁盘格式化" data-target-id="h3-磁盘格式化-5">磁盘格式化</a></li><li><a href="#逻辑格式化" data-target-id="h3-逻辑格式化-6">逻辑格式化</a></li><li><a href="#引导块" data-target-id="h3-引导块-7">引导块</a></li></ul></li></ul></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">文件管理</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>文件</h1>
+<p>文件时记录在外存上的相关信息的命名组合，从用户的角度，文件是逻辑外存的最小分配单元，也就是说数据只有通过文件才能写到外存。</p>
+<h2>文件属性</h2>
+<p>文件的属性因操作系统而异，通常包括：</p>
+<ul>
+<li>名称：符号名称，方便用户的查找</li>
+<li>标识符：唯一标记，对用户不可见，操作系统用于对文件的区分</li>
+<li>类型：文件类型</li>
+<li>位置：文件在外存中的位置，用户不可见</li>
+<li>尺寸：文件当前的大小以及可能允许的额最大尺寸</li>
+<li>保护：对文件访问的控制信息</li>
+<li>时间、日期和用户标识：文件创建、最后修改的时间</li>
+</ul>
+<h2>文件操作</h2>
+<p>文件为抽象数据类型，为了正确定义文件，操作系统需要提供系统调用来实现文件的一些基本操作。</p>
+<ul>
+<li>创建文件</li>
+<li>写文件<!-- -->
+<ul>
+<li>系统需要保留写指针</li>
+</ul>
+</li>
+<li>读文件<!-- -->
+<ul>
+<li>系统需要保留读指针</li>
+</ul>
+</li>
+<li>删除文件</li>
+<li>重新定位文件<!-- -->
+<ul>
+<li>文件位置指针重新定位到给定值，不涉及实际 I/O</li>
+</ul>
+</li>
+<li>截断文件<!-- -->
+<ul>
+<li>删除文件内容，保留文件属性</li>
+</ul>
+</li>
+<li>打开文件<!-- -->
+<ul>
+<li>将目录项的信息复制到打开文件表中，并将打开文件表中的索引号返回用户</li>
+<li>索引号即为文件描述符/文件句柄</li>
+<li>读写文件使用文件描述符即可快速定位文件</li>
+</ul>
+</li>
+<li>关闭文件</li>
+</ul>
+<h1>文件系统</h1>
+<p>文件系统提供高效和便捷的磁盘访问，以便允许轻松存储、定位、提取数据。</p>
+<p><strong>文件控制块（FCB）</strong></p>
+<p>FCB 类似于 PCB，FCB 中包含了文件的一些信息，包括基本信息（文件名、物理地址、逻辑结构、物理结构等），存取控制信息（读写权限等），使用信息（文件最后修改的日期等）。</p>
+<p><strong>索引节点（inode）</strong></p>
+<p>在目录表中查找数据时只需要用到文件名，使用 FCB 有些浪费空间，可以使用索引节点让目录瘦身，只有找到文件名时再读取需要的信息。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228102446076.png" alt=""/></p>
+<p>Unix 文件系统使用了 inode。</p>
+<h2>文件系统的实现</h2>
+<p>在磁盘上，文件系统可能包括如下信息：启动存储在哪里的操作系统、总的块数、空闲块的数量和位置、目录结构以及各个具体文件等。</p>
+<p>一个磁盘可以被划分为多个分区，包含文件系统的分区通常称为<strong>卷</strong>。</p>
+<p>文件系统需要的信息大致为：</p>
+<ul>
+<li>
+<p>引导控制块</p>
+<ul>
+<li>可以包含从该卷引导操作系统的所需信息</li>
+<li>可没有，如果不含操作系统</li>
+<li>通常为卷的第一块</li>
+<li>UFS（Unix 文件系统）通常称之为引导块，NTFS（Windows NT 文件系统）称之为分区引导扇区</li>
+</ul>
+</li>
+<li>
+<p>卷控制块</p>
+<ul>
+<li>包括卷的详细信息，例如分区的块的数量，块的大小，空闲块的数量和指针，空闲的FCB 数量和FCB指针</li>
+<li>UFS称之为<strong>超级块</strong>，NTFS 将该信息存储在主控文件表中</li>
+</ul>
+</li>
+<li>
+<p>目录</p>
+<ul>
+<li>用于组织文件</li>
+<li>NTFS 中，该信息存储在主控文件表中</li>
+<li>UFS 中，它包含文件名和相关的 inode</li>
+</ul>
+</li>
+<li>
+<p>每个文件的 FCB</p>
+<ul>
+<li>包含该文件的信息</li>
+<li>有一个唯一的标识号，和目录条目相关联</li>
+<li>NTFS 中这些信息存储在 FAT 中</li>
+</ul>
+</li>
+<li>
+<p>整个系统的打开文件表</p>
+</li>
+<li>
+<p>每个进程的打开文件表</p>
+</li>
+<li>
+<p>安装表</p>
+<ul>
+<li>位于内存，包含每个安装卷的有关信息</li>
+</ul>
+</li>
+</ul>
+<h2>文件系统结构</h2>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84.svg" alt=""/></p>
+<p>**I/O 控制层：**包括设备驱动程序和中断处理程序，设备驱动程序输入高级指令，输出为硬件特定的指令。</p>
+<p>**基本文件系统：**向适当设备驱动程序发送通用命令，也负责保存各种文件系统、目录和数据块的缓存。</p>
+<p>**文件组织模块：**将逻辑块地址转换成物理块地址</p>
+<p>**逻辑文件系统：**管理元数据信息。元数据包括文件系统的所有结构而不包括内容。该层次管理目录结构，通过 FCB 维护文件结构。</p>
+<h1>目录结构</h1>
+<p>目录可视为符号表，可将文件名转换成目录条目。</p>
+<p>目录表中的一条记录就是一个文件控制块。</p>
+<p>需要对目录进行的操作：</p>
+<ul>
+<li>搜索文件</li>
+<li>创建文件</li>
+<li>遍历目录</li>
+<li>重命名文件</li>
+<li>遍历文件系统</li>
+</ul>
+<h2>单级目录</h2>
+<p>早期操作系统不支持多级目录，整个系统中只能建立一张目录表，每个文件占一个目录项。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/%E5%8D%95%E7%BA%A7%E7%9B%AE%E5%BD%95.svg" alt=""/></p>
+<h2>两级目录</h2>
+<p>早期的多用户操作系统，采用两级目录结构。分为<strong>主目录（MFD）<strong>和</strong>用户文件目录（UFD）</strong>。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/%E4%B8%A4%E7%BA%A7%E7%9B%AE%E5%BD%95.svg" alt=""/></p>
+<p>两级目录结构允许不同用户文件重名，也可以在目录上实现用户访问限制。但是两级目录依旧缺乏灵活性，用户不能对自己的文件进行分类。</p>
+<h2>树形目录</h2>
+<p>从根路目录出发的路径为绝对路径，从当前目录出发的路径为相对路径。</p>
+<p>树形目录可以很方便的对文件进行分类，层次结构清晰，也能有效的进行文件的管理和保护。但是是树形结构不便于实现文件的共享。</p>
+<h2>无环图目录</h2>
+<p>和树形目录几乎相同，不同的是不同文件名可以指向相同的文件，甚至可以指向同一个目录。</p>
+<p>需要为每一个共享节点设置一个共享计数器，用于记录此时有多少个地方正在共享该节点。</p>
+<p>删除节点请求时，只删除该目录项，并且共享计数器的值减少1，只有共享计数器的值为0时，才会真正删除节点。</p>
+<h1>文件共享</h1>
+<h3>硬链接</h3>
+<p>在 FCB / inode 中有引用计数，多个目录项可以指向同一个索引节点。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228105742525.png" alt=""/></p>
+<h2>符号链接</h2>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228105804962.png" alt=""/></p>
+<h1>文件的物理结构</h1>
+<p>扇区是磁盘最小的物理存储单元，操作系统将相邻的扇区组合在一起，形成一个块，对块进行管理。磁盘块是文件系统读写数据的最小单位（内存和磁盘的 I/O 传输以块为单位）。在很多操作系统中，磁盘块的大小和页面大小相同。</p>
+<p>在内存管理中，进程的逻辑地址被分为一个个页面，在外存管理中，文件的逻辑地址也被分为一个个块。</p>
+<p>文件的逻辑地址则为：&lt;块号, 块内地址&gt;</p>
+<h2>连续分配</h2>
+<p>连续分配要求每个文件在磁盘上占有一组连续的块。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201227212730061.png" alt=""/></p>
+<p>文件目录中记录着文件的起始块号和长度：</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201227212757974.png" alt=""/></p>
+<p>优点：</p>
+<ol>
+<li>支持顺序访问和随机访问</li>
+<li>在顺序访问时速度最快</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>采用连续分配的文件不方便拓展</li>
+<li>存储空间利用率低，会产生难以利用的磁盘碎片</li>
+<li>使用紧凑技术处理磁盘碎片代价大</li>
+</ol>
+<h2>链接分配</h2>
+<p>链接分配解决了连续分配的所有问题，采用链接分配，每个文件是磁盘块的链表。</p>
+<p>每个目录条目会包含该文件的首个磁盘块的指针和最后一个磁盘块的指针。指针初始为 null，表示一个空的文件。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201227214524359.png" alt=""/></p>
+<p>优点：</p>
+<ol>
+<li>方便文件拓展</li>
+<li>没有碎片问题，磁盘利用率高</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>只支持顺序访问，不支持随机访问，查找效率低</li>
+<li>指向下一个磁盘块的指针也会占据空间</li>
+<li>如果其中一个磁盘块发生错误：指针丢失或损坏则发生错误</li>
+</ol>
+<h3>文件分配表</h3>
+<p>链接分配的一个变种是使用<strong>文件分配表（FAT）</strong>，将用于链接文件的各物理块的指针显式的存放到一张表（FAT）中。</p>
+<p>目录中的每个条目只需要记录文件的起始块号。</p>
+<p>一个卷只有一张 FAT，开机时将FAT读入内存并常驻内存。FAT 中的表项在物理上连续存储，所以物理块号可以隐含。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201227215104720.png" alt=""/></p>
+<p>优点：</p>
+<ol>
+<li>支持顺序访问，也支持随机访问</li>
+<li>方便文件拓展</li>
+<li>磁盘利用率高，没有碎片问题</li>
+</ol>
+<p>缺点：FAT 需要占据一定的空间</p>
+<h2>索引分配</h2>
+<p>链接分配解决了连续分配的问题，但是如果没有 FAT 时，链接分配无法实现高效的直接访问，因为块指针和块一起分散在整个磁盘上，必须按序读取。</p>
+<p>索引分配将所有指针放在一起，即<strong>索引块（index block）</strong>。</p>
+<p>系统会为每个文件建立一个索引表，索引表中记录了文件的各个逻辑块和其对应物理块的映射，索引表被存放的物理块称之为索引块。而文件存放的物理块称之为数据块。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228094950762.png" alt=""/></p>
+<h3>大文件</h3>
+<p>如果一个文件过大，一个磁盘块无法装下整个索引表，该如何解决。例如：一个每个磁盘块 1 KB，每个表项 4B，则一个磁盘块最多存放256个索引项。</p>
+<p><strong>链接方案</strong></p>
+<p>将索引块最后一个表项存放的地址变为下一个索引块的物理块号，如果没有下一个索引块则为 null。</p>
+<p>但是这样是低效的，因为访问后续的索引表需要顺序先访问前面的索引块。</p>
+<p><strong>多级索引</strong></p>
+<p>类似于多级页表，建立多层索引，采用 K 层索引，则访问一个数据块需要 K + 1 次磁盘读写。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228100259006.png" alt=""/></p>
+<p><strong>混合索引</strong></p>
+<p>索引块中的索引表中即存在直接索引，也存在多级索引。例如将索引块的前几个（比如12）直接指向文件的物理块，后面的几个一次指向一级简介块，二级间接块等。这样小文件就可以直接指向物理块。</p>
+<p>这种方案用于基于 Unix 的文件系统，这些信息存在 inode 中。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/1-140F2031911211.jpg" alt=""/></p>
+<h1>空闲空间管理</h1>
+<h2>空闲表法</h2>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228103116430.png" alt=""/></p>
+<h2>空闲链表法</h2>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228103200134.png" alt=""/></p>
+<h2>位向量</h2>
+<p>空闲空间列表按位图来实现，每块用一个位来表示，如果块是空闲的则位为1，如果块已被分配则为0。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228103943827.png" alt=""/></p>
+<p>字长为 n，则盘块号 b = n * 字号（有多少个字的0） + 位号（ 第一个值为1的位偏移）</p>
+<h2>成组链接法</h2>
+<p>Unix 系统采用了成组链接法对空闲磁盘进行管理，文件的目录区中专门有一个磁盘块作为<strong>超级块</strong>，当系统启动时需要将超级块读入内存，并且保证内存和外存中的超级块数据一致。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228143644813.png" alt=""/></p>
+<h1>磁盘</h1>
+<h2>物理结构</h2>
+<ul>
+<li>
+<p>磁盘由多个<strong>盘片</strong>组成，盘片可以有1-2个<strong>盘面</strong>，每个盘面都可以存数据</p>
+</li>
+<li>
+<p>每个盘片逻辑的被划分为多个同心圆结构的<strong>磁道</strong></p>
+</li>
+<li>
+<p>不同盘片上位于相同位置的磁道构成的圆柱体称为<strong>柱面</strong></p>
+</li>
+<li>
+<p>每个磁道分为固定多个或不等个数的<strong>扇区</strong>，硬盘的读写以扇区为基本单位</p>
+</li>
+</ul>
+<p><img src="https://oss.xiefeng.tech/img/%E7%A3%81%E7%9B%98%E7%89%A9%E7%90%86%E7%BB%93%E6%9E%84.png" alt=""/></p>
+<p><strong>物理块地址</strong></p>
+<ol>
+<li>柱面号,磁头号,扇区号</li>
+<li>面,道,扇区（面指磁头，道指柱面）</li>
+</ol>
+<h2>磁盘调度</h2>
+<p><strong>读写数据</strong></p>
+<p>读写数据时，磁头必须定位到指定的磁道上的指定扇区的开始处。</p>
+<p>过程：</p>
+<ol>
+<li>寻道：控制移动臂到达指定柱面，选择磁头号</li>
+<li>旋转：等待要读写的扇区旋转到磁头下</li>
+<li>数据传送</li>
+</ol>
+<p>磁盘完成数据读写所需要的时间 = 寻道时间 + 旋转延迟 + 传送时间</p>
+<p>磁盘可能同时接收到若干 I/O 请求，需要满足较快的访问速度和磁盘带宽。</p>
+<p>磁盘带宽 = 传输字节总数 / 总时间</p>
+<p>调度策略包括：</p>
+<ul>
+<li>移臂调度</li>
+<li>旋转调度</li>
+</ul>
+<h3>移臂调度</h3>
+<p>使移动臂的移动时间最短，从而减少寻道总时间。</p>
+<h4>先进先出（FCFS）</h4>
+<ul>
+<li>移动臂是随机移动，寻道性能较差</li>
+<li>按顺序处理请求，对所有进程公平</li>
+</ul>
+<h4>最短寻道时间优先（SSTF）</h4>
+<ul>
+<li>
+<p>优先处理靠近当前磁头位置的所有请求</p>
+</li>
+<li>
+<p>具有良好的寻道性能</p>
+</li>
+<li>
+<p>存在 ‘饥饿‘</p>
+</li>
+</ul>
+<h4>扫描调度（SCAN）</h4>
+<h5>循环扫描（C-SCAN）</h5>
+<ul>
+<li>移动臂总向一个方向扫面，归途中不提供服务。</li>
+<li>适用于不断有大量柱面均匀分布的请求的情形</li>
+</ul>
+<h5>电梯算法</h5>
+<ul>
+<li>
+<p>移动臂每次向一个方向移动，遇到最近的 I/O 请求便进行处理，到达最后一个柱面后再向相反方向移动。</p>
+</li>
+<li>
+<p>对最近扫描所跨越区域的请求响应较慢</p>
+</li>
+</ul>
+<h5>Look 调度</h5>
+<ul>
+<li>该方向上没有请求，立即反向，而不是等到达最后一个柱面</li>
+</ul>
+<h3>旋转调度</h3>
+<p>使得旋转延迟的总时间最少。</p>
+<h4>循环排序</h4>
+<ul>
+<li>
+<p>通过优化I/O请求排序，在最少旋转圈数内完成位于同一柱面的访问请求</p>
+</li>
+<li>
+<p>旋转位置测定硬件和多磁头同时读写技术有利于提高旋转调度的效率</p>
+</li>
+</ul>
+<h4>优化分布</h4>
+<ul>
+<li>
+<p>通过信息在存储空间的排列方式来减少旋转延迟</p>
+</li>
+<li>
+<p>交叉因子</p>
+<ul>
+<li>如果沿着磁道按序对扇区编号，可能由于磁盘转速太快，造成处理当前扇区的数据时，下一个扇区已经跳过，需要再转一圈才能继续读数据。因此，对扇区编号时会间隔编号，例如交叉因子为2:1表示相邻编号之间会间隔1个扇区，3:1表示会间隔2个扇区</li>
+</ul>
+</li>
+<li>
+<p>按柱面而非盘面进行数据读写</p>
+<ul>
+<li>连续记录数据时，先记录在同一柱面的不同磁道上，然后再更换柱面，可以减少数据读写时的移臂操作。</li>
+</ul>
+</li>
+</ul>
+<h2>磁盘管理</h2>
+<h3>磁盘格式化</h3>
+<p>一个新的磁盘是一个空白盘：它只是一个磁性记录材料的盘子。在磁盘可以存储数据之前，它必须分成扇区，以便磁盘控制器能够读写。该过程称为<strong>低级格式化</strong> / <strong>物理格式化</strong>。</p>
+<p>低级格式化为每个扇区使用特殊的数据结构填充磁盘，每个扇区的数据结构通常由头部、数据区域、尾部组成。头部和尾部包含了一些磁盘控制器的使用信息，比如磁盘号和纠错代码（ECC）。</p>
+<p>当控制器通过正常 I/O 写入一个扇区的数据时，ECC 会被根据区域所有字节计算出的新值更新，当读取一个扇区时，ECC 的值被重新计算然后和原来的值比较来判断扇区数据区是否损坏。在少数数据损坏时，控制器可以识别哪些位已经改变并计算正确值，然后报告可恢复的软错误。当读/写一个扇区时，控制器会自动进行 ECC 处理。</p>
+<h3>逻辑格式化</h3>
+<p>在可以使用磁盘存储文件之前，操作系统需要将自己的数据结构记录在磁盘上：</p>
+<ol>
+<li>将磁盘分为由<strong>柱面</strong>组成的多个<strong>分区</strong>，每个分区可以作为一个单独磁盘（例如一个分区存储操作系统的可执行代码，另一个分区存储用户数据）</li>
+<li>逻辑格式化 / 创建文件系统：操作系统将初始的文件系统数据结构存储到磁盘上，这些数据结构包括空闲和已分配的空间和初始为空的目录。</li>
+</ol>
+<p>大多数操作系统会将扇区组合成更大的块：<strong>簇</strong>，以提高效率。磁盘 I/O 按扇区完成，文件系统 I/O 按簇（块）完成。</p>
+<p><strong>原始磁盘</strong></p>
+<p>有些操作系统允许特殊程序将磁盘分区作为逻辑块的一个大的有序数组，而没有任何文件系统数据结构，这个数组有时称为原始磁盘，这个数组的 I/O 称为 <strong>原始 I/O</strong>。数据库系统喜欢使用原始 I/O，原始 I/O 绕过了所有文件系统服务。</p>
+<h3>引导块</h3>
+<p>为了开始运行计算机，比如打开电源或重启时，必须有一个初始程序来运行。这个初始<strong>自举</strong>（bootstrap）程序往往很简单，它初始化系统的所有部分，从 CPU 寄存器到设备控制器和内存，接着启动操作系统。</p>
+<p>自举程序找到磁盘上的操作系统内核，加载到内存，并转到起始地址来执行操作系统。</p>
+<p>大多数计算机自举程序储在ROM中，这个位置非常方便，因为 ROM 不需要初始化而且位于一个固定的位置，在 CPU 上电时就开始执行。ROM 只读不会受到计算机病毒的影响，但是改变自举程序需要更换 ROM 硬件。</p>
+<p>大多数系统存储一个极小的自举程序在 ROM 中，作用是从磁盘调入完整的引导程序。完整的引导程序存储在磁盘的<strong>固定位置</strong>上的<strong>启动块/启动分区</strong>，引导程序可以轻松改变。具有启动分区的磁盘称为<strong>启动磁盘</strong>/<strong>系统磁盘</strong>。</p>
+<p>Windows 允许将磁盘分为多个分区，有一个分区为<strong>引导分区</strong>，包含操作系统和设备驱动程序。</p>
+<p>Windows 将引导代码存在磁盘的第一个扇区（0柱面、0磁头、1扇区），称为<strong>主引导记录</strong>（MBR）。MBR包含：引导代码、一个表（列出了磁盘分区）和一个标志（指示从哪个分区引导系统）。当系统找到引导分区，就开始读取分区的第一个扇区（称为<strong>引导扇区</strong>）然后加载各种子系统和系统服务。</p>
+<p><img src="https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/Windows%20%E7%A3%81%E7%9B%98%E5%BC%95%E5%AF%BC.svg" alt=""/></p><div><a href="/notes/OS">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"文件管理","article":{"title":"文件管理","content":"# 文件\r\n\r\n文件时记录在外存上的相关信息的命名组合，从用户的角度，文件是逻辑外存的最小分配单元，也就是说数据只有通过文件才能写到外存。\r\n\r\n## 文件属性\r\n\r\n文件的属性因操作系统而异，通常包括：\r\n\r\n- 名称：符号名称，方便用户的查找\r\n- 标识符：唯一标记，对用户不可见，操作系统用于对文件的区分\r\n- 类型：文件类型\r\n- 位置：文件在外存中的位置，用户不可见\r\n- 尺寸：文件当前的大小以及可能允许的额最大尺寸\r\n- 保护：对文件访问的控制信息\r\n- 时间、日期和用户标识：文件创建、最后修改的时间\r\n\r\n## 文件操作\r\n\r\n文件为抽象数据类型，为了正确定义文件，操作系统需要提供系统调用来实现文件的一些基本操作。\r\n\r\n- 创建文件\r\n- 写文件\r\n\t- 系统需要保留写指针\r\n- 读文件\r\n\t- 系统需要保留读指针\r\n- 删除文件\r\n- 重新定位文件\r\n\t- 文件位置指针重新定位到给定值，不涉及实际 I/O\r\n- 截断文件\r\n\t- 删除文件内容，保留文件属性\r\n- 打开文件\r\n\t- 将目录项的信息复制到打开文件表中，并将打开文件表中的索引号返回用户\r\n\t- 索引号即为文件描述符/文件句柄\r\n\t- 读写文件使用文件描述符即可快速定位文件\r\n- 关闭文件\r\n\r\n# 文件系统\r\n\r\n文件系统提供高效和便捷的磁盘访问，以便允许轻松存储、定位、提取数据。\r\n\r\n**文件控制块（FCB）**\r\n\r\nFCB 类似于 PCB，FCB 中包含了文件的一些信息，包括基本信息（文件名、物理地址、逻辑结构、物理结构等），存取控制信息（读写权限等），使用信息（文件最后修改的日期等）。\r\n\r\n**索引节点（inode）**\r\n\r\n在目录表中查找数据时只需要用到文件名，使用 FCB 有些浪费空间，可以使用索引节点让目录瘦身，只有找到文件名时再读取需要的信息。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228102446076.png)\r\n\r\nUnix 文件系统使用了 inode。\r\n\r\n## 文件系统的实现\r\n\r\n在磁盘上，文件系统可能包括如下信息：启动存储在哪里的操作系统、总的块数、空闲块的数量和位置、目录结构以及各个具体文件等。\r\n\r\n一个磁盘可以被划分为多个分区，包含文件系统的分区通常称为**卷**。\r\n\r\n文件系统需要的信息大致为：\r\n\r\n- 引导控制块\r\n\t- 可以包含从该卷引导操作系统的所需信息\r\n\t- 可没有，如果不含操作系统\r\n\t- 通常为卷的第一块\r\n\t- UFS（Unix 文件系统）通常称之为引导块，NTFS（Windows NT 文件系统）称之为分区引导扇区\r\n- 卷控制块\r\n\t- 包括卷的详细信息，例如分区的块的数量，块的大小，空闲块的数量和指针，空闲的FCB 数量和FCB指针\r\n\t- UFS称之为**超级块**，NTFS 将该信息存储在主控文件表中\r\n- 目录\r\n\t- 用于组织文件\r\n\t- NTFS 中，该信息存储在主控文件表中\r\n\t- UFS 中，它包含文件名和相关的 inode\r\n- 每个文件的 FCB\r\n\t- 包含该文件的信息\r\n\t- 有一个唯一的标识号，和目录条目相关联\r\n\t- NTFS 中这些信息存储在 FAT 中\r\n\r\n- 整个系统的打开文件表\r\n- 每个进程的打开文件表\r\n- 安装表\r\n\t- 位于内存，包含每个安装卷的有关信息\r\n\r\n## 文件系统结构\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84.svg)\r\n\r\n**I/O 控制层：**包括设备驱动程序和中断处理程序，设备驱动程序输入高级指令，输出为硬件特定的指令。\r\n\r\n**基本文件系统：**向适当设备驱动程序发送通用命令，也负责保存各种文件系统、目录和数据块的缓存。\r\n\r\n**文件组织模块：**将逻辑块地址转换成物理块地址\r\n\r\n**逻辑文件系统：**管理元数据信息。元数据包括文件系统的所有结构而不包括内容。该层次管理目录结构，通过 FCB 维护文件结构。\r\n\r\n# 目录结构\r\n\r\n目录可视为符号表，可将文件名转换成目录条目。\r\n\r\n目录表中的一条记录就是一个文件控制块。\r\n\r\n需要对目录进行的操作：\r\n\r\n- 搜索文件\r\n- 创建文件\r\n- 遍历目录\r\n- 重命名文件\r\n- 遍历文件系统\r\n\r\n## 单级目录\r\n\r\n早期操作系统不支持多级目录，整个系统中只能建立一张目录表，每个文件占一个目录项。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/%E5%8D%95%E7%BA%A7%E7%9B%AE%E5%BD%95.svg)\r\n\r\n## 两级目录\r\n\r\n早期的多用户操作系统，采用两级目录结构。分为**主目录（MFD）**和**用户文件目录（UFD）**。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/%E4%B8%A4%E7%BA%A7%E7%9B%AE%E5%BD%95.svg)\r\n\r\n两级目录结构允许不同用户文件重名，也可以在目录上实现用户访问限制。但是两级目录依旧缺乏灵活性，用户不能对自己的文件进行分类。\r\n\r\n## 树形目录\r\n\r\n从根路目录出发的路径为绝对路径，从当前目录出发的路径为相对路径。\r\n\r\n树形目录可以很方便的对文件进行分类，层次结构清晰，也能有效的进行文件的管理和保护。但是是树形结构不便于实现文件的共享。\r\n\r\n## 无环图目录\r\n\r\n和树形目录几乎相同，不同的是不同文件名可以指向相同的文件，甚至可以指向同一个目录。\r\n\r\n需要为每一个共享节点设置一个共享计数器，用于记录此时有多少个地方正在共享该节点。\r\n\r\n删除节点请求时，只删除该目录项，并且共享计数器的值减少1，只有共享计数器的值为0时，才会真正删除节点。\r\n\r\n# 文件共享\r\n\r\n### 硬链接\r\n\r\n在 FCB / inode 中有引用计数，多个目录项可以指向同一个索引节点。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228105742525.png)\r\n\r\n## 符号链接\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228105804962.png)\r\n\r\n# 文件的物理结构\r\n\r\n扇区是磁盘最小的物理存储单元，操作系统将相邻的扇区组合在一起，形成一个块，对块进行管理。磁盘块是文件系统读写数据的最小单位（内存和磁盘的 I/O 传输以块为单位）。在很多操作系统中，磁盘块的大小和页面大小相同。\r\n\r\n在内存管理中，进程的逻辑地址被分为一个个页面，在外存管理中，文件的逻辑地址也被分为一个个块。\r\n\r\n文件的逻辑地址则为：\u003c块号, 块内地址\u003e\r\n\r\n## 连续分配\r\n\r\n连续分配要求每个文件在磁盘上占有一组连续的块。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201227212730061.png)\r\n\r\n文件目录中记录着文件的起始块号和长度：\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201227212757974.png)\r\n\r\n优点：\r\n\r\n1. 支持顺序访问和随机访问\r\n2. 在顺序访问时速度最快\r\n\r\n缺点：\r\n\r\n1. 采用连续分配的文件不方便拓展\r\n2. 存储空间利用率低，会产生难以利用的磁盘碎片\r\n3. 使用紧凑技术处理磁盘碎片代价大\r\n\r\n## 链接分配\r\n\r\n链接分配解决了连续分配的所有问题，采用链接分配，每个文件是磁盘块的链表。\r\n\r\n每个目录条目会包含该文件的首个磁盘块的指针和最后一个磁盘块的指针。指针初始为 null，表示一个空的文件。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201227214524359.png)\r\n\r\n优点：\r\n\r\n1. 方便文件拓展\r\n2. 没有碎片问题，磁盘利用率高\r\n\r\n缺点：\r\n\r\n1. 只支持顺序访问，不支持随机访问，查找效率低\r\n2. 指向下一个磁盘块的指针也会占据空间\r\n3. 如果其中一个磁盘块发生错误：指针丢失或损坏则发生错误\r\n\r\n### 文件分配表\r\n\r\n链接分配的一个变种是使用**文件分配表（FAT）**，将用于链接文件的各物理块的指针显式的存放到一张表（FAT）中。\r\n\r\n目录中的每个条目只需要记录文件的起始块号。\r\n\r\n一个卷只有一张 FAT，开机时将FAT读入内存并常驻内存。FAT 中的表项在物理上连续存储，所以物理块号可以隐含。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201227215104720.png)\r\n\r\n优点：\r\n\r\n1. 支持顺序访问，也支持随机访问\r\n2. 方便文件拓展\r\n3. 磁盘利用率高，没有碎片问题\r\n\r\n缺点：FAT 需要占据一定的空间\r\n\r\n## 索引分配\r\n\r\n链接分配解决了连续分配的问题，但是如果没有 FAT 时，链接分配无法实现高效的直接访问，因为块指针和块一起分散在整个磁盘上，必须按序读取。\r\n\r\n索引分配将所有指针放在一起，即**索引块（index block）**。\r\n\r\n系统会为每个文件建立一个索引表，索引表中记录了文件的各个逻辑块和其对应物理块的映射，索引表被存放的物理块称之为索引块。而文件存放的物理块称之为数据块。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228094950762.png)\r\n\r\n### 大文件\r\n\r\n如果一个文件过大，一个磁盘块无法装下整个索引表，该如何解决。例如：一个每个磁盘块 1 KB，每个表项 4B，则一个磁盘块最多存放256个索引项。\r\n\r\n**链接方案**\r\n\r\n将索引块最后一个表项存放的地址变为下一个索引块的物理块号，如果没有下一个索引块则为 null。\r\n\r\n但是这样是低效的，因为访问后续的索引表需要顺序先访问前面的索引块。\r\n\r\n**多级索引**\r\n\r\n类似于多级页表，建立多层索引，采用 K 层索引，则访问一个数据块需要 K + 1 次磁盘读写。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228100259006.png)\r\n\r\n**混合索引**\r\n\r\n索引块中的索引表中即存在直接索引，也存在多级索引。例如将索引块的前几个（比如12）直接指向文件的物理块，后面的几个一次指向一级简介块，二级间接块等。这样小文件就可以直接指向物理块。\r\n\r\n这种方案用于基于 Unix 的文件系统，这些信息存在 inode 中。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/1-140F2031911211.jpg)\r\n\r\n# 空闲空间管理\r\n\r\n## 空闲表法\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228103116430.png)\r\n\r\n## 空闲链表法\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228103200134.png)\r\n\r\n\r\n\r\n## 位向量\r\n\r\n空闲空间列表按位图来实现，每块用一个位来表示，如果块是空闲的则位为1，如果块已被分配则为0。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228103943827.png)\r\n\r\n字长为 n，则盘块号 b = n * 字号（有多少个字的0） + 位号（ 第一个值为1的位偏移）\r\n\r\n## 成组链接法\r\n\r\nUnix 系统采用了成组链接法对空闲磁盘进行管理，文件的目录区中专门有一个磁盘块作为**超级块**，当系统启动时需要将超级块读入内存，并且保证内存和外存中的超级块数据一致。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/image-20201228143644813.png)\r\n\r\n# 磁盘\r\n## 物理结构\r\n\r\n- 磁盘由多个**盘片**组成，盘片可以有1-2个**盘面**，每个盘面都可以存数据\r\n\r\n- 每个盘片逻辑的被划分为多个同心圆结构的**磁道**\r\n- 不同盘片上位于相同位置的磁道构成的圆柱体称为**柱面**\r\n- 每个磁道分为固定多个或不等个数的**扇区**，硬盘的读写以扇区为基本单位\r\n\r\n![](https://oss.xiefeng.tech/img/%E7%A3%81%E7%9B%98%E7%89%A9%E7%90%86%E7%BB%93%E6%9E%84.png)\r\n\r\n**物理块地址**\r\n\r\n1. 柱面号,磁头号,扇区号\r\n2. 面,道,扇区（面指磁头，道指柱面）\r\n\r\n## 磁盘调度\r\n\r\n**读写数据**\r\n\r\n读写数据时，磁头必须定位到指定的磁道上的指定扇区的开始处。\r\n\r\n过程：\r\n\r\n1. 寻道：控制移动臂到达指定柱面，选择磁头号\r\n2. 旋转：等待要读写的扇区旋转到磁头下\r\n3. 数据传送\r\n\r\n磁盘完成数据读写所需要的时间 = 寻道时间 + 旋转延迟 + 传送时间\r\n\r\n磁盘可能同时接收到若干 I/O 请求，需要满足较快的访问速度和磁盘带宽。\r\n\r\n磁盘带宽 = 传输字节总数 / 总时间\r\n\r\n调度策略包括：\r\n\r\n- 移臂调度\r\n- 旋转调度\r\n\r\n### 移臂调度\r\n\r\n使移动臂的移动时间最短，从而减少寻道总时间。\r\n\r\n#### 先进先出（FCFS）\r\n\r\n- 移动臂是随机移动，寻道性能较差\r\n- 按顺序处理请求，对所有进程公平\r\n\r\n#### 最短寻道时间优先（SSTF）\r\n\r\n- 优先处理靠近当前磁头位置的所有请求\r\n\r\n- 具有良好的寻道性能\r\n- 存在 ‘饥饿‘ \r\n\r\n#### 扫描调度（SCAN）\r\n\r\n##### 循环扫描（C-SCAN）\r\n\r\n- 移动臂总向一个方向扫面，归途中不提供服务。\r\n- 适用于不断有大量柱面均匀分布的请求的情形\r\n\r\n##### 电梯算法\r\n\r\n- 移动臂每次向一个方向移动，遇到最近的 I/O 请求便进行处理，到达最后一个柱面后再向相反方向移动。\r\n\r\n- 对最近扫描所跨越区域的请求响应较慢\r\n\r\n##### Look 调度\r\n\r\n- 该方向上没有请求，立即反向，而不是等到达最后一个柱面\r\n\r\n\r\n### 旋转调度\r\n\r\n使得旋转延迟的总时间最少。\r\n\r\n#### 循环排序\r\n\r\n- 通过优化I/O请求排序，在最少旋转圈数内完成位于同一柱面的访问请求\r\n\r\n- 旋转位置测定硬件和多磁头同时读写技术有利于提高旋转调度的效率\r\n\r\n#### 优化分布\r\n\r\n- 通过信息在存储空间的排列方式来减少旋转延迟\r\n\r\n- 交叉因子\r\n\t- 如果沿着磁道按序对扇区编号，可能由于磁盘转速太快，造成处理当前扇区的数据时，下一个扇区已经跳过，需要再转一圈才能继续读数据。因此，对扇区编号时会间隔编号，例如交叉因子为2:1表示相邻编号之间会间隔1个扇区，3:1表示会间隔2个扇区\r\n- 按柱面而非盘面进行数据读写\r\n\t- 连续记录数据时，先记录在同一柱面的不同磁道上，然后再更换柱面，可以减少数据读写时的移臂操作。\r\n\r\n## 磁盘管理\r\n\r\n### 磁盘格式化\r\n\r\n一个新的磁盘是一个空白盘：它只是一个磁性记录材料的盘子。在磁盘可以存储数据之前，它必须分成扇区，以便磁盘控制器能够读写。该过程称为**低级格式化** / **物理格式化**。\r\n\r\n低级格式化为每个扇区使用特殊的数据结构填充磁盘，每个扇区的数据结构通常由头部、数据区域、尾部组成。头部和尾部包含了一些磁盘控制器的使用信息，比如磁盘号和纠错代码（ECC）。\r\n\r\n当控制器通过正常 I/O 写入一个扇区的数据时，ECC 会被根据区域所有字节计算出的新值更新，当读取一个扇区时，ECC 的值被重新计算然后和原来的值比较来判断扇区数据区是否损坏。在少数数据损坏时，控制器可以识别哪些位已经改变并计算正确值，然后报告可恢复的软错误。当读/写一个扇区时，控制器会自动进行 ECC 处理。\r\n\r\n### 逻辑格式化\r\n\r\n在可以使用磁盘存储文件之前，操作系统需要将自己的数据结构记录在磁盘上：\r\n\r\n1. 将磁盘分为由**柱面**组成的多个**分区**，每个分区可以作为一个单独磁盘（例如一个分区存储操作系统的可执行代码，另一个分区存储用户数据）\r\n2. 逻辑格式化 / 创建文件系统：操作系统将初始的文件系统数据结构存储到磁盘上，这些数据结构包括空闲和已分配的空间和初始为空的目录。\r\n\r\n大多数操作系统会将扇区组合成更大的块：**簇**，以提高效率。磁盘 I/O 按扇区完成，文件系统 I/O 按簇（块）完成。\r\n\r\n**原始磁盘**\r\n\r\n有些操作系统允许特殊程序将磁盘分区作为逻辑块的一个大的有序数组，而没有任何文件系统数据结构，这个数组有时称为原始磁盘，这个数组的 I/O 称为 **原始 I/O**。数据库系统喜欢使用原始 I/O，原始 I/O 绕过了所有文件系统服务。\r\n\r\n### 引导块\r\n\r\n为了开始运行计算机，比如打开电源或重启时，必须有一个初始程序来运行。这个初始**自举**（bootstrap）程序往往很简单，它初始化系统的所有部分，从 CPU 寄存器到设备控制器和内存，接着启动操作系统。\r\n\r\n自举程序找到磁盘上的操作系统内核，加载到内存，并转到起始地址来执行操作系统。\r\n\r\n大多数计算机自举程序储在ROM中，这个位置非常方便，因为 ROM 不需要初始化而且位于一个固定的位置，在 CPU 上电时就开始执行。ROM 只读不会受到计算机病毒的影响，但是改变自举程序需要更换 ROM 硬件。\r\n\r\n大多数系统存储一个极小的自举程序在 ROM 中，作用是从磁盘调入完整的引导程序。完整的引导程序存储在磁盘的**固定位置**上的**启动块/启动分区**，引导程序可以轻松改变。具有启动分区的磁盘称为**启动磁盘**/**系统磁盘**。\r\n\r\nWindows 允许将磁盘分为多个分区，有一个分区为**引导分区**，包含操作系统和设备驱动程序。\r\n\r\nWindows 将引导代码存在磁盘的第一个扇区（0柱面、0磁头、1扇区），称为**主引导记录**（MBR）。MBR包含：引导代码、一个表（列出了磁盘分区）和一个标志（指示从哪个分区引导系统）。当系统找到引导分区，就开始读取分区的第一个扇区（称为**引导扇区**）然后加载各种子系统和系统服务。\r\n\r\n![](https://xf-blog-imgs.oss-cn-hangzhou.aliyuncs.com/img/Windows%20%E7%A3%81%E7%9B%98%E5%BC%95%E5%AF%BC.svg)\r\n","meta":{"size":17915,"birthTime":1663496641415.281,"updateTime":1663496641415.5527}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["OS","文件管理"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>react-router | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#history" data-target-id="h1-history-0">history</a><ul><li><a href="#location" data-target-id="h2-location-0">location</a><ul><li><a href="#创建" data-target-id="h3-创建-0">创建</a></li><li><a href="#初始值" data-target-id="h3-初始值-1">初始值</a></li><li><a href="#key值" data-target-id="h3-key值-2">key值</a></li></ul></li><li><a href="#transitionManager" data-target-id="h2-transitionManager-1">transitionManager</a><ul><li><a href="#跳转拦截" data-target-id="h3-跳转拦截-3">跳转拦截</a><ul><li><a href="#setPrompt" data-target-id="h4-setPrompt-0">setPrompt</a></li><li><a href="#confirmTransitionTo" data-target-id="h4-confirmTransitionTo-1">confirmTransitionTo</a></li></ul></li><li><a href="#发布订阅" data-target-id="h3-发布订阅-4">发布订阅</a></li></ul></li><li><a href="#push" data-target-id="h2-push-2">push</a></li><li><a href="#block" data-target-id="h2-block-3">block</a><ul><li><a href="#事件处理" data-target-id="h3-事件处理-5">事件处理</a></li></ul></li></ul></li><li><a href="#其他" data-target-id="h1-其他-1">其他</a><ul><li><a href="#basename" data-target-id="h2-basename-4">basename</a></li><li><a href="#getUserConfirmation" data-target-id="h2-getUserConfirmation-5">getUserConfirmation</a></li></ul></li><li><a href="#react-router" data-target-id="h1-react-router-2">react-router</a><ul><li><a href="#上下文" data-target-id="h2-上下文-6">上下文</a></li><li><a href="#matchPath" data-target-id="h2-matchPath-7">matchPath</a></li><li><a href="#Router" data-target-id="h2-Router-8">Router</a></li><li><a href="#Route" data-target-id="h2-Route-9">Route</a></li><li><a href="#Switch" data-target-id="h2-Switch-10">Switch</a></li><li><a href="#Lifecycle" data-target-id="h2-Lifecycle-11">Lifecycle</a></li><li><a href="#Redirect" data-target-id="h2-Redirect-12">Redirect</a></li></ul></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">react-router</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>history</h1>
+<p>history 是一个用于提供类似浏览器 history 对象实现页面的无刷新跳转的库，该库是 react-router 的核心依赖。</p>
+<p>history 库提供的功能：</p>
+<ul>
+<li>三种 history：browserHistory、hashHistory、memoryHistory，提供相应的 create 函数并保持统一的 api</li>
+<li>支持发布/订阅，当 URL 发生改变的时候，会发布订阅</li>
+<li>提供跳转拦截、跳转确认和 <code>basename</code> 等功能</li>
+</ul>
+<p>一个 <code>history</code> 对象所具有的属性：</p>
+<pre><code class="language-javascript">const history = {
+    length,
+    action,
+    location:,
+    createHref,
+    push,
+    replace,
+    go,
+    goBack,
+    goForward,
+    block,
+    listen
+}
+</code></pre>
+<ul>
+<li><code>length</code>：历史记录堆栈的长度，实现也非常简单就是 <code>(globalHistory = window.history).length</code></li>
+<li><code>action</code>：表示当前页面是通过什么行为进入的，取值为 <code>&#x27;POP&#x27;</code>、<code>&#x27;PUSH&#x27;</code>、<code>&#x27;REPLACE&#x27;</code>，默认值为 <code>&#x27;POP&#x27;</code></li>
+<li><code>location</code>：和 <code>window.location</code> 类似，react-router 上下文中的 <code>location</code> 对象就是该对象</li>
+<li><code>createHref</code>：根据 <code>location</code> 对象以及 <code>basename</code> 创建一个 <code>path</code> 字符串</li>
+<li><code>block</code>：向页面添加一个阻塞，创建 <code>history</code> 的时候可以传递一个 <code>getUserConfirmation</code> 函数用于判断是否拦截跳转</li>
+<li><code>listen</code>： 添加一个订阅，当 URL 发送改变会自动发布订阅</li>
+</ul>
+<blockquote>
+<p>主要看 browserHistory 的实现</p>
+</blockquote>
+<h2>location</h2>
+<p>location 对象的格式：</p>
+<pre><code class="language-json">{
+    key: &quot;xxx&quot;,
+    pathname: &#x27;/xxx&#x27;, 
+    search: &#x27;?xxx&#x27;, 
+    hash: &#x27;#xxx&#x27;,
+    state: xxx
+}
+</code></pre>
+<p><code>location</code> 具有的特点：</p>
+<ul>
+<li>每个 <code>location</code> 对象都具有一个唯一的 <code>key</code> 值</li>
+<li>每个 <code>location</code> 对象都具有 <code>state</code> 属性，该值是通过 <code>history.push</code> 所传递的值</li>
+<li>如果 URL 存在 query 和 hash，<code>search</code> 属性必定以 <code>?</code> 开头，<code>hash</code> 必定以 <code>#</code> 开头，否则举是空串</li>
+</ul>
+<h3>创建</h3>
+<p>该对象是通过 LocationUtil 模块下的 <code>createLocation</code> 所创建，当跳转到一个新地址时都会先创建一个新的 <code>location</code> 对象。</p>
+<p>通过 <code>history.push</code> 可以传递几种格式的路径，都是该函数帮忙处理的：</p>
+<ul>
+<li>可以传递对象格式的路径，<code>{pathname: xxx, hash: xxx, search: &#x27;xxx&#x27;}</code></li>
+<li>可以传递完整的字符串路径</li>
+<li>可以传递不完整的路径，会根据当前的路径进行补全</li>
+</ul>
+<pre><code class="language-javascript">function createLocation(path, state, key, currentLocation) {
+    let location;
+    // path 可以是location格式对象，可以直接是路径字符串
+    if (typeof path === &#x27;string&#x27;) {
+        // Two-arg form: push(path, state)
+        // parsePath 将 path 字符串解析为 { pathname: &#x27;/xxx&#x27;, search: &#x27;?xxx&#x27;, hash: &#x27;#xxx&#x27; } 的格式
+        location = parsePath(path);
+        location.state = state;
+    } else {
+        // One-arg form: push(location)
+        location = { ...path };
+        // 处理 search hash state
+    }
+
+    if (key) location.key = key;
+
+    // path 可以传递的是不完整的路径，因为会根据 currentLocation 进行补全
+    if (currentLocation) {
+        // Resolve incomplete/relative pathname relative to current location
+    } else {
+        // When there is no prior location and pathname is empty, set it to /
+    }
+
+    return location;
+}
+</code></pre>
+<h3>初始值</h3>
+<p>一个比较有意思的是 <code>location</code> 的初始值的实现：</p>
+<p>初始的 <code>location</code> 是通过 <code>window.location</code> 和 <code>window.history.state</code> 创建，因为该函数可能是刚进入页面运行，也可能是通过刷新页面导致运行，但是刷新并不会清空 <code>window.history.state</code> 的值。</p>
+<pre><code class="language-javascript">// 初始的 location 值，通过 window.location 和 window.history.state 创建
+// 因为刷新并不会 清空 window.history.state 的值
+const initialLocation = getDOMLocation(getHistoryState());
+
+// 通过 window.location 和 window.history.state 创建 location
+function getDOMLocation(historyState) {
+    const { key, state } = historyState || {};
+    const { pathname, search, hash } = window.location;
+
+    let path = pathname + search + hash;
+
+    if (basename) path = stripBasename(path, basename);
+
+    return createLocation(path, state, key);
+}
+
+function getHistoryState() {
+    return window.history.state || {};
+}
+</code></pre>
+<h3>key值</h3>
+<p>比较好奇的是 <code>location</code> 对象的 <code>key</code> 属性的作用，create 函数内部维护了一个 <code>allkeys</code> 队列，和浏览器的历史记录堆栈类似，该队列也按照历史记录堆栈的顺序存放着相对一个的 <code>location</code> 的 <code>key</code> 值。</p>
+<p>有什么用？不知道😂😂😂，应该是为了后序新增的功能铺垫。在 <code>revertPop</code> 方法中写了 TODO：</p>
+<pre><code class="language-javascript">// TODO: We could probably make this more reliable by
+// keeping a list of keys we&#x27;ve seen in sessionStorage.
+// Instead, we just default to 0 for keys we don&#x27;t know.
+</code></pre>
+<blockquote>
+<p>该函数没看出来对现有的功能有啥影响，感觉可以忽略该方法</p>
+</blockquote>
+<h2>transitionManager</h2>
+<p>因为 history 提供了跳转拦截，发布/订阅等功能，这也是在每次跳转时需要处理的一些事情。</p>
+<p>history 通过 transitionManager 对象来实现这些功能，通过名字就能看出来，过渡管理，一看就是处理跟页面的过度有关功能。</p>
+<p>该对象通过 <code>createTransitionManager</code> 创建，具有 <code>setPrompt</code>、<code>confirmTransitionTo</code>、<code>appendListener</code>、<code>notifyListeners</code> 几个方法，这些方法是 <code>history</code> 一些方法实现的核心。</p>
+<p>每个 history 对象都对应一个 transitionManager 对象，在合适的时候只需调用对应的方法即可。</p>
+<h3>跳转拦截</h3>
+<p>先来回顾跳转拦截怎么使用，首先我们使用 <code>history.block</code> 设置一个阻塞，接着我们在 <code>getUserConfirmation</code> 中判断处理是否允许跳转，<code>getUserConfirmation</code> 接收两个参数：</p>
+<ol>
+<li>参数1：阻塞传递的消息，我们通过 <code>block</code> 传递</li>
+<li>参数2：一个跳转的回调函数，向其传递 <code>true</code> 允许跳转，传递 <code>false</code> 阻塞</li>
+</ol>
+<h4>setPrompt</h4>
+<p><code>history.block</code> 本质上就是调用 <code>setPrompt</code>，该方法的的目的就是设置一个阻塞，是否跳转都是其他方法来处理，所以只需要用一个共享的变量来标识已经设置了拦截就可以了。</p>
+<p>该方法的实现很简单，因为 transitionManager 是通过函数所创建，通过一个变量 <code>prompt</code> 利用闭包实现标识拦截与否。</p>
+<pre><code class="language-javascript">let prompt = null;
+
+// 设置阻塞消息，prompt 可以是返回字符串的函数，也可以是字符串，block 时传入
+// prompt 起到了双重作用，一是标识是否设置了拦截，一是存储着阻塞消息
+function setPrompt(nextPrompt) {
+    prompt = nextPrompt;
+    return () =&gt; {
+        if (prompt === nextPrompt) prompt = null;
+    };
+}
+</code></pre>
+<h4>confirmTransitionTo</h4>
+<p>通过函数名就能看出来，是否跳转由我来处理，而且该方法是一个通用的方法，当需要跳转时你调用我就行。</p>
+<p>跳不跳转的事我来处理，你把 <code>location</code> 和实现跳转的方法作为 callback 传递给我，毕竟我不知道怎么跳转而且跳转的实现多种多样，而且跳转有时候需要 <code>getUserConfirmation</code> 来决定。</p>
+<blockquote>
+<p>callback 的格式：给你传 <code>true</code> 你就跳转，个人觉得跳转函数应该不接受参数，应该让此函数决定是否调用 callback 这样更加好。</p>
+</blockquote>
+<pre><code class="language-javascript">function confirmTransitionTo(location,  action, getUserConfirmation, callback) {
+    if (prompt != null) {
+        // prompt 可以是返回字符串的函数，也可以是字符串
+        const result = typeof prompt === &#x27;function&#x27; ? prompt(location, action) : prompt;
+        if (typeof result === &#x27;string&#x27;) {
+            getUserConfirmation(result, callback);
+        } else {
+            // Return false from a transition hook to cancel the transition.
+            // 如果传递的的阻塞消息/函数返回的阻塞消息不是字符串，
+            // 当该消息 === false 时不跳转，其他都跳转
+            callback(result !== false);
+        }
+    } else { // 如果没有阻塞，直接跳转
+        callback(true);
+    }
+}
+</code></pre>
+<h3>发布订阅</h3>
+<p>一个典型的发布订阅模式，要实现该功能必定有一个队列存放着监听函数，在 <code>appendListener</code> 时添加，在 <code>notifyListeners</code> 调用。</p>
+<p>比较巧妙的是 <code>appendListener</code> 的实现，因为监听是可以取消的，所以必定要从队列中移除相对应的 <code>listener</code>，利用闭包非常的巧妙实现了这一点。</p>
+<pre><code class="language-javascript">let listeners = [];
+
+// 添加 监听者，返回取消监听函数
+function appendListener(fn) {
+    // 通过 isActive 来进行监听函数的过滤
+    let isActive = true;
+
+    function listener(...args) {
+        if (isActive) fn(...args);
+    }
+
+    listeners.push(listener);
+
+    return () =&gt; {
+        isActive = false;
+        listeners = listeners.filter(item =&gt; item !== listener);
+    };
+}
+
+// notify 分发监听
+function notifyListeners(...args) {
+    listeners.forEach(listener =&gt; listener(...args));
+}
+
+</code></pre>
+<h2>push</h2>
+<p>push 是整个 history 对象中最重要的方法，也是用的最多的方法。该方法的作用是改变 URL 地址顺便和可以给新的页面传递数据。</p>
+<p>一旦进行了页面的跳转，history 对象就需要进行更新，<code>action</code> 和 <code>location</code> 肯定是需要改变的，这一点还是很好实现的。</p>
+<p>而URL 的改变直接使用 <code>window.history.pushState</code> 就可以很简单的实现。</p>
+<p>由于可能会存在跳转拦截，所以必定需要调用 <code>confirmTransitionTo</code> 方法，然后将跳转的操作作为 callback 传递。</p>
+<pre><code class="language-javascript">function push(path, state) {
+    const action = &#x27;PUSH&#x27;;
+    // 将新的路径对应的 location 对象创建出来
+    const location = createLocation(path, state, createKey(), history.location);
+
+    // 每次跳转都要进行 跳转确认
+    transitionManager.confirmTransitionTo(
+        location,
+        action,
+        getUserConfirmation,
+        ok =&gt; {	// 向 callback 传递 true 允许跳转，否则不跳转
+            if (!ok) return;
+            // 根据新的 location 对象创建新的 path 路径
+            const href = createHref(location);
+            const { key, state } = location;
+            // 通过 h5 的 history api 改变 url 地址
+            // 生成的 key 和传递的 state会被保存到 window.history.state 中
+            globalHistory.pushState({ key, state }, null, href);
+            // 更新 history 对象
+            setState({ action, location });
+        }
+    );
+}
+</code></pre>
+<p><code>setState</code> 做的事很简单，就是更新 history 对象，并顺便分发一下订阅：</p>
+<pre><code class="language-javascript">// 用于更新 history ，以及分发 listener
+function setState(nextState) {
+    // 更新 action 和 location
+    Object.assign(history, nextState);
+    // 更新 length
+    history.length = globalHistory.length;
+    // notify 所有 listener
+    transitionManager.notifyListeners(history.location, history.action);
+}
+</code></pre>
+<p>我们传递的 <code>state</code> 会被保存在两个地方，一个是 <code>history.location.state</code>，另一个是 <code>window.history.state</code></p>
+<p><code>replace</code> 的实现很简单和 <code>push</code> 一样，不一样的仅仅是 <code>aciton</code> 的值为 <code>&#x27;REPLACE&#x27;</code>，跳转调用的是 <code>window.history.replaceState</code></p>
+<h2>block</h2>
+<p>由于 transitionManager 对象实现了 <code>setPrompt</code> 方法，所以 <code>block</code> 方法实现阻塞只需要调用该方法就可以，但是需要注册 <code>popState</code> 事件因为当使用浏览器前进后退时也需要进行跳转拦截的确认。</p>
+<p><code>listen</code> 的实现和 <code>block</code> 的实现类似，因为一旦设置了监听，跳转时需要分发订阅。</p>
+<pre><code class="language-javascript">let isBlocked = false;
+
+// 添加一个阻塞
+function block(prompt = false) {
+    const unblock = transitionManager.setPrompt(prompt);
+
+    // 防止重复注册事件
+    if (!isBlocked) {
+        checkDOMListeners(1);
+        isBlocked = true;
+    }
+
+    // 防止重复调用
+    return () =&gt; {
+        if (isBlocked) {
+            isBlocked = false;
+            checkDOMListeners(-1);
+        }
+
+        return unblock();
+    };
+}
+</code></pre>
+<h3>事件处理</h3>
+<p>当设置了 block / listen 时，当通过浏览器进行前进后退时，也需要跳转检测。</p>
+<p><code>checkDOMListeners</code> 方法实现了事件的添加和取消。</p>
+<pre><code class="language-javascript">// 添加 popState 事件处理，当使用 前进后退 时，也需要跳转检测，以及用于取消该事件处理
+// 该方法只有当设置了 block / listen 时才有必要
+function checkDOMListeners(delta) {
+    listenerCount += delta;
+    if (listenerCount === 1 &amp;&amp; delta === 1) {
+        window.addEventListener(PopStateEvent, handlePopState);
+    } else if (listenerCount === 0) {
+        window.removeEventListener(PopStateEvent, handlePopState);
+    }
+}
+
+// 处理 popstate 事件
+function handlePopState(event) {
+    handlePop(getDOMLocation(event.state));
+}
+
+function handlePop(location) {
+    const action = &#x27;POP&#x27;;
+    // 根据阻塞更新 history 
+    transitionManager.confirmTransitionTo(
+        location,
+        action,
+        getUserConfirmation,
+        ok =&gt; {
+            if (ok) {
+                setState({ action, location });
+            } else {
+                revertPop(location);
+            }
+        }
+    );
+}
+</code></pre>
+<h1>其他</h1>
+<h2>basename</h2>
+<p>history 提供了 <code>basename</code> 功能，也就是说我们的项目可能不是部署在网站的根目录，在创建 history 的时候我们可以指定 basename，然后写项目时可以当作项目就是部署在根目录一样来写，history 帮我们处理的这个问题。</p>
+<p>处理方式就是通过 <code>createHref</code> 的实现，该函数是创建一个 <code>path</code> 字符串，一般用于内部的实现。它的实现很简单：</p>
+<pre><code class="language-javascript">// 创建一个 path 字符串
+function createHref(location) {
+    return basename + createPath(location);
+}
+
+// 通过 location 对象创建 path，path格式为 /path?query#hash
+function createPath(location) {
+    const { pathname, search, hash } = location;
+
+    let path = pathname || &#x27;/&#x27;;
+
+    if (search &amp;&amp; search !== &#x27;?&#x27;)
+        path += search.charAt(0) === &#x27;?&#x27; ? search : `?${search}`;
+
+    if (hash &amp;&amp; hash !== &#x27;#&#x27;) path += hash.charAt(0) === &#x27;#&#x27; ? hash : `#${hash}`;
+
+    return path;
+}
+</code></pre>
+<h2>getUserConfirmation</h2>
+<p>在我们使用 react-router 的过程中，发现没有传递 <code>getUserConfirmation</code>，有默认的处理方式，history 提供了该方法的默认实现：</p>
+<pre><code class="language-javascript">// 默认 gerUserConfirmation 实现
+function getConfirmation(message, callback) {
+    callback(window.confirm(message)); // eslint-disable-line no-alert
+}
+</code></pre>
+<h1>react-router</h1>
+<p>react-router 本身的实现是比较简单的，核心的功能都被 history 实现了。</p>
+<p>只需要根据 path 的匹配与否来渲染对应的组件，以及提供上下文数据。主要就是实现一些用于路由的组件。</p>
+<h2>上下文</h2>
+<p>react-router 中定义了两个上下文，一个是 <code>RouterContext</code>，另一个是 <code>HistoryContext</code>。</p>
+<p>react-router 中的上下文设计我不是很能理解，<code>RouterContext.Provider</code> 使用了两次，上下文中都是 <code>history</code>、<code>location</code>、<code>match</code></p>
+<p>但是第一个 <code>RouterContext</code> 中数据不是给我们使用的，而且其中的 <code>match</code> 和我们真正使用的 <code>match</code> 不一样，<code>Route</code> 组件又使用了一次该上下文，这次传递的 <code>value</code> 才是我们组件中真正使用到的数据。</p>
+<p><code>HistoryContext</code> 中的数据只有一个 <code>history</code> 对象，用于给 <code>useHistory</code> hook 提供 <code>history</code>，明明使用 <code>RouterContext</code> 就能够拿到需要的 <code>history</code>。</p>
+<h2>matchPath</h2>
+<p>该方法用于进行路径匹配，用于将当前的路径和配置的路径规则进行匹配，匹配成功返回 <code>match</code> 对象，否则返回 <code>null</code>。</p>
+<p>核心是利用 path-to-regexp 库进行匹配，<code>match</code> 对象的格式：</p>
+<pre><code class="language-json">{
+    isExact: true, // 当前的路径和路由配置的路径是否是精确匹配的,跟 exat 配置没关系
+    params: {}, // 路径规则中对应的参数, /:id 这种
+    path: &quot;/&quot;,  // 路径规则
+    url: &quot;/&quot;  // 真实路径中匹配到路径规则的那部分
+}
+</code></pre>
+<p>每当需要进行路径匹配的时候都会调用该方法进行判断，我们给一个组件配置的路径规则和选项例如 <code>exact</code>，都会传递过来进行判断。</p>
+<pre><code class="language-javascript">function matchPath(pathname, options = {}) {
+    if (typeof options === &quot;string&quot; || Array.isArray(options)) {
+        options = { path: options };
+    }
+
+    const { path, exact = false, strict = false, sensitive = false } = options;
+
+    // path（路径规则） 可以是 string,也可以是 []，如果 参数不是 [], concat 也能拼接
+    const paths = [].concat(path);
+
+    // 只要 path 中有一个能匹配就可以
+    return paths.reduce((matched, path) =&gt; {
+        if (!path &amp;&amp; path !== &quot;&quot;) return null;
+        
+		// ...大段处理过程
+
+        return { /* ...  */};
+    }, null);
+}
+</code></pre>
+<h2>Router</h2>
+<p>因为存在三种不同的路由组件，但是核心逻辑是相同的，<code>Router</code> 组件就是所有路由组件都使用的核心组件，只需要传递不同类型的 <code>history</code> 即可。</p>
+<p><code>Router</code> 组件做的事很简单，就是提供上下文数据，主要是给内部组件提供的，间接的给我们的组件提供。</p>
+<p>其中进行了一些必要的处理，存在子组件在 <code>Router</code> 组件没有 mount 完毕就改变 URL 的情况。</p>
+<p><img src="http://oss.xiefeng.tech/img/20210411155549.png" alt=""/></p>
+<h2>Route</h2>
+<p><code>Route</code> 组件的作用：</p>
+<ol>
+<li>根据路径规则配置来配渲染我们的组件</li>
+<li>为我们的组件提供上下文数据，以及将上下文中的数据作为 <code>props</code> 传入</li>
+</ol>
+<p><code>Route</code> 组件可以传入 <code>component</code>、<code>render</code>、<code>children</code>，但是渲染的优先级是不同的，这里才是 <code>Route</code> 组件的核心。</p>
+<p>优先级：<code>children</code>（函数）&gt; <code>children</code>（node）&gt; <code>component</code>（node） &gt; <code>render</code>（函数）</p>
+<p>当 <code>children</code> 为函数时，即使该路由没有匹配也会渲染。</p>
+<p>当我们直接使用 Route 组件时，每个 Route 组件是一定会被渲染的，只不过会根据我们递的路径规则进行 mathPath 进行判断是否把我们的组件渲染出来。</p>
+<p>而当我们使用了 <code>Switch</code> 组件时，只有匹配到的第一个才会被渲染，为了提高优先级 <code>Switch</code> 会传递 <code>computedMatch</code> 属性，其实就是一个 <code>match</code> 对象，只不过名称不同而已，我们也可以传递不过没必要。</p>
+<p><img src="http://oss.xiefeng.tech/img/20210411155338.png" alt=""/></p>
+<h2>Switch</h2>
+<p>Switch 组件用于渲染第一个匹配的 Route 组件 / Redirect 组件。</p>
+<p>其实没必要一定是 Route / Redirect，只要一个组件传递了 path / from 属性，Switch 都会渲染。</p>
+<p><img src="http://oss.xiefeng.tech/img/20210411154250.png" alt=""/></p>
+<h2>Lifecycle</h2>
+<p>正如名字那样，这个组件不是用来渲染的，是用来在生命周期处理各种事情的，是一个工具组件。</p>
+<pre><code class="language-jsx">class Lifecycle extends React.Component {
+    componentDidMount() {
+        if (this.props.onMount) this.props.onMount.call(this, this);
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.onUpdate) this.props.onUpdate.call(this, this, prevProps);
+    }
+
+    componentWillUnmount() {
+        if (this.props.onUnmount) this.props.onUnmount.call(this, this);
+    }
+
+    render() {
+        return null;
+    }
+}
+</code></pre>
+<h2>Redirect</h2>
+<p><code>Redirect</code> 组件用于实现跳转，但是不能在 render 的时候就跳转，这就相当于在 render 时触发 rerender，不合理。所以需要在 cdm 中进行，利用写好的 <code>Lifecycle</code> 组件只需要传递回调就可以。</p>
+<p>而且单独使用 <code>Redirect</code> 是没办法使用 <code>from</code> 属性进行匹配的，只有使用 <code>Switch</code> 时才可以使用，因为 <code>from</code> 的匹配在 <code>Switch</code> 组件完成。</p>
+<p><img src="http://oss.xiefeng.tech/img/20210411155107.png" alt=""/></p><div><a href="/notes">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"react-router","article":{"title":"react-router","content":"# history\r\n\r\nhistory 是一个用于提供类似浏览器 history 对象实现页面的无刷新跳转的库，该库是 react-router 的核心依赖。\r\n\r\nhistory 库提供的功能：\r\n\r\n- 三种 history：browserHistory、hashHistory、memoryHistory，提供相应的 create 函数并保持统一的 api\r\n- 支持发布/订阅，当 URL 发生改变的时候，会发布订阅\r\n- 提供跳转拦截、跳转确认和 `basename` 等功能\r\n\r\n一个 `history` 对象所具有的属性：\r\n\r\n```javascript\r\nconst history = {\r\n    length,\r\n    action,\r\n    location:,\r\n    createHref,\r\n    push,\r\n    replace,\r\n    go,\r\n    goBack,\r\n    goForward,\r\n    block,\r\n    listen\r\n}\r\n```\r\n\r\n- `length`：历史记录堆栈的长度，实现也非常简单就是 `(globalHistory = window.history).length`\r\n- `action`：表示当前页面是通过什么行为进入的，取值为 `'POP'`、`'PUSH'`、`'REPLACE'`，默认值为 `'POP'`\r\n- `location`：和 `window.location` 类似，react-router 上下文中的 `location` 对象就是该对象\r\n- `createHref`：根据 `location` 对象以及 `basename` 创建一个 `path` 字符串\r\n- `block`：向页面添加一个阻塞，创建 `history` 的时候可以传递一个 `getUserConfirmation` 函数用于判断是否拦截跳转\r\n- `listen`： 添加一个订阅，当 URL 发送改变会自动发布订阅\r\n\r\n\u003e 主要看 browserHistory 的实现\r\n\r\n## location\r\n\r\nlocation 对象的格式：\r\n\r\n```json\r\n{\r\n    key: \"xxx\",\r\n    pathname: '/xxx', \r\n    search: '?xxx', \r\n    hash: '#xxx',\r\n    state: xxx\r\n}\r\n```\r\n\r\n`location` 具有的特点：\r\n\r\n- 每个 `location` 对象都具有一个唯一的 `key` 值\r\n- 每个 `location` 对象都具有 `state` 属性，该值是通过 `history.push` 所传递的值\r\n- 如果 URL 存在 query 和 hash，`search` 属性必定以 `?` 开头，`hash` 必定以 `#` 开头，否则举是空串\r\n\r\n### 创建\r\n\r\n该对象是通过 LocationUtil 模块下的 `createLocation` 所创建，当跳转到一个新地址时都会先创建一个新的 `location` 对象。\r\n\r\n通过 `history.push` 可以传递几种格式的路径，都是该函数帮忙处理的：\r\n\r\n- 可以传递对象格式的路径，`{pathname: xxx, hash: xxx, search: 'xxx'}`\r\n- 可以传递完整的字符串路径\r\n- 可以传递不完整的路径，会根据当前的路径进行补全\r\n\r\n```javascript\r\nfunction createLocation(path, state, key, currentLocation) {\r\n    let location;\r\n    // path 可以是location格式对象，可以直接是路径字符串\r\n    if (typeof path === 'string') {\r\n        // Two-arg form: push(path, state)\r\n        // parsePath 将 path 字符串解析为 { pathname: '/xxx', search: '?xxx', hash: '#xxx' } 的格式\r\n        location = parsePath(path);\r\n        location.state = state;\r\n    } else {\r\n        // One-arg form: push(location)\r\n        location = { ...path };\r\n        // 处理 search hash state\r\n    }\r\n\r\n    if (key) location.key = key;\r\n\r\n    // path 可以传递的是不完整的路径，因为会根据 currentLocation 进行补全\r\n    if (currentLocation) {\r\n        // Resolve incomplete/relative pathname relative to current location\r\n    } else {\r\n        // When there is no prior location and pathname is empty, set it to /\r\n    }\r\n\r\n    return location;\r\n}\r\n```\r\n\r\n### 初始值\r\n\r\n一个比较有意思的是 `location` 的初始值的实现：\r\n\r\n初始的 `location` 是通过 `window.location` 和 `window.history.state` 创建，因为该函数可能是刚进入页面运行，也可能是通过刷新页面导致运行，但是刷新并不会清空 `window.history.state` 的值。\r\n\r\n```javascript\r\n// 初始的 location 值，通过 window.location 和 window.history.state 创建\r\n// 因为刷新并不会 清空 window.history.state 的值\r\nconst initialLocation = getDOMLocation(getHistoryState());\r\n\r\n// 通过 window.location 和 window.history.state 创建 location\r\nfunction getDOMLocation(historyState) {\r\n    const { key, state } = historyState || {};\r\n    const { pathname, search, hash } = window.location;\r\n\r\n    let path = pathname + search + hash;\r\n\r\n    if (basename) path = stripBasename(path, basename);\r\n\r\n    return createLocation(path, state, key);\r\n}\r\n\r\nfunction getHistoryState() {\r\n    return window.history.state || {};\r\n}\r\n```\r\n\r\n### key值\r\n\r\n比较好奇的是 `location` 对象的 `key` 属性的作用，create 函数内部维护了一个 `allkeys` 队列，和浏览器的历史记录堆栈类似，该队列也按照历史记录堆栈的顺序存放着相对一个的 `location` 的 `key` 值。\r\n\r\n有什么用？不知道😂😂😂，应该是为了后序新增的功能铺垫。在 `revertPop` 方法中写了 TODO：\r\n\r\n```javascript\r\n// TODO: We could probably make this more reliable by\r\n// keeping a list of keys we've seen in sessionStorage.\r\n// Instead, we just default to 0 for keys we don't know.\r\n```\r\n\r\n\u003e 该函数没看出来对现有的功能有啥影响，感觉可以忽略该方法\r\n\r\n## transitionManager\r\n\r\n因为 history 提供了跳转拦截，发布/订阅等功能，这也是在每次跳转时需要处理的一些事情。\r\n\r\nhistory 通过 transitionManager 对象来实现这些功能，通过名字就能看出来，过渡管理，一看就是处理跟页面的过度有关功能。\r\n\r\n该对象通过 `createTransitionManager` 创建，具有 `setPrompt`、`confirmTransitionTo`、`appendListener`、`notifyListeners` 几个方法，这些方法是 `history` 一些方法实现的核心。\r\n\r\n每个 history 对象都对应一个 transitionManager 对象，在合适的时候只需调用对应的方法即可。\r\n\r\n### 跳转拦截\r\n\r\n先来回顾跳转拦截怎么使用，首先我们使用 `history.block` 设置一个阻塞，接着我们在 `getUserConfirmation` 中判断处理是否允许跳转，`getUserConfirmation` 接收两个参数：\r\n\r\n1. 参数1：阻塞传递的消息，我们通过 `block` 传递\r\n2. 参数2：一个跳转的回调函数，向其传递 `true` 允许跳转，传递 `false` 阻塞\r\n\r\n#### setPrompt\r\n\r\n`history.block` 本质上就是调用 `setPrompt`，该方法的的目的就是设置一个阻塞，是否跳转都是其他方法来处理，所以只需要用一个共享的变量来标识已经设置了拦截就可以了。\r\n\r\n该方法的实现很简单，因为 transitionManager 是通过函数所创建，通过一个变量 `prompt` 利用闭包实现标识拦截与否。\r\n\r\n```javascript\r\nlet prompt = null;\r\n\r\n// 设置阻塞消息，prompt 可以是返回字符串的函数，也可以是字符串，block 时传入\r\n// prompt 起到了双重作用，一是标识是否设置了拦截，一是存储着阻塞消息\r\nfunction setPrompt(nextPrompt) {\r\n    prompt = nextPrompt;\r\n    return () =\u003e {\r\n        if (prompt === nextPrompt) prompt = null;\r\n    };\r\n}\r\n```\r\n\r\n#### confirmTransitionTo\r\n\r\n通过函数名就能看出来，是否跳转由我来处理，而且该方法是一个通用的方法，当需要跳转时你调用我就行。\r\n\r\n跳不跳转的事我来处理，你把 `location` 和实现跳转的方法作为 callback 传递给我，毕竟我不知道怎么跳转而且跳转的实现多种多样，而且跳转有时候需要 `getUserConfirmation` 来决定。\r\n\r\n\u003e callback 的格式：给你传 `true` 你就跳转，个人觉得跳转函数应该不接受参数，应该让此函数决定是否调用 callback 这样更加好。\r\n\r\n```javascript\r\nfunction confirmTransitionTo(location,  action, getUserConfirmation, callback) {\r\n    if (prompt != null) {\r\n        // prompt 可以是返回字符串的函数，也可以是字符串\r\n        const result = typeof prompt === 'function' ? prompt(location, action) : prompt;\r\n        if (typeof result === 'string') {\r\n            getUserConfirmation(result, callback);\r\n        } else {\r\n            // Return false from a transition hook to cancel the transition.\r\n            // 如果传递的的阻塞消息/函数返回的阻塞消息不是字符串，\r\n            // 当该消息 === false 时不跳转，其他都跳转\r\n            callback(result !== false);\r\n        }\r\n    } else { // 如果没有阻塞，直接跳转\r\n        callback(true);\r\n    }\r\n}\r\n```\r\n\r\n### 发布订阅\r\n\r\n一个典型的发布订阅模式，要实现该功能必定有一个队列存放着监听函数，在 `appendListener` 时添加，在 `notifyListeners` 调用。\r\n\r\n比较巧妙的是 `appendListener` 的实现，因为监听是可以取消的，所以必定要从队列中移除相对应的 `listener`，利用闭包非常的巧妙实现了这一点。\r\n\r\n```javascript\r\nlet listeners = [];\r\n\r\n// 添加 监听者，返回取消监听函数\r\nfunction appendListener(fn) {\r\n    // 通过 isActive 来进行监听函数的过滤\r\n    let isActive = true;\r\n\r\n    function listener(...args) {\r\n        if (isActive) fn(...args);\r\n    }\r\n\r\n    listeners.push(listener);\r\n\r\n    return () =\u003e {\r\n        isActive = false;\r\n        listeners = listeners.filter(item =\u003e item !== listener);\r\n    };\r\n}\r\n\r\n// notify 分发监听\r\nfunction notifyListeners(...args) {\r\n    listeners.forEach(listener =\u003e listener(...args));\r\n}\r\n\r\n```\r\n\r\n## push\r\n\r\npush 是整个 history 对象中最重要的方法，也是用的最多的方法。该方法的作用是改变 URL 地址顺便和可以给新的页面传递数据。\r\n\r\n一旦进行了页面的跳转，history 对象就需要进行更新，`action` 和 `location` 肯定是需要改变的，这一点还是很好实现的。\r\n\r\n而URL 的改变直接使用 `window.history.pushState` 就可以很简单的实现。\r\n\r\n由于可能会存在跳转拦截，所以必定需要调用 `confirmTransitionTo` 方法，然后将跳转的操作作为 callback 传递。\r\n\r\n```javascript\r\nfunction push(path, state) {\r\n    const action = 'PUSH';\r\n    // 将新的路径对应的 location 对象创建出来\r\n    const location = createLocation(path, state, createKey(), history.location);\r\n\r\n    // 每次跳转都要进行 跳转确认\r\n    transitionManager.confirmTransitionTo(\r\n        location,\r\n        action,\r\n        getUserConfirmation,\r\n        ok =\u003e {\t// 向 callback 传递 true 允许跳转，否则不跳转\r\n            if (!ok) return;\r\n            // 根据新的 location 对象创建新的 path 路径\r\n            const href = createHref(location);\r\n            const { key, state } = location;\r\n            // 通过 h5 的 history api 改变 url 地址\r\n            // 生成的 key 和传递的 state会被保存到 window.history.state 中\r\n            globalHistory.pushState({ key, state }, null, href);\r\n            // 更新 history 对象\r\n            setState({ action, location });\r\n        }\r\n    );\r\n}\r\n```\r\n\r\n`setState` 做的事很简单，就是更新 history 对象，并顺便分发一下订阅：\r\n\r\n```javascript\r\n// 用于更新 history ，以及分发 listener\r\nfunction setState(nextState) {\r\n    // 更新 action 和 location\r\n    Object.assign(history, nextState);\r\n    // 更新 length\r\n    history.length = globalHistory.length;\r\n    // notify 所有 listener\r\n    transitionManager.notifyListeners(history.location, history.action);\r\n}\r\n```\r\n\r\n我们传递的 `state` 会被保存在两个地方，一个是 `history.location.state`，另一个是 `window.history.state`\r\n\r\n`replace` 的实现很简单和 `push` 一样，不一样的仅仅是 `aciton` 的值为 `'REPLACE'`，跳转调用的是 `window.history.replaceState`\r\n\r\n## block\r\n\r\n由于 transitionManager 对象实现了 `setPrompt` 方法，所以 `block` 方法实现阻塞只需要调用该方法就可以，但是需要注册 `popState` 事件因为当使用浏览器前进后退时也需要进行跳转拦截的确认。\r\n\r\n`listen` 的实现和 `block` 的实现类似，因为一旦设置了监听，跳转时需要分发订阅。\r\n\r\n```javascript\r\nlet isBlocked = false;\r\n\r\n// 添加一个阻塞\r\nfunction block(prompt = false) {\r\n    const unblock = transitionManager.setPrompt(prompt);\r\n\r\n    // 防止重复注册事件\r\n    if (!isBlocked) {\r\n        checkDOMListeners(1);\r\n        isBlocked = true;\r\n    }\r\n\r\n    // 防止重复调用\r\n    return () =\u003e {\r\n        if (isBlocked) {\r\n            isBlocked = false;\r\n            checkDOMListeners(-1);\r\n        }\r\n\r\n        return unblock();\r\n    };\r\n}\r\n```\r\n\r\n### 事件处理\r\n\r\n当设置了 block / listen 时，当通过浏览器进行前进后退时，也需要跳转检测。\r\n\r\n`checkDOMListeners` 方法实现了事件的添加和取消。\r\n\r\n```javascript\r\n// 添加 popState 事件处理，当使用 前进后退 时，也需要跳转检测，以及用于取消该事件处理\r\n// 该方法只有当设置了 block / listen 时才有必要\r\nfunction checkDOMListeners(delta) {\r\n    listenerCount += delta;\r\n    if (listenerCount === 1 \u0026\u0026 delta === 1) {\r\n        window.addEventListener(PopStateEvent, handlePopState);\r\n    } else if (listenerCount === 0) {\r\n        window.removeEventListener(PopStateEvent, handlePopState);\r\n    }\r\n}\r\n\r\n// 处理 popstate 事件\r\nfunction handlePopState(event) {\r\n    handlePop(getDOMLocation(event.state));\r\n}\r\n\r\nfunction handlePop(location) {\r\n    const action = 'POP';\r\n    // 根据阻塞更新 history \r\n    transitionManager.confirmTransitionTo(\r\n        location,\r\n        action,\r\n        getUserConfirmation,\r\n        ok =\u003e {\r\n            if (ok) {\r\n                setState({ action, location });\r\n            } else {\r\n                revertPop(location);\r\n            }\r\n        }\r\n    );\r\n}\r\n```\r\n\r\n# 其他\r\n\r\n## basename\r\n\r\nhistory 提供了 `basename` 功能，也就是说我们的项目可能不是部署在网站的根目录，在创建 history 的时候我们可以指定 basename，然后写项目时可以当作项目就是部署在根目录一样来写，history 帮我们处理的这个问题。\r\n\r\n处理方式就是通过 `createHref` 的实现，该函数是创建一个 `path` 字符串，一般用于内部的实现。它的实现很简单：\r\n\r\n```javascript\r\n// 创建一个 path 字符串\r\nfunction createHref(location) {\r\n    return basename + createPath(location);\r\n}\r\n\r\n// 通过 location 对象创建 path，path格式为 /path?query#hash\r\nfunction createPath(location) {\r\n    const { pathname, search, hash } = location;\r\n\r\n    let path = pathname || '/';\r\n\r\n    if (search \u0026\u0026 search !== '?')\r\n        path += search.charAt(0) === '?' ? search : `?${search}`;\r\n\r\n    if (hash \u0026\u0026 hash !== '#') path += hash.charAt(0) === '#' ? hash : `#${hash}`;\r\n\r\n    return path;\r\n}\r\n```\r\n\r\n## getUserConfirmation\r\n\r\n在我们使用 react-router 的过程中，发现没有传递 `getUserConfirmation`，有默认的处理方式，history 提供了该方法的默认实现：\r\n\r\n```javascript\r\n// 默认 gerUserConfirmation 实现\r\nfunction getConfirmation(message, callback) {\r\n    callback(window.confirm(message)); // eslint-disable-line no-alert\r\n}\r\n```\r\n\r\n# react-router\r\n\r\nreact-router 本身的实现是比较简单的，核心的功能都被 history 实现了。\r\n\r\n只需要根据 path 的匹配与否来渲染对应的组件，以及提供上下文数据。主要就是实现一些用于路由的组件。\r\n\r\n## 上下文\r\n\r\nreact-router 中定义了两个上下文，一个是 `RouterContext`，另一个是 `HistoryContext`。\r\n\r\nreact-router 中的上下文设计我不是很能理解，`RouterContext.Provider` 使用了两次，上下文中都是 `history`、`location`、`match`\r\n\r\n但是第一个 `RouterContext` 中数据不是给我们使用的，而且其中的 `match` 和我们真正使用的 `match` 不一样，`Route` 组件又使用了一次该上下文，这次传递的 `value` 才是我们组件中真正使用到的数据。\r\n\r\n`HistoryContext` 中的数据只有一个 `history` 对象，用于给 `useHistory` hook 提供 `history`，明明使用 `RouterContext` 就能够拿到需要的 `history`。\r\n\r\n## matchPath\r\n\r\n该方法用于进行路径匹配，用于将当前的路径和配置的路径规则进行匹配，匹配成功返回 `match` 对象，否则返回 `null`。\r\n\r\n核心是利用 path-to-regexp 库进行匹配，`match` 对象的格式：\r\n\r\n```json\r\n{\r\n    isExact: true, // 当前的路径和路由配置的路径是否是精确匹配的,跟 exat 配置没关系\r\n    params: {}, // 路径规则中对应的参数, /:id 这种\r\n    path: \"/\",  // 路径规则\r\n    url: \"/\"  // 真实路径中匹配到路径规则的那部分\r\n}\r\n```\r\n\r\n每当需要进行路径匹配的时候都会调用该方法进行判断，我们给一个组件配置的路径规则和选项例如 `exact`，都会传递过来进行判断。\r\n\r\n```javascript\r\nfunction matchPath(pathname, options = {}) {\r\n    if (typeof options === \"string\" || Array.isArray(options)) {\r\n        options = { path: options };\r\n    }\r\n\r\n    const { path, exact = false, strict = false, sensitive = false } = options;\r\n\r\n    // path（路径规则） 可以是 string,也可以是 []，如果 参数不是 [], concat 也能拼接\r\n    const paths = [].concat(path);\r\n\r\n    // 只要 path 中有一个能匹配就可以\r\n    return paths.reduce((matched, path) =\u003e {\r\n        if (!path \u0026\u0026 path !== \"\") return null;\r\n        \r\n\t\t// ...大段处理过程\r\n\r\n        return { /* ...  */};\r\n    }, null);\r\n}\r\n```\r\n\r\n## Router\r\n\r\n因为存在三种不同的路由组件，但是核心逻辑是相同的，`Router` 组件就是所有路由组件都使用的核心组件，只需要传递不同类型的 `history` 即可。\r\n\r\n`Router` 组件做的事很简单，就是提供上下文数据，主要是给内部组件提供的，间接的给我们的组件提供。\r\n\r\n其中进行了一些必要的处理，存在子组件在 `Router` 组件没有 mount 完毕就改变 URL 的情况。\r\n\r\n![](http://oss.xiefeng.tech/img/20210411155549.png)\r\n\r\n## Route\r\n\r\n`Route` 组件的作用：\r\n\r\n1. 根据路径规则配置来配渲染我们的组件\r\n2. 为我们的组件提供上下文数据，以及将上下文中的数据作为 `props` 传入\r\n\r\n`Route` 组件可以传入 `component`、`render`、`children`，但是渲染的优先级是不同的，这里才是 `Route` 组件的核心。\r\n\r\n优先级：`children`（函数）\u003e `children`（node）\u003e `component`（node） \u003e `render`（函数）\r\n\r\n当 `children` 为函数时，即使该路由没有匹配也会渲染。\r\n\r\n当我们直接使用 Route 组件时，每个 Route 组件是一定会被渲染的，只不过会根据我们递的路径规则进行 mathPath 进行判断是否把我们的组件渲染出来。\r\n\r\n而当我们使用了 `Switch` 组件时，只有匹配到的第一个才会被渲染，为了提高优先级 `Switch` 会传递 `computedMatch` 属性，其实就是一个 `match` 对象，只不过名称不同而已，我们也可以传递不过没必要。\r\n\r\n![](http://oss.xiefeng.tech/img/20210411155338.png)\r\n\r\n## Switch\r\n\r\nSwitch 组件用于渲染第一个匹配的 Route 组件 / Redirect 组件。\r\n\r\n其实没必要一定是 Route / Redirect，只要一个组件传递了 path / from 属性，Switch 都会渲染。\r\n\r\n![](http://oss.xiefeng.tech/img/20210411154250.png)\r\n\r\n## Lifecycle\r\n\r\n正如名字那样，这个组件不是用来渲染的，是用来在生命周期处理各种事情的，是一个工具组件。\r\n\r\n```jsx\r\nclass Lifecycle extends React.Component {\r\n    componentDidMount() {\r\n        if (this.props.onMount) this.props.onMount.call(this, this);\r\n    }\r\n\r\n    componentDidUpdate(prevProps) {\r\n        if (this.props.onUpdate) this.props.onUpdate.call(this, this, prevProps);\r\n    }\r\n\r\n    componentWillUnmount() {\r\n        if (this.props.onUnmount) this.props.onUnmount.call(this, this);\r\n    }\r\n\r\n    render() {\r\n        return null;\r\n    }\r\n}\r\n```\r\n\r\n## Redirect\r\n\r\n`Redirect` 组件用于实现跳转，但是不能在 render 的时候就跳转，这就相当于在 render 时触发 rerender，不合理。所以需要在 cdm 中进行，利用写好的 `Lifecycle` 组件只需要传递回调就可以。\r\n\r\n而且单独使用 `Redirect` 是没办法使用 `from` 属性进行匹配的，只有使用 `Switch` 时才可以使用，因为 `from` 的匹配在 `Switch` 组件完成。\r\n\r\n![](http://oss.xiefeng.tech/img/20210411155107.png)","meta":{"size":20110,"birthTime":1663496641422.3535,"updateTime":1663496641422.5254}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["react-router"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

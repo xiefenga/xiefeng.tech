@@ -1,0 +1,73 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>m1 docker 搭建 hit-oslab | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">m1 docker 搭建 hit-oslab</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><p>使用 docker 基于 ubuntu:18.04 搭建 hit-oslab 实验环境</p>
+<p>首先拉取 ubuntu 18.04 镜像：</p>
+<pre><code class="language-shell">docker pull ubuntu:18.04
+</code></pre>
+<p>接着通过 Dockerfile 创建自己的 oslab 镜像</p>
+<pre><code class="language-dockerfile">FROM ubuntu:18.04
+
+COPY source ./source
+
+RUN \
+  apt-get update \
+  &amp;&amp; cd ./source \
+  &amp;&amp; tar -xvf gcc-3.4.tar.gz \
+  &amp;&amp; tar -xvf hit-oslab-linux-20110823.tar.gz \
+  &amp;&amp; apt-get install -y binutils \
+  &amp;&amp; cd ./gcc-3.4/amd64 \
+  &amp;&amp; dpkg -i *.deb \
+  &amp;&amp; apt-cache search as86 ld86 \
+  &amp;&amp; apt install bin86 \
+  &amp;&amp; apt install -y libc6-dev-i386 \
+  &amp;&amp; cd ../../oslab/linux-0.11 \
+  &amp;&amp; apt-get install make \
+  &amp;&amp; make all \
+  &amp;&amp; dpkg --add-architecture i386 \
+  &amp;&amp; apt-get update \
+  &amp;&amp; apt-get install -y libsm6:i386 \
+  &amp;&amp; apt-get install -y libx11-6:i386 \
+  &amp;&amp; apt-get install libxpm4:i386
+</code></pre>
+<p>![](/Users/xiefeng/Downloads/iShot截图/iShot2022-03-15 23.25.27.png)</p>
+<p>然后构建镜像，由于 linux 0.11 基于 x86，需要使用 buildx 在 m1 上构建 amd64 的镜像</p>
+<pre><code class="language-shell">docker buildx build --platform=Linux/amd64 -t oslab:v0 .
+</code></pre>
+<p>![](/Users/xiefeng/Downloads/iShot截图/iShot2022-03-15 23.25.12.png)</p>
+<p>这样实验环境就搭好了，如果是使用虚拟机或者直接使用安装 ubuntu 18 的系统，但是 m1 虚拟机无法安装 x86 系统镜像</p>
+<p>运行镜像可以发现环境确实是搭好了，就是缺少图形界面</p>
+<pre><code class="language-shell">docker run -it --platform linux/amd64 oslab:v0 /bin/bash
+cd source/oslab/
+./run
+</code></pre>
+<p>![](/Users/xiefeng/Downloads/iShot截图/iShot2022-03-16 22.48.37.png)</p>
+<p>把 Docker 镜像看做一台没配显示器的电脑，程序可以运行，但是没地方显示</p>
+<p>X Window System（也常称为X11或X）是一种以<strong>位图方式</strong>显示的软件窗口系统，最初是1984年麻省理工学院的研究，之后变成UNIX、类UNIX、以及OpenVMS等操作系统所一致适用的标准化软件工具包及显示架构的运作协议。</p>
+<p>X 只是工具包及架构规范，本身并无实际参与运作的实体，所以必须有人依据此标准进行开发撰写。如此才有真正可用、可执行的实体，始可称为实现体。当前依据X的规范架构所开发撰写成的实现体中，以X.Org最为普遍且最受欢迎</p>
+<p>X 协议由 X server 和 X client 组成：</p>
+<ol>
+<li>X server 管理主机上与显示相关的硬件设置（如显卡、硬盘、鼠标等），它负责屏幕画面的绘制与显示，以及将输入设置（如键盘、鼠标）的动作告知 X client</li>
+<li>X client 则主要负责事件的处理（即程序的逻辑）</li>
+</ol>
+<p>只要在容器启动的时候，将『unix:端口』或『主机名:端口』共享给docker，docker就可以通过端口找到显示输出的地方，和linux系统共用显示。</p>
+<p><img src="https://img2018.cnblogs.com/blog/1046925/201908/1046925-20190824165625707-1560779550.png" alt=""/></p>
+<pre><code class="language-shell">brew install socat
+brew install xquartz
+
+echo $DISPLAY
+
+# /private/tmp/com.apple.launchd.nzm51qjuIW/org.macosforge.xquartz:0
+
+open -a Xquartz
+
+socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\&quot;$DISPLAY\&quot;
+</code></pre>
+<p><strong>在容器内</strong>设置环境变量指向我们的内网 IP： DISPLAY=192.168.0.106:0</p>
+<pre><code class="language-shell">docker run -it --platform linux/amd64 -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=192.168.3.146:0 oslab:v0 /bin/bash
+</code></pre>
+<p>参考文章</p>
+<ul>
+<li><a href="https://www.cnblogs.com/noluye/p/11405358.html">https://www.cnblogs.com/noluye/p/11405358.html</a></li>
+<li><a href="https://blog.csdn.net/Dsky_A/article/details/121489721">https://blog.csdn.net/Dsky_A/article/details/121489721</a></li>
+<li><a href="https://www.zhihu.com/question/34493859">https://www.zhihu.com/question/34493859</a></li>
+<li><a href="https://blog.csdn.net/weixin_43833642/article/details/105341872">https://blog.csdn.net/weixin_43833642/article/details/105341872</a></li>
+<li><a href="https://www.runoob.com/docker/docker-dockerfile.html">https://www.runoob.com/docker/docker-dockerfile.html</a></li>
+</ul><div><a href="/notes">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"m1 docker 搭建 hit-oslab","article":{"title":"m1 docker 搭建 hit-oslab","content":"使用 docker 基于 ubuntu:18.04 搭建 hit-oslab 实验环境\n\n首先拉取 ubuntu 18.04 镜像：\n\n```shell\ndocker pull ubuntu:18.04\n```\n\n接着通过 Dockerfile 创建自己的 oslab 镜像\n\n```dockerfile\nFROM ubuntu:18.04\n\nCOPY source ./source\n\nRUN \\\n  apt-get update \\\n  \u0026\u0026 cd ./source \\\n  \u0026\u0026 tar -xvf gcc-3.4.tar.gz \\\n  \u0026\u0026 tar -xvf hit-oslab-linux-20110823.tar.gz \\\n  \u0026\u0026 apt-get install -y binutils \\\n  \u0026\u0026 cd ./gcc-3.4/amd64 \\\n  \u0026\u0026 dpkg -i *.deb \\\n  \u0026\u0026 apt-cache search as86 ld86 \\\n  \u0026\u0026 apt install bin86 \\\n  \u0026\u0026 apt install -y libc6-dev-i386 \\\n  \u0026\u0026 cd ../../oslab/linux-0.11 \\\n  \u0026\u0026 apt-get install make \\\n  \u0026\u0026 make all \\\n  \u0026\u0026 dpkg --add-architecture i386 \\\n  \u0026\u0026 apt-get update \\\n  \u0026\u0026 apt-get install -y libsm6:i386 \\\n  \u0026\u0026 apt-get install -y libx11-6:i386 \\\n  \u0026\u0026 apt-get install libxpm4:i386\n```\n\n![](/Users/xiefeng/Downloads/iShot截图/iShot2022-03-15 23.25.27.png)\n\n然后构建镜像，由于 linux 0.11 基于 x86，需要使用 buildx 在 m1 上构建 amd64 的镜像\n\n```shell\ndocker buildx build --platform=Linux/amd64 -t oslab:v0 .\n```\n\n![](/Users/xiefeng/Downloads/iShot截图/iShot2022-03-15 23.25.12.png)\n\n这样实验环境就搭好了，如果是使用虚拟机或者直接使用安装 ubuntu 18 的系统，但是 m1 虚拟机无法安装 x86 系统镜像\n\n运行镜像可以发现环境确实是搭好了，就是缺少图形界面\n\n```shell\ndocker run -it --platform linux/amd64 oslab:v0 /bin/bash\ncd source/oslab/\n./run\n```\n\n![](/Users/xiefeng/Downloads/iShot截图/iShot2022-03-16 22.48.37.png)\n\n把 Docker 镜像看做一台没配显示器的电脑，程序可以运行，但是没地方显示\n\nX Window System（也常称为X11或X）是一种以**位图方式**显示的软件窗口系统，最初是1984年麻省理工学院的研究，之后变成UNIX、类UNIX、以及OpenVMS等操作系统所一致适用的标准化软件工具包及显示架构的运作协议。\n\nX 只是工具包及架构规范，本身并无实际参与运作的实体，所以必须有人依据此标准进行开发撰写。如此才有真正可用、可执行的实体，始可称为实现体。当前依据X的规范架构所开发撰写成的实现体中，以X.Org最为普遍且最受欢迎\n\nX 协议由 X server 和 X client 组成：\n\n1.  X server 管理主机上与显示相关的硬件设置（如显卡、硬盘、鼠标等），它负责屏幕画面的绘制与显示，以及将输入设置（如键盘、鼠标）的动作告知 X client\n2. X client 则主要负责事件的处理（即程序的逻辑）\n\n只要在容器启动的时候，将『unix:端口』或『主机名:端口』共享给docker，docker就可以通过端口找到显示输出的地方，和linux系统共用显示。\n\n![](https://img2018.cnblogs.com/blog/1046925/201908/1046925-20190824165625707-1560779550.png)\n\n```shell\nbrew install socat\nbrew install xquartz\n\necho $DISPLAY\n\n# /private/tmp/com.apple.launchd.nzm51qjuIW/org.macosforge.xquartz:0\n\nopen -a Xquartz\n\nsocat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\\\"$DISPLAY\\\"\n```\n\n**在容器内**设置环境变量指向我们的内网 IP： DISPLAY=192.168.0.106:0\n\n```shell\ndocker run -it --platform linux/amd64 -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=192.168.3.146:0 oslab:v0 /bin/bash\n```\n\n参考文章\n\n- https://www.cnblogs.com/noluye/p/11405358.html\n- https://blog.csdn.net/Dsky_A/article/details/121489721\n- https://www.zhihu.com/question/34493859\n- https://blog.csdn.net/weixin_43833642/article/details/105341872\n- https://www.runoob.com/docker/docker-dockerfile.html\n\n","meta":{"size":3525,"birthTime":1663496641421.469,"updateTime":1663496641421.6536}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["m1 docker 搭建 hit-oslab"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

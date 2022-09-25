@@ -1,0 +1,64 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>Debug | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#基本使用" data-target-id="h1-基本使用-0">基本使用</a><ul><li><a href="#操作寄存器" data-target-id="h2-操作寄存器-0">操作寄存器</a></li><li><a href="#操作内存" data-target-id="h2-操作内存-1">操作内存</a></li></ul></li><li><a href="#分别对应 ASCII 字符 @ A B C D" data-target-id="h1-分别对应 ASCII 字符 @ A B C D-1">分别对应 ASCII 字符 @ A B C D</a><ul><li><a href="#机器指令" data-target-id="h2-机器指令-2">机器指令</a></li></ul></li><li><a href="#b80100 -&gt; mov ax, 0001" data-target-id="h1-b80100 -&gt; mov ax, 0001-2">b80100 -&gt; mov ax, 0001</a></li><li><a href="#b90200 -&gt; mov cx, 0002" data-target-id="h1-b90200 -&gt; mov cx, 0002-3">b90200 -&gt; mov cx, 0002</a></li><li><a href="#01c8   -&gt; add ax, cx" data-target-id="h1-01c8   -&gt; add ax, cx-4">01c8   -&gt; add ax, cx</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">Debug</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>基本使用</h1>
+<blockquote>
+<p>Debug 是 DOS、Windows 提供的实模式（8086模式）程序的调试工具。</p>
+<p>可以查看 CPU 各种寄存器中的内容、内存的情况和在机器码级别跟踪程序的运行。</p>
+</blockquote>
+<p>常用命令（不区分大小写）：</p>
+<ul>
+<li><code>R</code>：查看、改变 CPU 寄存器的内容</li>
+<li><code>D</code>：查看内存中的内容</li>
+<li><code>E</code>：改写内存中的内容</li>
+<li><code>U</code>：将内存中的机器指令翻译成汇编指令</li>
+<li><code>T</code>：执行一条机器指令</li>
+<li><code>A</code>：以汇编指令的格式在内存中写入一条机器指令</li>
+</ul>
+<h2>操作寄存器</h2>
+<ul>
+<li>运行 Debug 时，输入 <code>r</code>，即可查看寄存器信息</li>
+<li>运行 <code>r ax</code> 指令会出现 <code>:</code> 提示，即可改变寄存器的值</li>
+</ul>
+<p><img src="http://oss.xiefeng.tech/img/20210530132140.png" alt=""/></p>
+<h2>操作内存</h2>
+<ol>
+<li>
+<p>使用 <code>d</code> 命令，可以查看内存中的内容，默认显示 128 个内存单元的内容，再接着使用 <code>d</code> 即可查看后序内容。</p>
+</li>
+<li>
+<p>查看具体某个地址开始的内容通过 <code>d 段地址:偏移地址</code> 即可查看从该地址开始的内存中的内容；</p>
+</li>
+<li>
+<p>使用 <code>d 段地址:起始偏移地址 结尾偏移地址</code> 即可范围查看内存中的内容</p>
+</li>
+</ol>
+<p>显示的结果：</p>
+<ol>
+<li>每行默认输出 16 个地址的内容，中间有一个 <code>-</code> 连接，便于区分前 8 个字节和后 8 个字节</li>
+<li>内容通过 16 进制输出，每个内存单元一个 16 进制数</li>
+<li>左边显示的是该行的起始地址</li>
+<li>右边是每个内存单元中的数据对应的 ASCII 字符</li>
+</ol>
+<p><img src="http://oss.xiefeng.tech/img/20210530132854.jpg" alt=""/></p>
+<p><code>e</code> 命令可以改写内存中的内容，通过 <code>e 起始地址 数据 数据 数据 ....</code> 即可写入数据，可以直接输入字符：</p>
+<pre><code class="language-shell">-d 1000:10 2A
+
+-e 40 41 42 43 44 45 # 分别对应 ASCII 字符 @ A B C D
+</code></pre>
+<p><img src="http://oss.xiefeng.tech/img/20210530134452.png" alt=""/></p>
+<h2>机器指令</h2>
+<p><code>u</code> 命令可以查看内存中的数据（作为机器指令）所对应的汇编指令</p>
+<pre><code class="language-shell"># b80100 -&gt; mov ax, 0001
+# b90200 -&gt; mov cx, 0002
+# 01c8   -&gt; add ax, cx 
+
+-e 1000:0 b8 01 00 b9 02 00 01 c8
+-u 1000:0 7
+</code></pre>
+<p><img src="http://oss.xiefeng.tech/img/20210530135332.png" alt=""/></p>
+<p><code>t</code> 命令可以执行一条或多条指令（CS、IP 所指向地址中的）：</p>
+<ol>
+<li>要使用 <code>t</code> 命令，需要先修改 CS、IP 寄存器的值，指向需要执行的指令所的地址</li>
+<li>然后使用 <code>t</code> 命令使得 CPU 执行 CS、IP 指向地址中的指令</li>
+<li>使用一次 <code>t</code> 命令只会执行一条指令，接着使用 <code>t</code> 就可以接着执行后序指令</li>
+</ol>
+<p><code>a</code> 命令可以以汇编的形式向内存中写入指令：</p>
+<p><img src="http://oss.xiefeng.tech/img/20210530140549.png" alt=""/></p><div><a href="/notes/%E6%B1%87%E7%BC%96">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"Debug","article":{"title":"Debug","content":"# 基本使用\r\n\r\n\u003e Debug 是 DOS、Windows 提供的实模式（8086模式）程序的调试工具。\r\n\u003e\r\n\u003e 可以查看 CPU 各种寄存器中的内容、内存的情况和在机器码级别跟踪程序的运行。\r\n\r\n常用命令（不区分大小写）：\r\n\r\n- `R`：查看、改变 CPU 寄存器的内容\r\n- `D`：查看内存中的内容\r\n- `E`：改写内存中的内容\r\n- `U`：将内存中的机器指令翻译成汇编指令\r\n- `T`：执行一条机器指令\r\n- `A`：以汇编指令的格式在内存中写入一条机器指令\r\n\r\n## 操作寄存器\r\n\r\n- 运行 Debug 时，输入 `r`，即可查看寄存器信息\r\n- 运行 `r ax` 指令会出现 `:` 提示，即可改变寄存器的值\r\n\r\n![](http://oss.xiefeng.tech/img/20210530132140.png)\r\n\r\n## 操作内存\r\n\r\n1. 使用 `d` 命令，可以查看内存中的内容，默认显示 128 个内存单元的内容，再接着使用 `d` 即可查看后序内容。\r\n\r\n2. 查看具体某个地址开始的内容通过 `d 段地址:偏移地址` 即可查看从该地址开始的内存中的内容；\r\n\r\n3. 使用 `d 段地址:起始偏移地址 结尾偏移地址` 即可范围查看内存中的内容\r\n\r\n显示的结果：\r\n\r\n1. 每行默认输出 16 个地址的内容，中间有一个 `-` 连接，便于区分前 8 个字节和后 8 个字节\r\n2. 内容通过 16 进制输出，每个内存单元一个 16 进制数\r\n3. 左边显示的是该行的起始地址\r\n4. 右边是每个内存单元中的数据对应的 ASCII 字符\r\n\r\n![](http://oss.xiefeng.tech/img/20210530132854.jpg)\r\n\r\n`e` 命令可以改写内存中的内容，通过 `e 起始地址 数据 数据 数据 ....` 即可写入数据，可以直接输入字符：\r\n\r\n```shell\r\n-d 1000:10 2A\r\n\r\n-e 40 41 42 43 44 45 # 分别对应 ASCII 字符 @ A B C D\r\n```\r\n\r\n![](http://oss.xiefeng.tech/img/20210530134452.png)\r\n\r\n## 机器指令\r\n\r\n`u` 命令可以查看内存中的数据（作为机器指令）所对应的汇编指令\r\n\r\n```shell\r\n# b80100 -\u003e mov ax, 0001\r\n# b90200 -\u003e mov cx, 0002\r\n# 01c8   -\u003e add ax, cx \r\n\r\n-e 1000:0 b8 01 00 b9 02 00 01 c8\r\n-u 1000:0 7\r\n```\r\n\r\n![](http://oss.xiefeng.tech/img/20210530135332.png)\r\n\r\n`t` 命令可以执行一条或多条指令（CS、IP 所指向地址中的）：\r\n\r\n1. 要使用 `t` 命令，需要先修改 CS、IP 寄存器的值，指向需要执行的指令所的地址\r\n2. 然后使用 `t` 命令使得 CPU 执行 CS、IP 指向地址中的指令\r\n3. 使用一次 `t` 命令只会执行一条指令，接着使用 `t` 就可以接着执行后序指令\r\n\r\n`a` 命令可以以汇编的形式向内存中写入指令：\r\n\r\n![](http://oss.xiefeng.tech/img/20210530140549.png)\r\n\r\n","meta":{"size":2652,"birthTime":1663496641432.5571,"updateTime":1663496641432.6665}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["汇编","Debug"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

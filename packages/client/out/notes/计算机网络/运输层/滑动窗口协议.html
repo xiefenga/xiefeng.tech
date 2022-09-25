@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>滑动窗口协议 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#滑动窗口协议" data-target-id="h1-滑动窗口协议-0">滑动窗口协议</a></li><li><a href="#GBN（Go-Back-N）" data-target-id="h1-GBN（Go-Back-N）-1">GBN（Go-Back-N）</a></li><li><a href="#SR（Selective Repeat）" data-target-id="h1-SR（Selective Repeat）-2">SR（Selective Repeat）</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">滑动窗口协议</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>滑动窗口协议</h1>
+<p>滑动窗口协议允许发送方在停止并等待确认前发送多个数据分组。由于发送方不必每发一个分组就停下来等待确认，因此该协议可以加速数据的传输，提高网络吞吐量。</p>
+<h1>GBN（Go-Back-N）</h1>
+<p>回退N步协议，允许发送方发送多个分组而不需要等待确认（不需要停等）；但是在流水线中未确认的分组数不能超过某个最大的允许数N；N即为窗口长度。</p>
+<p><img src="http://oss.xiefeng.tech/img/20210701192440.png" alt=""/></p>
+<p>**基序号（send_base）：**最早发送确未确认的分组号</p>
+<p>**下一个序列号（nextseqnum）：**最小的未使用的序号（即下一个代发分组的序号）</p>
+<p>序号范围：</p>
+<ol>
+<li>[ 0 , send_base - 1 ] ：已经发送并确认的分组序号</li>
+<li>[ send_base , nextseqnum - 1 ] ：已发送未确认的分组序号</li>
+<li>[ nextseqnum , send_base + N - 1 ] ：可以用于立即发送的分组序号</li>
+<li>[ send_base + N , Infinity ) ：不能使用的分组序号，直到send_base已确认，才可以向后滑动窗口</li>
+</ol>
+<p><strong>发送方响应的事件：</strong></p>
+<ol>
+<li>上层的调用：对于上层的调用，窗口未满就发送否则就等待；</li>
+<li>收到一个ACK：对于确认，GBN使用<strong>累积确认</strong>机制；</li>
+<li>超时事件：如果出现超时，GBN重传所有已发送还未被确认的分组（名字的由来）</li>
+</ol>
+<p><strong>对于接收方：</strong></p>
+<p>正确有序收到分组即发送一个ACK，并且将数据交付上层，其他情况则丢弃分组，并返回最近按序正确收到的分组的ACK；</p>
+<p><strong>缺点：</strong></p>
+<p>重传了许多不必要的分组</p>
+<h1>SR（Selective Repeat）</h1>
+<p>选择重传，仅重传那些它怀疑在接收方出错（丢失或受损）的分组而避免不必要的重传；</p>
+<p><img src="http://oss.xiefeng.tech/img/20210701192443.png" alt=""/></p>
+<p>SR接收方将确认一个正确接收的分组（不管是否按序），失序的分组将被缓存直到前面的丢失分组都被收到；这样就可以一起交付给上层；</p>
+<p><strong>发送方的事件：</strong></p>
+<ol>
+<li>从上次收到数据</li>
+<li>超时</li>
+<li>收到ACK</li>
+</ol>
+<p>每个分组都需要有自己的定时器，超时只能发送一个分组</p>
+<p>收到的ack如果等于send_base 就滑动窗口；否则就标记分组</p>
+<p><strong>接收方的事件：</strong></p>
+<ol>
+<li>正确接收到分组，就返回ACK，如果之前没有接受过即缓存，接受过则丢弃</li>
+<li>对于[rcv_base + N , Infinity ) 的分组，丢弃也不返回</li>
+</ol>
+<p><strong>对于SR协议，窗口长度必须小y于等于序列号空间大小的一半。</strong></p><div><a href="/notes/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%BF%90%E8%BE%93%E5%B1%82">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"滑动窗口协议","article":{"title":"滑动窗口协议","content":"# 滑动窗口协议\r\n\r\n滑动窗口协议允许发送方在停止并等待确认前发送多个数据分组。由于发送方不必每发一个分组就停下来等待确认，因此该协议可以加速数据的传输，提高网络吞吐量。\r\n\r\n# GBN（Go-Back-N）\r\n\r\n回退N步协议，允许发送方发送多个分组而不需要等待确认（不需要停等）；但是在流水线中未确认的分组数不能超过某个最大的允许数N；N即为窗口长度。\r\n\r\n![](http://oss.xiefeng.tech/img/20210701192440.png)\r\n\r\n**基序号（send_base）：**最早发送确未确认的分组号\r\n\r\n**下一个序列号（nextseqnum）：**最小的未使用的序号（即下一个代发分组的序号）\r\n\r\n序号范围：\r\n\r\n1. [ 0 , send_base - 1 ] ：已经发送并确认的分组序号\r\n2. [ send_base , nextseqnum - 1 ] ：已发送未确认的分组序号\r\n3. [ nextseqnum , send_base + N - 1 ] ：可以用于立即发送的分组序号\r\n4. [ send_base + N , Infinity ) ：不能使用的分组序号，直到send_base已确认，才可以向后滑动窗口\r\n\r\n**发送方响应的事件：**\r\n\r\n1. 上层的调用：对于上层的调用，窗口未满就发送否则就等待；\r\n2. 收到一个ACK：对于确认，GBN使用**累积确认**机制；\r\n3. 超时事件：如果出现超时，GBN重传所有已发送还未被确认的分组（名字的由来）\r\n\r\n**对于接收方：**\r\n\r\n正确有序收到分组即发送一个ACK，并且将数据交付上层，其他情况则丢弃分组，并返回最近按序正确收到的分组的ACK；\r\n\r\n**缺点：**\r\n\r\n重传了许多不必要的分组\r\n\r\n# SR（Selective Repeat）\r\n\r\n选择重传，仅重传那些它怀疑在接收方出错（丢失或受损）的分组而避免不必要的重传；\r\n\r\n![](http://oss.xiefeng.tech/img/20210701192443.png)\r\n\r\nSR接收方将确认一个正确接收的分组（不管是否按序），失序的分组将被缓存直到前面的丢失分组都被收到；这样就可以一起交付给上层；\r\n\r\n**发送方的事件：**\r\n\r\n1. 从上次收到数据\r\n2. 超时\r\n3. 收到ACK\r\n\r\n每个分组都需要有自己的定时器，超时只能发送一个分组\r\n\r\n收到的ack如果等于send_base 就滑动窗口；否则就标记分组\r\n\r\n**接收方的事件：**\r\n\r\n1. 正确接收到分组，就返回ACK，如果之前没有接受过即缓存，接受过则丢弃\r\n2. 对于[rcv_base + N , Infinity ) 的分组，丢弃也不返回\r\n\r\n**对于SR协议，窗口长度必须小y于等于序列号空间大小的一半。**","meta":{"size":2541,"birthTime":1663496641447.244,"updateTime":1663496641447.3354}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["计算机网络","运输层","滑动窗口协议"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

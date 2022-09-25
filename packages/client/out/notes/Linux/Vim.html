@@ -1,0 +1,170 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>Vim | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#VIM" data-target-id="h1-VIM-0">VIM</a></li><li><a href="#模式" data-target-id="h1-模式-1">模式</a></li><li><a href="#打开文件" data-target-id="h1-打开文件-2">打开文件</a></li><li><a href="#命令模式" data-target-id="h1-命令模式-3">命令模式</a><ul><li><a href="#光标移动" data-target-id="h2-光标移动-0">光标移动</a></li><li><a href="#复制操作" data-target-id="h2-复制操作-1">复制操作</a></li><li><a href="#剪切/删除" data-target-id="h2-剪切/删除-2">剪切/删除</a></li><li><a href="#撤销/恢复" data-target-id="h2-撤销/恢复-3">撤销/恢复</a></li></ul></li><li><a href="#末行模式" data-target-id="h1-末行模式-4">末行模式</a><ul><li><a href="#退出模式" data-target-id="h2-退出模式-4">退出模式</a></li><li><a href="#保存和退出" data-target-id="h2-保存和退出-5">保存和退出</a></li><li><a href="#查找" data-target-id="h2-查找-6">查找</a></li><li><a href="#其他" data-target-id="h2-其他-7">其他</a></li></ul></li><li><a href="#编辑模式" data-target-id="h1-编辑模式-5">编辑模式</a><ul><li><a href="#进入方式" data-target-id="h2-进入方式-8">进入方式</a></li><li><a href="#计算器" data-target-id="h2-计算器-9">计算器</a></li></ul></li><li><a href="#配置文件" data-target-id="h1-配置文件-6">配置文件</a></li><li><a href="#异常退出" data-target-id="h1-异常退出-7">异常退出</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">Vim</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>VIM</h1>
+<p>Vi 编辑器是所有 Unix 及 Linux 系统下标准的编辑器，在 Unix 及 Linux 系统的任何版本，Vi 编辑器是完全相同的，Vi 也是 Linux 中最基本的文本编辑器。</p>
+<p>vim 编辑器是在 vi 的基础上改进的版本，比 vi 功能更强大，支持语法颜色，是 vi 的升级版。</p>
+<h1>模式</h1>
+<p>Vim 中存在三种模式：<strong>命令模式、编辑模式（输入模式）、末行模式（尾行模式）</strong>。</p>
+<ul>
+<li>命令模式：在该模式下不能对文件直接编辑，可以通过快捷键进行一些操作（复制行，移动光标等），打开文件之后默认进入的模式</li>
+<li>编辑模式：在该模式下可以对文件的内容进行编辑</li>
+<li>末行模式：可以在末行输入命令来对文件进行操作（搜索、替换、保存、退出、撤销、高亮等等）</li>
+</ul>
+<p>模式之间的切换：</p>
+<ul>
+<li>命令模式：打开文件默认该模式，其他模式通过 <code>esc</code> 返回该模式</li>
+<li>末行模式：在命令模式通过 <code>:</code> 进入</li>
+<li>编辑模式：在命令模式通过 <code>i</code>、<code>a</code> 等进入</li>
+</ul>
+<p>模式间的切换必须通过<strong>命令模式</strong>间接切换。</p>
+<h1>打开文件</h1>
+<ol>
+<li><code>vim 路径</code>：打开指定文件</li>
+<li><code>vim +数字 路径</code>：打开指定文件，并将光标移动到指定的行</li>
+<li><code>vim +/关键词 路径</code>：打开指定的文件，并且高亮显示关键词</li>
+<li><code>vim 路径1 路径2 路径3</code>：同时打开多个文件</li>
+</ol>
+<h1>命令模式</h1>
+<blockquote>
+<p>该模式是打开文件直接进入的模式</p>
+</blockquote>
+<h2>光标移动</h2>
+<ol>
+<li>光标移动到<strong>行首</strong>：<code>shift + 6</code> === <code>^</code></li>
+<li>光标移动到<strong>行末</strong>：<code>shift + 4</code> === <code>$</code></li>
+<li>光标移动到<strong>首行</strong>：<code>gg</code></li>
+<li>光标移动到<strong>末行</strong>：<code>G</code></li>
+<li>翻屏操作<!-- -->
+<ul>
+<li>向上翻屏：<code>ctrl + b</code></li>
+<li>向下翻屏：<code>ctrl + f</code></li>
+</ul>
+</li>
+<li>移动到指定的行：<code>数字G </code></li>
+<li>向上/向下移动n行：<code>n↑</code> / <code>n↓</code></li>
+<li>向左/向右移动n字符：<code>n←</code> / <code>n→</code></li>
+<li><strong>末行模式</strong>下移动到指定的行：<code>:n</code></li>
+</ol>
+<h2>复制操作</h2>
+<ol>
+<li>复制光标所在行：<code>yy</code></li>
+<li>以光标所在行开始，向下复制指定的行数：<code>数字yy</code></li>
+<li>可视化复制：通过 <code>ctrl v</code> / <code>V</code> / <code>v</code> 进行可视化选中，<code>y</code> 进行复制</li>
+</ol>
+<p>粘贴使用 <code>p</code> 键，如果复制的是整行，粘贴都是粘贴到选中位置的下一行。</p>
+<h2>剪切/删除</h2>
+<ol>
+<li>剪切/删除光标所在行：<code>dd</code></li>
+<li>以当前行开始，向下删除/剪切指定的行：<code>数字dd</code></li>
+<li>剪切/删除光标所在的当前行之后的内容，但是删除之后下一行不上移：<code>D</code></li>
+<li>可视化删除/剪切：通过 <code>ctrl v</code> / <code>V</code> / <code>v</code> 进行可视化选中，按下 <code>D</code> 表示删除<strong>选中行</strong>，<code>d</code> 表示删<strong>选中块</strong></li>
+</ol>
+<h2>撤销/恢复</h2>
+<ul>
+<li>撤销：<code>:u</code>，属于末行模式</li>
+<li>恢复：<code>ctrl + r</code></li>
+</ul>
+<h1>末行模式</h1>
+<p>进入方式：在命令模式通过 <code>:</code> 进入，或者通过 <code>/</code> 查找进入</p>
+<h2>退出模式</h2>
+<ul>
+<li><code>esc</code></li>
+<li>两次 <code>esc</code></li>
+<li>删除末行全部字符</li>
+</ul>
+<h2>保存和退出</h2>
+<ol>
+<li>保存操作：<code>:w</code></li>
+<li>另存为：<code>:w 路径</code></li>
+<li>退出：<code>:q</code></li>
+<li>保存并退出：<code>wq</code>，<code>:x</code>，后一个如果没有修改就是 <code>:q</code>，文件修改了就是 <code>:wq</code></li>
+<li>强制操作：<code>q!</code> 表示强制退出</li>
+<li>调用外部命令：<code>!命令</code></li>
+</ol>
+<h2>查找</h2>
+<ul>
+<li>查找：<code>/关键词</code>
+<ul>
+<li>在搜索结果中切换上/下一个结果：N/n</li>
+<li>取消高亮，则需要输入：<code>:nohl</code></li>
+</ul>
+</li>
+<li>查找并替换内容<!-- -->
+<ul>
+<li><code>:s/搜索的关键词/新的内容</code>：替换光标所在行的第一处符合条件的内容</li>
+<li><code>:s/搜索的关键词/新的内容/g</code>：替换光标所在行的全部符合条件的内容</li>
+<li><code>:%s/搜索的关键词/新的内容</code>：替换整个文档中每行第一个符合条件的内容</li>
+<li><code>:%s/搜索的关键词/新的内容/g</code>:替换整个文档的符合条件的内容</li>
+</ul>
+</li>
+</ul>
+<h2>其他</h2>
+<ul>
+<li>
+<p>显示行号：<code>:set nu</code></p>
+</li>
+<li>
+<p>取消显示行号：<code>set nonu</code></p>
+</li>
+<li>
+<p>查看已经打开的文件：<code>:files</code></p>
+</li>
+<li>
+<p>切换文件：</p>
+<ul>
+<li><code>:open 文件名</code>：切换到已经打开的其他文件</li>
+<li><code>:bn</code>：切换到下一个文件</li>
+<li><code>:bp</code>：切换到上一个文件</li>
+</ul>
+</li>
+<li>
+<p>控制代码着色：</p>
+<ul>
+<li><code>:syntax on</code></li>
+<li><code>:syntax off</code></li>
+</ul>
+</li>
+<li>
+<p>分屏操作：</p>
+<ul>
+<li>垂直分屏：<code>:vs [file]</code></li>
+<li>水平分屏：<code>:sv [file]</code></li>
+<li>移动当前屏幕：<code>ctrl ww</code></li>
+<li>关闭当前屏幕：<code>:hide</code>、<code>ctrl w c</code></li>
+<li>将当前屏移动到最左 / 右端：<code>ctrl w H</code>、<code>ctrl w L</code></li>
+<li>将当前屏移动到最上 / 下端：<code>ctrl w K</code>、<code>ctrl w J</code></li>
+</ul>
+</li>
+</ul>
+<h1>编辑模式</h1>
+<h2>进入方式</h2>
+<ul>
+<li><code>i</code>：在光标字符前插入</li>
+<li><code>a</code>：在光标字符后插入</li>
+<li><code>o</code>：在光标所在行的另起新一行插入</li>
+<li><code>I</code>：在光标所在行的行首开始插入，如果行首有空格则在空格之后插入</li>
+<li><code>A</code>：在光标所在行的行尾插入</li>
+<li><code>O</code>：在光标所在行的上面另起一行插入</li>
+<li><code>S</code>：删除光标坐在行并开始插入</li>
+</ul>
+<h2>计算器</h2>
+<p>当在编辑文件的时候突然需要使用计算器去计算一些公式，则此时需要用计算器，vim自身集成了一个简易的计算器。</p>
+<p>在编辑模式：</p>
+<ol>
+<li>按下 <code>ctrl + R</code></li>
+<li>输入 <code>=</code></li>
+<li>输入需要计算的内容，按下回车</li>
+<li>结果会被输入到光标所在位置</li>
+</ol>
+<h1>配置文件</h1>
+<p>Vim配置有三种情况：</p>
+<ul>
+<li>在文件打开的时候在末行模式下输入的配置（临时的）</li>
+<li>个人配置文件（<code>~/.vimrc</code>，如果没有可以自行新建）</li>
+<li>全局配置文件（vim自带，<code>/etc/vimrc</code>）</li>
+</ul>
+<h1>异常退出</h1>
+<p>在编辑文件之后并没有正常的去保存退出，而是遇到突然关闭终端或者断电的情况，则发生了异常退出。</p>
+<p>解决办法：</p>
+<ul>
+<li><code>:recover</code> 进行恢复</li>
+<li><code>rm -f .passwd.swp</code> 删除交换文件</li>
+</ul><div><a href="/notes/Linux">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"Vim","article":{"title":"Vim","content":"# VIM\r\n\r\nVi 编辑器是所有 Unix 及 Linux 系统下标准的编辑器，在 Unix 及 Linux 系统的任何版本，Vi 编辑器是完全相同的，Vi 也是 Linux 中最基本的文本编辑器。\r\n\r\nvim 编辑器是在 vi 的基础上改进的版本，比 vi 功能更强大，支持语法颜色，是 vi 的升级版。\r\n\r\n# 模式\r\n\r\nVim 中存在三种模式：**命令模式、编辑模式（输入模式）、末行模式（尾行模式）**。\r\n\r\n- 命令模式：在该模式下不能对文件直接编辑，可以通过快捷键进行一些操作（复制行，移动光标等），打开文件之后默认进入的模式\r\n- 编辑模式：在该模式下可以对文件的内容进行编辑\r\n- 末行模式：可以在末行输入命令来对文件进行操作（搜索、替换、保存、退出、撤销、高亮等等）\r\n\r\n模式之间的切换：\r\n\r\n- 命令模式：打开文件默认该模式，其他模式通过 `esc` 返回该模式\r\n- 末行模式：在命令模式通过 `:` 进入\r\n- 编辑模式：在命令模式通过 `i`、`a` 等进入\r\n\r\n模式间的切换必须通过**命令模式**间接切换。\r\n\r\n# 打开文件\r\n\r\n1. `vim 路径`：打开指定文件\r\n2. `vim +数字 路径`：打开指定文件，并将光标移动到指定的行\r\n3. `vim +/关键词 路径`：打开指定的文件，并且高亮显示关键词\r\n4. `vim 路径1 路径2 路径3`：同时打开多个文件\r\n\r\n# 命令模式\r\n\r\n\u003e 该模式是打开文件直接进入的模式\r\n\r\n## 光标移动\r\n\r\n1. 光标移动到**行首**：`shift + 6` === `^`\r\n2. 光标移动到**行末**：`shift + 4` === `$`\r\n3. 光标移动到**首行**：`gg`\r\n4. 光标移动到**末行**：`G`\r\n5. 翻屏操作\r\n\t- 向上翻屏：`ctrl + b`\r\n\t- 向下翻屏：`ctrl + f`\r\n6. 移动到指定的行：`数字G `\r\n7. 向上/向下移动n行：`n↑` / `n↓`\r\n8. 向左/向右移动n字符：`n←` / `n→`\r\n9. **末行模式**下移动到指定的行：`:n`\r\n\r\n## 复制操作\r\n\r\n1. 复制光标所在行：`yy`\r\n2. 以光标所在行开始，向下复制指定的行数：`数字yy`\r\n3. 可视化复制：通过 `ctrl v` / `V` / `v` 进行可视化选中，`y` 进行复制\r\n\r\n粘贴使用 `p` 键，如果复制的是整行，粘贴都是粘贴到选中位置的下一行。\r\n\r\n## 剪切/删除\r\n\r\n1. 剪切/删除光标所在行：`dd`\r\n2. 以当前行开始，向下删除/剪切指定的行：`数字dd`\r\n3. 剪切/删除光标所在的当前行之后的内容，但是删除之后下一行不上移：`D`\r\n4. 可视化删除/剪切：通过 `ctrl v` / `V` / `v` 进行可视化选中，按下 `D` 表示删除**选中行**，`d` 表示删**选中块**\r\n\r\n## 撤销/恢复\r\n\r\n- 撤销：`:u`，属于末行模式\r\n- 恢复：`ctrl + r`\r\n\r\n# 末行模式\r\n\r\n进入方式：在命令模式通过 `:` 进入，或者通过 `/` 查找进入\r\n\r\n## 退出模式\r\n\r\n- `esc`\r\n- 两次 `esc`\r\n- 删除末行全部字符\r\n\r\n## 保存和退出\r\n\r\n1. 保存操作：`:w`\r\n2. 另存为：`:w 路径`\r\n3. 退出：`:q`\r\n4. 保存并退出：`wq`，`:x`，后一个如果没有修改就是 `:q`，文件修改了就是 `:wq`\r\n5. 强制操作：`q!` 表示强制退出\r\n6. 调用外部命令：`!命令`\r\n\r\n## 查找\r\n\r\n- 查找：`/关键词`\r\n\t- 在搜索结果中切换上/下一个结果：N/n\r\n\t- 取消高亮，则需要输入：`:nohl`\r\n- 查找并替换内容\r\n\t- `:s/搜索的关键词/新的内容`：替换光标所在行的第一处符合条件的内容\r\n\t- `:s/搜索的关键词/新的内容/g`：替换光标所在行的全部符合条件的内容\r\n\t- `:%s/搜索的关键词/新的内容`：替换整个文档中每行第一个符合条件的内容\r\n\t- `:%s/搜索的关键词/新的内容/g`:替换整个文档的符合条件的内容\r\n\r\n## 其他\r\n\r\n- 显示行号：`:set nu`\r\n- 取消显示行号：`set nonu`\r\n\r\n- 查看已经打开的文件：`:files`\r\n- 切换文件：\r\n\t- `:open 文件名`：切换到已经打开的其他文件\r\n\t- `:bn`：切换到下一个文件\r\n\t- `:bp`：切换到上一个文件\r\n- 控制代码着色：\r\n\t- `:syntax on`\r\n\t- `:syntax off`\r\n- 分屏操作：\r\n\t- 垂直分屏：`:vs [file]`\r\n\t- 水平分屏：`:sv [file]`\r\n\t- 移动当前屏幕：`ctrl ww`\r\n\t- 关闭当前屏幕：`:hide`、`ctrl w c`\r\n\t- 将当前屏移动到最左 / 右端：`ctrl w H`、`ctrl w L`\r\n\t- 将当前屏移动到最上 / 下端：`ctrl w K`、`ctrl w J`\r\n\r\n# 编辑模式\r\n\r\n## 进入方式\r\n\r\n- `i`：在光标字符前插入\r\n- `a`：在光标字符后插入\r\n- `o`：在光标所在行的另起新一行插入\r\n- `I`：在光标所在行的行首开始插入，如果行首有空格则在空格之后插入\r\n- `A`：在光标所在行的行尾插入\r\n- `O`：在光标所在行的上面另起一行插入\r\n- `S`：删除光标坐在行并开始插入\r\n\r\n## 计算器\r\n\r\n当在编辑文件的时候突然需要使用计算器去计算一些公式，则此时需要用计算器，vim自身集成了一个简易的计算器。\r\n\r\n在编辑模式：\r\n\r\n1. 按下 `ctrl + R`\r\n2. 输入 `=` \r\n3. 输入需要计算的内容，按下回车\r\n4. 结果会被输入到光标所在位置\r\n\r\n# 配置文件\r\n\r\nVim配置有三种情况：\r\n\r\n- 在文件打开的时候在末行模式下输入的配置（临时的）\r\n- 个人配置文件（`~/.vimrc`，如果没有可以自行新建）\r\n- 全局配置文件（vim自带，`/etc/vimrc`）\r\n\r\n# 异常退出\r\n\r\n在编辑文件之后并没有正常的去保存退出，而是遇到突然关闭终端或者断电的情况，则发生了异常退出。\r\n\r\n解决办法：\r\n\r\n- `:recover` 进行恢复\r\n- `rm -f .passwd.swp` 删除交换文件\r\n\r\n\r\n\r\n","meta":{"size":5598,"birthTime":1663496641409.6914,"updateTime":1663496641409.9731}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["Linux","Vim"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

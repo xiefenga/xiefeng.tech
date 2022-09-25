@@ -1,0 +1,51 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>层叠 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#层叠规则" data-target-id="h1-层叠规则-0">层叠规则</a><ul><li><a href="#重要性" data-target-id="h2-重要性-0">重要性</a></li><li><a href="#优先级" data-target-id="h2-优先级-1">优先级</a></li></ul></li><li><a href="#属性值计算" data-target-id="h1-属性值计算-1">属性值计算</a><ul><li><a href="#计算过程" data-target-id="h2-计算过程-2">计算过程</a></li></ul></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">层叠</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>层叠规则</h1>
+<p>一个属性多次应用到同一个元素就发生了生命冲突，层叠就是解决声明冲突的过程</p>
+<p>层叠规则：</p>
+<ol>
+<li>比较重要性</li>
+<li>比较特殊性</li>
+<li>比较源次序</li>
+</ol>
+<h2>重要性</h2>
+<ol>
+<li>作者样式表中的 <code>!important</code>  样式</li>
+<li>作者样式表中的普通样式</li>
+<li>浏览器默认样式表中的样式</li>
+</ol>
+<h2>优先级</h2>
+<p>选择符的优先级由选择符本身的组成部分决定，一个优先级由四部分构成 <code>0, 0, 0, 0</code></p>
+<p>零优先级战胜无优先级，所以 <code>*</code> 能战胜继承</p>
+<p><strong>CSS权重进制在IE6为256，后来扩大到了65536。而现代浏览器则采用更大的数量</strong></p>
+<table><thead><tr><th>选择器</th><th>优先级</th></tr></thead><tbody><tr><td>行间样式</td><td>1, 0, 0, 0</td></tr><tr><td>id</td><td>1, 0, 0</td></tr><tr><td>class | 属性 | 伪类</td><td>0, 1, 0</td></tr><tr><td>标签 | 伪元素</td><td>0, 0, 1</td></tr><tr><td>通配符</td><td>0, 0, 0</td></tr></tbody></table>
+<p><code>!important</code> 对优先级没有影响，但是会和不重要的声明分开处理，重要的放在一起，不重要的放一起，发生冲突的属性使用优先级来解决。</p>
+<h1>属性值计算</h1>
+<ul>
+<li>
+<p>浏览器渲染页面时是按照树形结构来渲染</p>
+</li>
+<li>
+<p>渲染每个元素的前提条件：该元素的<strong>所有</strong>CSS属性必须有值</p>
+</li>
+<li>
+<p>一个元素，从所有属性都没有值，到所有的属性都有值，这个过程叫做<strong>属性值计算过程</strong></p>
+</li>
+</ul>
+<h2>计算过程</h2>
+<ol>
+<li>
+<p>确定声明值</p>
+<p>将作者样式表和浏览器默认样式表中没有冲突的样式，作为css的属性值</p>
+</li>
+<li>
+<p>层叠冲突</p>
+<p>对样式表有冲突的声明使用层叠规则，确定CSS属性值</p>
+</li>
+<li>
+<p>使用继承</p>
+<p>对仍然没有值的属性，若可以继承，则继承父元素的值</p>
+</li>
+<li>
+<p>使用默认值</p>
+<p>对仍然没有值的属性，使用默认值</p>
+</li>
+</ol><div><a href="/notes/CSS">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"层叠","article":{"title":"层叠","content":"# 层叠规则\n\n一个属性多次应用到同一个元素就发生了生命冲突，层叠就是解决声明冲突的过程\n\n层叠规则：\n\n1. 比较重要性\n2. 比较特殊性\n3. 比较源次序\n\n## 重要性\n\n1. 作者样式表中的 `!important`  样式\n2. 作者样式表中的普通样式\n3. 浏览器默认样式表中的样式\n\n## 优先级\n\n选择符的优先级由选择符本身的组成部分决定，一个优先级由四部分构成 `0, 0, 0, 0` \n\n零优先级战胜无优先级，所以 `*` 能战胜继承\n\n**CSS权重进制在IE6为256，后来扩大到了65536。而现代浏览器则采用更大的数量**\n\n| 选择器                | 优先级     |\n| --------------------- | ---------- |\n| 行间样式              | 1, 0, 0, 0 |\n| id                    | 1, 0, 0    |\n| class \\| 属性 \\| 伪类 | 0, 1, 0    |\n| 标签 \\| 伪元素        | 0, 0, 1    |\n| 通配符                | 0, 0, 0    |\n\n`!important` 对优先级没有影响，但是会和不重要的声明分开处理，重要的放在一起，不重要的放一起，发生冲突的属性使用优先级来解决。\n\n# 属性值计算\n\n- 浏览器渲染页面时是按照树形结构来渲染\n\n- 渲染每个元素的前提条件：该元素的**所有**CSS属性必须有值\n\n- 一个元素，从所有属性都没有值，到所有的属性都有值，这个过程叫做**属性值计算过程**\n\n## 计算过程\n\n1. 确定声明值\n\n   将作者样式表和浏览器默认样式表中没有冲突的样式，作为css的属性值\n\n2. 层叠冲突\n\n   对样式表有冲突的声明使用层叠规则，确定CSS属性值\n\n3. 使用继承\n\n   对仍然没有值的属性，若可以继承，则继承父元素的值\n\n4. 使用默认值\n\n   对仍然没有值的属性，使用默认值\n","meta":{"size":1780,"birthTime":1663496641378.291,"updateTime":1663496641378.6013}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["CSS","层叠"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

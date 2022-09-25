@@ -1,0 +1,132 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>Web Components | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#自定义元素" data-target-id="h1-自定义元素-0">自定义元素</a><ul><li><a href="#生命周期" data-target-id="h2-生命周期-0">生命周期</a></li><li><a href="#回调" data-target-id="h2-回调-1">回调</a></li><li><a href="#子元素" data-target-id="h2-子元素-2">子元素</a></li></ul></li><li><a href="#HTML模板" data-target-id="h1-HTML模板-1">HTML模板</a></li><li><a href="#影子DOM" data-target-id="h1-影子DOM-2">影子DOM</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">Web Components</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>自定义元素</h1>
+<p>命名规范：自定义网页元素的标签名必须含有连字符 <code>-</code>，一个或多个连字符都可以。</p>
+<p>自定义元素需要使用 JavaScript 通过自定义类继承 <code>HTMLElement</code> 或 <code>HTMLElement</code> 的子类。</p>
+<pre><code class="language-javascript">class MyElement extends HTMLElement {
+  constructor() {
+    super();
+    this.innerHTML = `&lt;h1&gt;hello world&lt;/h1&gt;`;
+  }
+}
+</code></pre>
+<p>要想在HTML中使用自定义元素，需要通过 <code>window.customElements.define</code> 方法建立自定义元素和该类之间的映射。</p>
+<pre><code class="language-javascript">window.customElements.define(&#x27;my-element&#x27;, MyElement);
+</code></pre>
+<p>之后页面上的每一个 <code>&lt;my-element&gt;</code> 元素都是一个 <code>MyElement</code> 的实例。只要浏览器解析到 <code>&lt;my-element&gt;</code> 元素，就会运行 <code>MyElement</code> 的构造函数。</p>
+<h2>生命周期</h2>
+<ul>
+<li>
+<p><code>connectedCallback()</code>：插入 DOM 时调用</p>
+</li>
+<li>
+<p><code>disconnectedCallback()</code>：移出 DOM 时执行</p>
+</li>
+<li>
+<p><code>attributeChangedCallback(attrName, oldVal, newVal)</code>：添加、删除、更新或替换属性时调用。元素创建或升级时，也会调用。只有加入 <code>observedAttributes</code> 的属性才会执行这个方法。</p>
+</li>
+<li>
+<p><code>adoptedCallback()</code>：自定义元素移动到新的 document 时调用，比如执行 <code>document.adoptNode(element)</code> 时。</p>
+</li>
+<li>
+<p><code>observedAttributes</code>：是一个静态属性，用于设置需要观察的属性（属性白名单）</p>
+</li>
+</ul>
+<p>生命周期的顺序：<code>constructor</code> -&gt; <code>attributeChangedCallback</code> -&gt; <code>connectedCallback</code>。</p>
+<p>这是因为 <code>attributeChangedCallback</code> 相当于调整配置，应该在插入 DOM 之前完成。</p>
+<h2>回调</h2>
+<p>自定义元素的原型有一些属性，用来指定回调函数，在特定事件发生时触发。</p>
+<ul>
+<li><code>createdCallback()</code>：实例生成时触发</li>
+<li><code>attachedCallback()</code>：实例插入HTML文档时触发</li>
+<li><code>detachedCallback()</code>：实例从HTML文档移除时触发</li>
+<li><code>attributeChangedCallback(attrName, oldVal, newVal)</code>：实例的属性发生改变时（添加、移除、更新）触发</li>
+</ul>
+<h2>子元素</h2>
+<p>自定义元素可以在内部放置子元素，可以通过任何 DOM 的方式放置。比如：<code>innterHTML</code>、<code>appenChild</code>、包括在HTML直接在标签内书写。</p>
+<p><code>&lt;slot&gt;</code> 和 Vue 中的插槽类似，可以让自定义元素的某些区域让外部传进来，但是外部传进来的会成为 <code>slot</code> 的子元素。</p>
+<pre><code class="language-javascript">class MyElement extends HTMLElement {
+  constructor() {
+    super()
+    this.innerHTML = `
+&lt;div id=&quot;container&quot;&gt;
+  &lt;div class=&quot;images&quot;&gt;
+    &lt;slot name=&quot;image&quot;&gt;&lt;/slot&gt;
+  &lt;/div&gt;
+&lt;/div&gt;`
+  }
+}
+</code></pre>
+<pre><code class="language-html">&lt;image-gallery&gt;
+  &lt;img src=&quot;foo.jpg&quot; slot=&quot;image&quot;&gt;
+  &lt;img src=&quot;bar.jpg&quot; slot=&quot;image&quot;&gt;
+&lt;/image-gallery&gt;
+</code></pre>
+<p>最终就会变成这样：</p>
+<pre><code class="language-html">&lt;div id=&quot;container&quot;&gt;
+  &lt;div class=&quot;images&quot;&gt;
+    &lt;slot name=&quot;image&quot;&gt;
+      &lt;img src=&quot;foo.jpg&quot; slot=&quot;image&quot;&gt;
+      &lt;img src=&quot;bar.jpg&quot; slot=&quot;image&quot;&gt;
+    &lt;/slot&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<h1>HTML模板</h1>
+<p>HTML 模板说的就是 <code>template</code> 标签，标签内部就是正常的 HTML 代码，浏览器会自动将其解析为 DOM 子树，但跳过渲染。</p>
+<pre><code class="language-html">&lt;template id=&quot;foo&quot;&gt;
+    &lt;p&gt;I&#x27;m inside a template!&lt;/p&gt;
+&lt;/template&gt;
+</code></pre>
+<p>在使用 <code>template</code> 时，无法直接获取到里面的 DOM 元素。这是因为内部元素存在于一个包含在 HTML 模板中的 DocumentFragment 节点内。</p>
+<p>通过 <code>template</code> 元素的 <code>content</code> 属性可以取得这个 DocumentFragment 的引用，再通过这个引用可以获取到内部的DOM。</p>
+<pre><code class="language-javascript">console.log(document.querySelector(&#x27;#foo&#x27;).content); // #document-fragment
+
+const fragment = document.querySelector(&#x27;#foo&#x27;).content;
+console.log(document.querySelector(&#x27;p&#x27;)); // null
+console.log(fragment.querySelector(&#x27;p&#x27;)); // &lt;p&gt;...&lt;p&gt;
+</code></pre>
+<p>对于自定义元素来说，HTML具有辅助意义，可以将模板写在 <code>template</code> 中，再复制节点。</p>
+<h1>影子DOM</h1>
+<p>Shadow DOM 指的是，浏览器将模板、样式表、属性、JavaScript 码等，封装成一个独立的 DOM 元素。外部的设置无法影响到其内部，而内部的设置也不会影响到外部。</p>
+<p>Shadow DOM 是通过 <code>attachShadow</code> 方法创建并添加给有效 HTML 元素的。容纳影子 DOM 的元素被称为影子宿主（shadow host）。影子 DOM 的根节点被称为影子根（shadow root）。</p>
+<p>大部分 DOM 元素都可以创建 Shadow DOM，但没有必要。一般用于给自定义元素创建，隔离组件和外部的影响。</p>
+<p><code>attachShadow</code> 接受一个对象 <code>{ mode: &#x27;open&#x27; }</code>，并返回 Shadow DOM 的实例。<code>mode</code> 取值为 <code>open</code> 或 <code>closed</code>。</p>
+<p>对 <code>open</code> 影子 DOM的引用可以通过 <code>shadowRoot</code> 属性在 HTML 元素上获得，而对 <code>closed</code> 影子 DOM 的引用无法这样获取。</p>
+<pre><code class="language-javascript">class MyElement extends HTMLElement {
+    constructor() {
+        super();
+        const shadowDOM = this.attachShadow({ mode: &quot;open&quot; });
+        shadowDOM.innerHTML = &#x27;fuck&#x27;;
+    }
+}
+
+customElements.define(&#x27;my-element&#x27;, MyElement);
+
+console.log(document.querySelector(&#x27;my-element&#x27;).shadowRoot); // #shadow-root (open)
+</code></pre>
+<p>在 Shadow DOM 和 <code>template</code> 内部的样式都是通过 <code>&lt;style&gt;</code> 或 <code>&lt;link&gt;</code> 来设置。</p>
+<p>样式中 <code>:host</code> 表示宿主元素，外部样式会覆盖掉 <code>:host</code> 的设置。</p>
+<pre><code class="language-javascript">const template = document.createElement(&#x27;template&#x27;);
+
+template.innerHTML = `
+&lt;style&gt;
+:host {
+    display: flex;
+    flex-direction: column;
+
+}
+&lt;/style&gt;
+&lt;h1&gt;hello world&lt;/h1&gt;
+&lt;slot&gt;&lt;/slot&gt;
+`
+
+class MyElement extends HTMLElement {
+    constructor() {
+        super();
+        const root = this.attachShadow({ mode: &#x27;open&#x27; });
+        root.appendChild(
+            template.content.cloneNode(true)
+        );
+    }
+}
+window.customElements.define(&#x27;my-element&#x27;, MyElement);
+</code></pre><div><a href="/notes/JavaScript/Web%20api">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"Web Components","article":{"title":"Web Components","content":"# 自定义元素\r\n\r\n命名规范：自定义网页元素的标签名必须含有连字符 `-`，一个或多个连字符都可以。\r\n\r\n自定义元素需要使用 JavaScript 通过自定义类继承 `HTMLElement` 或 `HTMLElement` 的子类。\r\n\r\n```javascript\r\nclass MyElement extends HTMLElement {\r\n  constructor() {\r\n    super();\r\n    this.innerHTML = `\u003ch1\u003ehello world\u003c/h1\u003e`;\r\n  }\r\n}\r\n```\r\n\r\n要想在HTML中使用自定义元素，需要通过 `window.customElements.define` 方法建立自定义元素和该类之间的映射。\r\n\r\n```javascript\r\nwindow.customElements.define('my-element', MyElement);\r\n```\r\n\r\n之后页面上的每一个 `\u003cmy-element\u003e` 元素都是一个 `MyElement` 的实例。只要浏览器解析到 `\u003cmy-element\u003e` 元素，就会运行 `MyElement` 的构造函数。\r\n\r\n## 生命周期\r\n\r\n- `connectedCallback()`：插入 DOM 时调用\r\n- `disconnectedCallback()`：移出 DOM 时执行\r\n- `attributeChangedCallback(attrName, oldVal, newVal)`：添加、删除、更新或替换属性时调用。元素创建或升级时，也会调用。只有加入 `observedAttributes` 的属性才会执行这个方法。\r\n- `adoptedCallback()`：自定义元素移动到新的 document 时调用，比如执行 `document.adoptNode(element)` 时。\r\n\r\n- `observedAttributes`：是一个静态属性，用于设置需要观察的属性（属性白名单）\r\n\r\n生命周期的顺序：`constructor` -\u003e `attributeChangedCallback` -\u003e `connectedCallback`。\r\n\r\n这是因为 `attributeChangedCallback` 相当于调整配置，应该在插入 DOM 之前完成。\r\n\r\n## 回调\r\n\r\n自定义元素的原型有一些属性，用来指定回调函数，在特定事件发生时触发。\r\n\r\n- `createdCallback()`：实例生成时触发\r\n- `attachedCallback()`：实例插入HTML文档时触发\r\n- `detachedCallback()`：实例从HTML文档移除时触发\r\n- `attributeChangedCallback(attrName, oldVal, newVal)`：实例的属性发生改变时（添加、移除、更新）触发\r\n\r\n## 子元素\r\n\r\n自定义元素可以在内部放置子元素，可以通过任何 DOM 的方式放置。比如：`innterHTML`、`appenChild`、包括在HTML直接在标签内书写。\r\n\r\n`\u003cslot\u003e` 和 Vue 中的插槽类似，可以让自定义元素的某些区域让外部传进来，但是外部传进来的会成为 `slot` 的子元素。\r\n\r\n```javascript\r\nclass MyElement extends HTMLElement {\r\n  constructor() {\r\n    super()\r\n    this.innerHTML = `\r\n\u003cdiv id=\"container\"\u003e\r\n  \u003cdiv class=\"images\"\u003e\r\n    \u003cslot name=\"image\"\u003e\u003c/slot\u003e\r\n  \u003c/div\u003e\r\n\u003c/div\u003e`\r\n  }\r\n}\r\n```\r\n\r\n```html\r\n\u003cimage-gallery\u003e\r\n  \u003cimg src=\"foo.jpg\" slot=\"image\"\u003e\r\n  \u003cimg src=\"bar.jpg\" slot=\"image\"\u003e\r\n\u003c/image-gallery\u003e\r\n```\r\n\r\n最终就会变成这样：\r\n\r\n```html\r\n\u003cdiv id=\"container\"\u003e\r\n  \u003cdiv class=\"images\"\u003e\r\n    \u003cslot name=\"image\"\u003e\r\n      \u003cimg src=\"foo.jpg\" slot=\"image\"\u003e\r\n      \u003cimg src=\"bar.jpg\" slot=\"image\"\u003e\r\n    \u003c/slot\u003e\r\n  \u003c/div\u003e\r\n\u003c/div\u003e\r\n```\r\n\r\n# HTML模板\r\n\r\nHTML 模板说的就是 `template` 标签，标签内部就是正常的 HTML 代码，浏览器会自动将其解析为 DOM 子树，但跳过渲染。\r\n\r\n```html\r\n\u003ctemplate id=\"foo\"\u003e\r\n    \u003cp\u003eI'm inside a template!\u003c/p\u003e\r\n\u003c/template\u003e\r\n```\r\n\r\n在使用 `template` 时，无法直接获取到里面的 DOM 元素。这是因为内部元素存在于一个包含在 HTML 模板中的 DocumentFragment 节点内。\r\n\r\n通过 `template` 元素的 `content` 属性可以取得这个 DocumentFragment 的引用，再通过这个引用可以获取到内部的DOM。\r\n\r\n```javascript\r\nconsole.log(document.querySelector('#foo').content); // #document-fragment\r\n\r\nconst fragment = document.querySelector('#foo').content;\r\nconsole.log(document.querySelector('p')); // null\r\nconsole.log(fragment.querySelector('p')); // \u003cp\u003e...\u003cp\u003e\r\n```\r\n\r\n对于自定义元素来说，HTML具有辅助意义，可以将模板写在 `template` 中，再复制节点。\r\n\r\n# 影子DOM\r\n\r\nShadow DOM 指的是，浏览器将模板、样式表、属性、JavaScript 码等，封装成一个独立的 DOM 元素。外部的设置无法影响到其内部，而内部的设置也不会影响到外部。\r\n\r\nShadow DOM 是通过 `attachShadow` 方法创建并添加给有效 HTML 元素的。容纳影子 DOM 的元素被称为影子宿主（shadow host）。影子 DOM 的根节点被称为影子根（shadow root）。\r\n\r\n大部分 DOM 元素都可以创建 Shadow DOM，但没有必要。一般用于给自定义元素创建，隔离组件和外部的影响。\r\n\r\n`attachShadow` 接受一个对象 `{ mode: 'open' }`，并返回 Shadow DOM 的实例。`mode` 取值为 `open` 或 `closed`。\r\n\r\n对 `open` 影子 DOM的引用可以通过 `shadowRoot` 属性在 HTML 元素上获得，而对 `closed` 影子 DOM 的引用无法这样获取。\r\n\r\n```javascript\r\nclass MyElement extends HTMLElement {\r\n    constructor() {\r\n        super();\r\n        const shadowDOM = this.attachShadow({ mode: \"open\" });\r\n        shadowDOM.innerHTML = 'fuck';\r\n    }\r\n}\r\n\r\ncustomElements.define('my-element', MyElement);\r\n\r\nconsole.log(document.querySelector('my-element').shadowRoot); // #shadow-root (open)\r\n```\r\n\r\n在 Shadow DOM 和 `template` 内部的样式都是通过 `\u003cstyle\u003e` 或 `\u003clink\u003e` 来设置。\r\n\r\n样式中 `:host` 表示宿主元素，外部样式会覆盖掉 `:host` 的设置。\r\n\r\n```javascript\r\nconst template = document.createElement('template');\r\n\r\ntemplate.innerHTML = `\r\n\u003cstyle\u003e\r\n:host {\r\n    display: flex;\r\n    flex-direction: column;\r\n\r\n}\r\n\u003c/style\u003e\r\n\u003ch1\u003ehello world\u003c/h1\u003e\r\n\u003cslot\u003e\u003c/slot\u003e\r\n`\r\n\r\nclass MyElement extends HTMLElement {\r\n    constructor() {\r\n        super();\r\n        const root = this.attachShadow({ mode: 'open' });\r\n        root.appendChild(\r\n            template.content.cloneNode(true)\r\n        );\r\n    }\r\n}\r\nwindow.customElements.define('my-element', MyElement);\r\n```\r\n\r\n","meta":{"size":5782,"birthTime":1663496641399.14,"updateTime":1663496641399.3066}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["JavaScript","Web api","Web Components"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

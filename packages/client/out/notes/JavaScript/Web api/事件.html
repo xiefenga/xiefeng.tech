@@ -1,0 +1,368 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>事件 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#事件注册" data-target-id="h1-事件注册-0">事件注册</a></li><li><a href="#事件流" data-target-id="h1-事件流-1">事件流</a></li><li><a href="#事件对象" data-target-id="h1-事件对象-2">事件对象</a><ul><li><a href="#事件委托" data-target-id="h2-事件委托-0">事件委托</a></li><li><a href="#阻止默认事件" data-target-id="h2-阻止默认事件-1">阻止默认事件</a></li><li><a href="#阻止事件冒泡" data-target-id="h2-阻止事件冒泡-2">阻止事件冒泡</a></li></ul></li><li><a href="#事件类型" data-target-id="h1-事件类型-3">事件类型</a><ul><li><a href="#UI事件" data-target-id="h2-UI事件-3">UI事件</a></li><li><a href="#焦点事件" data-target-id="h2-焦点事件-4">焦点事件</a></li><li><a href="#鼠标事件" data-target-id="h2-鼠标事件-5">鼠标事件</a><ul><li><a href="#移动事件" data-target-id="h3-移动事件-0">移动事件</a></li><li><a href="#点击事件" data-target-id="h3-点击事件-1">点击事件</a></li><li><a href="#事件对象" data-target-id="h3-事件对象-2">事件对象</a></li></ul></li><li><a href="#键盘事件" data-target-id="h2-键盘事件-6">键盘事件</a></li><li><a href="#表单事件" data-target-id="h2-表单事件-7">表单事件</a></li><li><a href="#设备事件" data-target-id="h2-设备事件-8">设备事件</a></li></ul></li><li><a href="#事件模拟" data-target-id="h1-事件模拟-4">事件模拟</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">事件</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>事件注册</h1>
+<ul>
+<li><code>dom.onxxx = function () {}</code>
+<ul>
+<li>dom0 的方式</li>
+<li>移除事件：<code>dom.onxxx = null / undefined</code></li>
+<li>对于同一个元素同一个事件只能绑定一个事件处理程序，同一个事件的后绑定的事件处理程序覆盖前一个</li>
+</ul>
+</li>
+<li><code>dom.addEventListener(type, handle, false)</code>
+<ul>
+<li>dom2的方式</li>
+<li>移除事件：<code>dom.removeEventListener(type, handle, false)</code></li>
+<li>第三个参数用于控制该事件处理函数是否属于事件捕获阶段</li>
+<li>对同一事件注册多个处理程序（不可为同一函数），触发顺序和绑定顺序吻合</li>
+</ul>
+</li>
+<li><code>dom.attachEvent(&#x27;on&#x27;+type, handle)</code>
+<ul>
+<li>IE8及以下得用这种方式注册事件替代 dom2 的方式</li>
+<li>这也可以注册多个处理程序</li>
+<li>移除事件：<code>detachEvent(&#x27;on&#x27;+type, handle)</code></li>
+</ul>
+</li>
+</ul>
+<h1>事件流</h1>
+<p>当一个元素发生了某个事件时，那该元素的所有<strong>祖先元素</strong>及<strong>整个页面</strong>都发生了该事件，事件流即描述页面接收事件的顺序</p>
+<ol>
+<li>
+<p>事件冒泡</p>
+</li>
+<li>
+<p>事件捕获</p>
+</li>
+</ol>
+<p>通过 <code>addEventListenr(type, handle, true)</code> 可将事件注册为事件捕获阶段发生</p>
+<p>对于事件源来说不存在事件捕获和事件冒泡，都是事件执行</p>
+<p>**对于同一事件这两种处理模型的触发顺序：**先捕获，后冒泡</p>
+<h1>事件对象</h1>
+<ol>
+<li>事件源对象：<code>event.target || event.srcElement</code></li>
+<li>事件类型：<code>event.type</code></li>
+<li>事件所处阶段（冒泡、捕获）：<code>event.eventPhase</code></li>
+<li>当前绑定事件的元素：<code>event.currentTarget</code>  等效于 <code>this</code></li>
+</ol>
+<h2>事件委托</h2>
+<p>通过事件冒泡和事件源对象可以实现事件委托</p>
+<p>即通过给祖先元素注册事件，在程序处理程序中判断事件源进行不同的处理</p>
+<h2>阻止默认事件</h2>
+<ul>
+<li><code>return false</code> dom 0 的方式才有效</li>
+<li><code>event.preventDefault()</code> 标准，ie8-</li>
+<li><code>event.returnValue = false</code>  兼容IE</li>
+</ul>
+<h2>阻止事件冒泡</h2>
+<ul>
+<li><code>event.stopPropagation()</code> 标准</li>
+<li><code>event.cancelBubble = true</code> IE</li>
+</ul>
+<h1>事件类型</h1>
+<p>浏览器中可以发生很多种事件，所发生事件的类型决定了事件对象中会保存什么信息</p>
+<p>DOM3 Events 定义的事件类型：</p>
+<ul>
+<li>用户界面事件：涉及与 BOM 交互的通用浏览器事件</li>
+<li>焦点事件：在元素获得和失去焦点时触发</li>
+<li>鼠标事件：使用鼠标在页面上执行某些操作时触发</li>
+<li>滚轮事件：使用鼠标滚轮（或类似设备）时触发</li>
+<li>输入事件：向文档中输入文本时触发</li>
+<li>键盘事件：使用键盘在页面上执行某些操作时触发</li>
+<li>合成事件：在使用某种 IME（Input Method Editor，输入法编辑器）输入字符时触发</li>
+</ul>
+<h2>UI事件</h2>
+<p>UI 事件不一定跟用户操作有关，在 DOM 规范出现之前就已经以某种形式存在了，保留它们是为了向后兼容</p>
+<ul>
+<li>
+<p><code>load</code></p>
+<ul>
+<li>当一个资源及其依赖<strong>资源</strong>已<strong>完成加载</strong>时触发load事件</li>
+<li>在 window 上当页面加载完成后触发</li>
+<li>在 <code>img</code> 元素上当图片加载完成后触发</li>
+<li>根据 DOM2 Events，load 事件应该在 document 上触发</li>
+<li>为了向后兼容，所有浏览器都在 window 上实现了该事件</li>
+</ul>
+</li>
+<li>
+<p><code>beforeunload</code></p>
+<ul>
+<li>该事件在 window 上触发，用意是给开发者提供阻止页面被卸载的机会</li>
+<li>在页面即将从浏览器中卸载时触发（关闭、刷新）</li>
+<li>这个事件会向用户显示一个确认框，请用户确认是关闭页还是取消关闭</li>
+<li><code>event.returnValue</code> 设置为要提示的字符串，函数返回该字符串（对于 Chrome 和 Safari）</li>
+</ul>
+</li>
+<li>
+<p><code>unload</code></p>
+<ul>
+<li>在 window 上当页面完全卸载后触发</li>
+<li>一般是在从一个页面导航到另一个页面时触发</li>
+<li>它在 <code>beforeunload</code> 和 <code>pagehide</code>（例如回退）后被触发</li>
+</ul>
+</li>
+<li>
+<p><code>error</code></p>
+<ul>
+<li>在 window 上当 JavaScript 报错时触发</li>
+<li>在 <code>img</code> 元素上当图片加载失败时触发</li>
+</ul>
+</li>
+<li>
+<p><code>resize</code></p>
+<ul>
+<li>在 window 或窗格上当窗口或窗格被缩放时触发</li>
+<li>最大化、最小化也会触发该事件</li>
+</ul>
+</li>
+<li>
+<p><code>scroll</code></p>
+<ul>
+<li>当用户滚动包含滚动条的元素时在元素上触发</li>
+<li><code>body</code> 元素包含整个页面的滚动条</li>
+</ul>
+</li>
+<li>
+<p><code>contextmenu</code></p>
+<ul>
+<li>专门用于表示何时该显示上下文菜单</li>
+<li>允许开发者取消默认的上下文菜单并提供自定义菜单</li>
+<li>该事件冒泡，只要给 document 指定一个事件处理程序就可以处理页面上的所有同类事件</li>
+</ul>
+</li>
+<li>
+<p><code>DOMContentLoaded</code></p>
+<ul>
+<li>DOM 树构建完成后立即触发</li>
+<li><code>document</code>、<code>window</code> 都能触发（实际是 <code>document</code>，冒泡到 <code>window</code>）</li>
+<li>对于不支持该事件的浏览器，可以通过 <code>setTimout</code> 0 来实现</li>
+</ul>
+</li>
+<li>
+<p><code>readystatechange</code></p>
+<ul>
+<li>支持该事件的每个对象都有一个 <code>readyState</code> 属性，该属性可能具有的值：<!-- -->
+<ul>
+<li><code>uninitialized</code>：对象存在并尚未初始化</li>
+<li><code>loading</code>：对象正在加载数据</li>
+<li><code>loaded</code>：对象已经加载完数据</li>
+<li><code>interactive</code>：对象可以交互，但尚未加载完成</li>
+<li><code>complete</code>：对象加载完成</li>
+</ul>
+</li>
+<li>并非所有对象都会经历所有 readystate 阶段</li>
+<li>document 上触发时，readyState 的值首先为 <code>interactive</code></li>
+<li><code>document.readyState</code> 属性描述了文档的加载状态<!-- -->
+<ol>
+<li><code>loading</code>：document 仍在加载</li>
+<li><code>interactive</code>：文档<strong>解析</strong>完成，先于 <code>DOMContentLoaded</code> 事件触发</li>
+<li><code>complete</code>：文档和所有子资源已完成加载，<code>load</code> 事件即将被触发</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p><code>pageshow</code>、<code>pagehide</code></p>
+<ul>
+<li>Firefox 和 Opera 开发了一个名为往返缓存功能，旨在使用浏览器“前进”和“后退”时加快页面之间的切换</li>
+</ul>
+</li>
+<li>
+<p>如果页面在缓存中，那么导航到这个页面时就 不会触发 load 事件</p>
+<ul>
+<li>Firefx 决定提供一些事件，把往返缓存的行为暴露出来</li>
+</ul>
+</li>
+<li>
+<p><code>pageshow</code> 会在页面显示时触发，无论是否来自往返缓存</p>
+<ul>
+<li>
+<p>在新加载的页面上， pageshow 会在 load 事件之后触发</p>
+</li>
+<li>
+<p>在来自往返缓存的页面上，pageshow 会在页面状态完全恢复后触发</p>
+</li>
+</ul>
+</li>
+<li>
+<p>这个事件的目标是 document，但事件处理程序必须添加到 window 上</p>
+<ul>
+<li>pagehide 事件会在页面从浏览器中卸载后，在 unload 事件之前触发</li>
+</ul>
+</li>
+<li>
+<p>event 对象中有一个 persisted 属性，该属性指示页面是否存储在往返缓存中</p>
+<ul>
+<li>pageshow 事件表明页面是从往返缓存中加载的</li>
+</ul>
+</li>
+<li>
+<p>pagehide 事件表明页面卸载之后会被保存在往返缓存中</p>
+</li>
+<li>
+<p>注册了onunload 事件处理程序(即使是空函数)的页面会自动排除在往返缓存之外</p>
+</li>
+<li>
+<p><code>hashchange</code></p>
+<ul>
+<li>在 URL hash 发生变化时通知开发者</li>
+<li>hashchange 事件处理程序必须添加给 window</li>
+<li>event 对象有两个新属性：oldURL 和 newURL，是包含散列值的完整 URL</li>
+</ul>
+</li>
+</ul>
+<h2>焦点事件</h2>
+<p>焦点事件在页面元素获得或失去焦点时触发，</p>
+<ul>
+<li><code>blur</code>：当元素失去焦点时触发，这个事件不冒泡</li>
+<li><code>focus</code>：当元素获得焦点时触发，这个事件不冒泡</li>
+<li><code>focusin</code>：当元素获得焦点时触发，这个事件是 focus 的冒泡版</li>
+<li><code>focusout</code>：当元素失去焦点时触发，这个事件是 blur 的通用版</li>
+</ul>
+<h2>鼠标事件</h2>
+<h3>移动事件</h3>
+<ul>
+<li><code>mouseover</code>、<code>mouseout</code>
+<ul>
+<li>从父元素移动到子元素，对于父元素而言，仍然算作离开</li>
+<li>这两个事件冒泡</li>
+</ul>
+</li>
+<li><code>mouseenter</code>、<code>mouseleave</code>
+<ul>
+<li>子元素仍然是父元素的一部分，从父元素到子元素不算离开</li>
+<li>这两个事件不冒泡</li>
+</ul>
+</li>
+</ul>
+<p>除了 <code>mouseenter</code> 和 <code>mouseleave</code>，所有的鼠标事件都会冒泡。</p>
+<h3>点击事件</h3>
+<p>点击事件的执行顺序： <code>mousedown</code>、<code>mouseup</code>、<code>click</code>、<code>mousedown</code>、<code>mouseup</code>、<code>click</code>、<code>dbclick</code></p>
+<p>事件之间存在关系，取消鼠标事件的默认行为会影响其他事件：</p>
+<ul>
+<li>
+<p><code>mousedown</code> 和 <code>mouseup</code> 中的任意一个事件被取消，<code>click</code> 事件就不会触发</p>
+</li>
+<li>
+<p><code>mousedown</code>、<code>mouseup</code> 、<code>click</code> 中任意被取消，<code>dbclick</code> 不会触发</p>
+</li>
+</ul>
+<h3>事件对象</h3>
+<p>所有的鼠标事件，都为 <code>MouseEvent</code> 类型对象</p>
+<ul>
+<li>
+<p><code>e.button</code> 可以区分鼠标按键</p>
+<ul>
+<li>0 主键、1 中键、2 次键</li>
+</ul>
+</li>
+<li>
+<p><code>e.detail</code></p>
+<ul>
+<li>表示在该位置发生多少次点击</li>
+<li>如果 <code>mousedown</code> 和 <code>mouseup</code> 的位置不同，则重新开始计数</li>
+</ul>
+</li>
+<li>
+<p>坐标</p>
+<ul>
+<li><code>pageX</code>、<code>pageY</code>  当前鼠标距离页面的坐标</li>
+<li><code>clientX</code>、<code>clientY</code>  当前鼠标相对于视口的坐标</li>
+<li><code>offsetX</code>、<code>offsetY</code>  鼠标相对于<strong>事件源</strong>的<strong>内边距</strong>的坐标</li>
+<li><code>screenX</code>、<code>screenY</code> / <code>x</code>、<code>y</code>  鼠标相对于屏幕的坐标</li>
+<li><code>movementX</code>、<code>movementY</code>  只在 <code>mousemove</code> 中有效，相对于<strong>上一次鼠标位置偏移</strong>的距离</li>
+</ul>
+</li>
+<li>
+<p>按键</p>
+<ul>
+<li><code>altKey</code>  触发事件时，是否按下了键盘的alt键</li>
+<li><code>ctrlKey</code>  触发事件时，是否按下了键盘的ctrl键</li>
+<li><code>shiftKey</code>  触发事件时，是否按下了键盘的shift键</li>
+</ul>
+</li>
+<li>
+<p><code>e.wheelData</code></p>
+<ul>
+<li><code>mousewheel</code> 事件</li>
+<li>向前滚动，<code>e.wheelData</code> 是 120 的倍数</li>
+<li>向后滚动，<code>e.wheelData</code> 是 -120 的倍数</li>
+</ul>
+</li>
+</ul>
+<h2>键盘事件</h2>
+<ul>
+<li><code>keydown</code>
+<ul>
+<li>按下键盘上任意键触发</li>
+<li>按住不放，会重复触发此事件</li>
+</ul>
+</li>
+<li><code>keypress</code>
+<ul>
+<li>按下键盘上一个<strong>字符键</strong>时触发，包括 ESC</li>
+<li>DOM3 Events 废弃了 该事件，推荐 textInput 事件</li>
+</ul>
+</li>
+<li><code>keyup</code>
+<ul>
+<li>抬起键盘上任意键触发</li>
+</ul>
+</li>
+</ul>
+<p>响应顺序：<code>keydown</code> 、<code>keypress</code> 、<code>keyup</code></p>
+<p>区别：<code>keydown</code>、<code>keypress</code> 如果阻止了事件默认行为，文本不会显示</p>
+<p>事件对象为 <code>KeyboardEvent</code> 类型</p>
+<ul>
+<li><code>event.code</code>  得到按键字符串，适配键盘布局</li>
+<li><code>event.key</code>  得到按键字符串，不适配键盘布局</li>
+</ul>
+<h2>表单事件</h2>
+<ul>
+<li><code>submit</code>  提交表单事件，仅在 form 元素上有效</li>
+<li><code>change</code>  域的内容改变并且失去焦点时事件会触发</li>
+<li><code>input</code>  文本改变事件，即时触发</li>
+<li><code>select</code>：在文本框上当用户选择了一个或多个字符时触发</li>
+</ul>
+<h2>设备事件</h2>
+<ul>
+<li><code>deviceorientationchange</code>：检测设备的方向变化<!-- -->
+<ul>
+<li><code>e.alpha</code>    围绕 z 轴旋转是，y 轴的度数差</li>
+<li><code>e.beta</code>     围绕 x 轴旋转时，z 轴的度数差</li>
+<li><code>e.gamma</code>   围绕 y 轴旋转时，z 轴的度数差</li>
+<li><code>e.absolute </code> 表示设备是否返回一个绝对值</li>
+<li><code>e.compassCalibrated </code>  设备的指南针是否校准过</li>
+</ul>
+</li>
+<li><code>devicemotion</code>：设备移动<!-- -->
+<ul>
+<li><code>e.acceleration</code>  x y z 每个方向上的加速度</li>
+<li><code>e.accelerationIncludingGravity </code>  在考虑 z 轴自然重力加速度的情况下，x y z 每个方向上的加速度</li>
+<li><code>e.interval </code></li>
+<li><code>e.rotationRate </code> 一个包含 alpha beta gamma 的对象</li>
+</ul>
+</li>
+</ul>
+<h1>事件模拟</h1>
+<ol>
+<li>使用 <code>document.createEvent()</code> 方法创建一个 event 对象<!-- -->
+<ul>
+<li><code>&#x27;UIEvents&#x27;</code>：通用用户界面事件(鼠标事件和键盘事件都继承自这 个事件)</li>
+<li><code>&#x27;MouseEvents&#x27;</code>：通用鼠标事件</li>
+<li><code>&#x27;HTMLEvents&#x27;</code>：通用 HTML 事件(HTML 事件已经分散到了其他事件大类中，DOM3中没有该类事件)</li>
+<li>在 DOM2 中，所有这些字符串都是英文复数形式，但在 DOM3 中，又把它们改成了英文单数形式</li>
+</ul>
+</li>
+<li>初始化事件，每种类型的 event 对象都有特定的方法</li>
+<li>使用 <code>dom.dispatchEvent()</code> 分发事件</li>
+</ol>
+<p>通过手动分发 input 事件来触发 react onChange 事件：</p>
+<pre><code class="language-javascript">// init 事件
+const event = document.createEvent(&#x27;UIEvent&#x27;)
+event.initEvent(&#x27;input&#x27;, true, true)
+
+// 原生 set ，清空
+nativeInputValueSetter!.call(inputRef.current, &#x27;&#x27;)
+
+// 手动分发事件，触发 react onChange
+inputRef.current.dispatchEvent(event)
+</code></pre><div><a href="/notes/JavaScript/Web%20api">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"事件","article":{"title":"事件","content":"# 事件注册\r\n\r\n- `dom.onxxx = function () {}`\r\n  - dom0 的方式\r\n  - 移除事件：`dom.onxxx = null / undefined`\r\n  - 对于同一个元素同一个事件只能绑定一个事件处理程序，同一个事件的后绑定的事件处理程序覆盖前一个\r\n- `dom.addEventListener(type, handle, false)`\r\n  - dom2的方式\r\n  - 移除事件：`dom.removeEventListener(type, handle, false)` \r\n  - 第三个参数用于控制该事件处理函数是否属于事件捕获阶段\r\n  - 对同一事件注册多个处理程序（不可为同一函数），触发顺序和绑定顺序吻合\r\n- `dom.attachEvent('on'+type, handle)`\r\n  - IE8及以下得用这种方式注册事件替代 dom2 的方式\r\n  - 这也可以注册多个处理程序\r\n  - 移除事件：`detachEvent('on'+type, handle)`\r\n\r\n# 事件流\r\n\r\n当一个元素发生了某个事件时，那该元素的所有**祖先元素**及**整个页面**都发生了该事件，事件流即描述页面接收事件的顺序\r\n\r\n1. 事件冒泡\r\n\r\n2. 事件捕获\r\n\r\n通过 `addEventListenr(type, handle, true)` 可将事件注册为事件捕获阶段发生\r\n\r\n对于事件源来说不存在事件捕获和事件冒泡，都是事件执行\r\n\r\n**对于同一事件这两种处理模型的触发顺序：**先捕获，后冒泡\r\n\r\n# 事件对象\r\n\r\n1. 事件源对象：`event.target || event.srcElement`\r\n2. 事件类型：`event.type`\r\n3. 事件所处阶段（冒泡、捕获）：`event.eventPhase`\r\n4. 当前绑定事件的元素：`event.currentTarget`  等效于 `this`\r\n\r\n## 事件委托\r\n\r\n通过事件冒泡和事件源对象可以实现事件委托\r\n\r\n即通过给祖先元素注册事件，在程序处理程序中判断事件源进行不同的处理\r\n\r\n## 阻止默认事件\r\n\r\n- `return false` dom 0 的方式才有效\r\n- `event.preventDefault()` 标准，ie8-\r\n- `event.returnValue = false`  兼容IE\r\n\r\n## 阻止事件冒泡\r\n\r\n- `event.stopPropagation()` 标准\r\n- `event.cancelBubble = true` IE\r\n\r\n# 事件类型\r\n\r\n浏览器中可以发生很多种事件，所发生事件的类型决定了事件对象中会保存什么信息\r\n\r\nDOM3 Events 定义的事件类型：\r\n\r\n- 用户界面事件：涉及与 BOM 交互的通用浏览器事件\r\n- 焦点事件：在元素获得和失去焦点时触发\r\n- 鼠标事件：使用鼠标在页面上执行某些操作时触发\r\n- 滚轮事件：使用鼠标滚轮（或类似设备）时触发\r\n- 输入事件：向文档中输入文本时触发\r\n- 键盘事件：使用键盘在页面上执行某些操作时触发\r\n- 合成事件：在使用某种 IME（Input Method Editor，输入法编辑器）输入字符时触发\r\n\r\n## UI事件\r\n\r\nUI 事件不一定跟用户操作有关，在 DOM 规范出现之前就已经以某种形式存在了，保留它们是为了向后兼容\r\n\r\n- `load`\r\n\t- 当一个资源及其依赖**资源**已**完成加载**时触发load事件\r\n\t- 在 window 上当页面加载完成后触发\r\n\t- 在 `img` 元素上当图片加载完成后触发\r\n\t- 根据 DOM2 Events，load 事件应该在 document 上触发\r\n\t- 为了向后兼容，所有浏览器都在 window 上实现了该事件\r\n\t\r\n- `beforeunload`\r\n\r\n\t- 该事件在 window 上触发，用意是给开发者提供阻止页面被卸载的机会\r\n\t- 在页面即将从浏览器中卸载时触发（关闭、刷新）\r\n\t- 这个事件会向用户显示一个确认框，请用户确认是关闭页还是取消关闭\r\n\t- `event.returnValue` 设置为要提示的字符串，函数返回该字符串（对于 Chrome 和 Safari）\r\n\t\r\n- `unload`\r\n\r\n\t- 在 window 上当页面完全卸载后触发\r\n\t- 一般是在从一个页面导航到另一个页面时触发\r\n\t- 它在 `beforeunload` 和 `pagehide`（例如回退）后被触发\r\n\t\r\n- `error`\r\n\r\n  - 在 window 上当 JavaScript 报错时触发\r\n  - 在 `img` 元素上当图片加载失败时触发\r\n  \r\n- `resize`\r\n\t- 在 window 或窗格上当窗口或窗格被缩放时触发\r\n\t- 最大化、最小化也会触发该事件\r\n\t\r\n- `scroll`\r\n\r\n\t- 当用户滚动包含滚动条的元素时在元素上触发\r\n\t- `body` 元素包含整个页面的滚动条\r\n\t\r\n- `contextmenu`\r\n\r\n\t- 专门用于表示何时该显示上下文菜单\r\n\t- 允许开发者取消默认的上下文菜单并提供自定义菜单\r\n\t- 该事件冒泡，只要给 document 指定一个事件处理程序就可以处理页面上的所有同类事件\r\n\t\r\n- `DOMContentLoaded`\r\n  - DOM 树构建完成后立即触发\r\n  - `document`、`window` 都能触发（实际是 `document`，冒泡到 `window`）\r\n  - 对于不支持该事件的浏览器，可以通过 `setTimout` 0 来实现\r\n  \r\n- `readystatechange`\r\n\r\n  - 支持该事件的每个对象都有一个 `readyState` 属性，该属性可能具有的值：\r\n  \t- `uninitialized`：对象存在并尚未初始化\r\n  \t- `loading`：对象正在加载数据\r\n  \t- `loaded`：对象已经加载完数据\r\n  \t- `interactive`：对象可以交互，但尚未加载完成\r\n  \t- `complete`：对象加载完成\r\n  - 并非所有对象都会经历所有 readystate 阶段\r\n  - document 上触发时，readyState 的值首先为 `interactive`\r\n  - `document.readyState` 属性描述了文档的加载状态\r\n  \t1. `loading`：document 仍在加载\r\n  \t2. `interactive`：文档**解析**完成，先于 `DOMContentLoaded` 事件触发\r\n  \t3. `complete`：文档和所有子资源已完成加载，`load` 事件即将被触发\r\n  \r\n- `pageshow`、`pagehide`\r\n\r\n  - Firefox 和 Opera 开发了一个名为往返缓存功能，旨在使用浏览器“前进”和“后退”时加快页面之间的切换\r\n- 如果页面在缓存中，那么导航到这个页面时就 不会触发 load 事件\r\n  - Firefx 决定提供一些事件，把往返缓存的行为暴露出来\r\n- `pageshow` 会在页面显示时触发，无论是否来自往返缓存\r\n  \r\n  - 在新加载的页面上， pageshow 会在 load 事件之后触发\r\n  \r\n  - 在来自往返缓存的页面上，pageshow 会在页面状态完全恢复后触发\r\n  \r\n- 这个事件的目标是 document，但事件处理程序必须添加到 window 上\r\n  - pagehide 事件会在页面从浏览器中卸载后，在 unload 事件之前触发\r\n-  event 对象中有一个 persisted 属性，该属性指示页面是否存储在往返缓存中\r\n    - pageshow 事件表明页面是从往返缓存中加载的\r\n  - pagehide 事件表明页面卸载之后会被保存在往返缓存中\r\n  - 注册了onunload 事件处理程序(即使是空函数)的页面会自动排除在往返缓存之外\r\n\r\n- `hashchange`\r\n  \r\n  - 在 URL hash 发生变化时通知开发者\r\n  - hashchange 事件处理程序必须添加给 window\r\n  - event 对象有两个新属性：oldURL 和 newURL，是包含散列值的完整 URL\r\n\r\n## 焦点事件\r\n\r\n焦点事件在页面元素获得或失去焦点时触发，\r\n\r\n- `blur`：当元素失去焦点时触发，这个事件不冒泡\r\n- `focus`：当元素获得焦点时触发，这个事件不冒泡\r\n- `focusin`：当元素获得焦点时触发，这个事件是 focus 的冒泡版\r\n- `focusout`：当元素失去焦点时触发，这个事件是 blur 的通用版\r\n\r\n## 鼠标事件\r\n\r\n### 移动事件\r\n\r\n- `mouseover`、`mouseout`\r\n\t- 从父元素移动到子元素，对于父元素而言，仍然算作离开\r\n\t- 这两个事件冒泡\r\n- `mouseenter`、`mouseleave`\r\n\t- 子元素仍然是父元素的一部分，从父元素到子元素不算离开\r\n\t- 这两个事件不冒泡\r\n\r\n除了 `mouseenter` 和 `mouseleave`，所有的鼠标事件都会冒泡。\r\n\r\n### 点击事件\r\n\r\n点击事件的执行顺序： `mousedown`、`mouseup`、`click`、`mousedown`、`mouseup`、`click`、`dbclick`\r\n\r\n事件之间存在关系，取消鼠标事件的默认行为会影响其他事件：\r\n\r\n- `mousedown` 和 `mouseup` 中的任意一个事件被取消，`click` 事件就不会触发\r\n\r\n- `mousedown`、`mouseup` 、`click` 中任意被取消，`dbclick` 不会触发\r\n\r\n### 事件对象\r\n\r\n所有的鼠标事件，都为 `MouseEvent` 类型对象\r\n\r\n- `e.button` 可以区分鼠标按键\r\n\t- 0 主键、1 中键、2 次键\r\n- `e.detail` \r\n\t- 表示在该位置发生多少次点击\r\n\t- 如果 `mousedown` 和 `mouseup` 的位置不同，则重新开始计数\r\n- 坐标\r\n\t- `pageX`、`pageY`  当前鼠标距离页面的坐标\r\n\t- `clientX`、`clientY`  当前鼠标相对于视口的坐标\r\n\t- `offsetX`、`offsetY`  鼠标相对于**事件源**的**内边距**的坐标\r\n\t- `screenX`、`screenY` / `x`、`y`  鼠标相对于屏幕的坐标\r\n\t- `movementX`、`movementY`  只在 `mousemove` 中有效，相对于**上一次鼠标位置偏移**的距离\r\n- 按键\r\n\t- `altKey`  触发事件时，是否按下了键盘的alt键\r\n\t- `ctrlKey`  触发事件时，是否按下了键盘的ctrl键\r\n\t- `shiftKey`  触发事件时，是否按下了键盘的shift键\r\n\r\n- `e.wheelData`\r\n\t- `mousewheel` 事件\r\n\t- 向前滚动，`e.wheelData` 是 120 的倍数\r\n\t- 向后滚动，`e.wheelData` 是 -120 的倍数\r\n\r\n## 键盘事件\r\n\r\n- `keydown`\r\n\t- 按下键盘上任意键触发\r\n\t- 按住不放，会重复触发此事件\r\n- `keypress`\r\n\t- 按下键盘上一个**字符键**时触发，包括 ESC\r\n\t- DOM3 Events 废弃了 该事件，推荐 textInput 事件\r\n- `keyup`\r\n\t- 抬起键盘上任意键触发\r\n\r\n响应顺序：`keydown` 、`keypress` 、`keyup` \r\n\r\n区别：`keydown`、`keypress` 如果阻止了事件默认行为，文本不会显示\r\n\r\n事件对象为 `KeyboardEvent` 类型\r\n\r\n- `event.code`  得到按键字符串，适配键盘布局\r\n- `event.key`  得到按键字符串，不适配键盘布局\r\n\r\n## 表单事件\r\n\r\n- `submit`  提交表单事件，仅在 form 元素上有效\r\n- `change`  域的内容改变并且失去焦点时事件会触发\r\n- `input`  文本改变事件，即时触发\r\n- `select`：在文本框上当用户选择了一个或多个字符时触发\r\n\r\n## 设备事件\r\n\r\n- `deviceorientationchange`：检测设备的方向变化\r\n\t- `e.alpha`    围绕 z 轴旋转是，y 轴的度数差\r\n\t- `e.beta`     围绕 x 轴旋转时，z 轴的度数差\r\n\t- `e.gamma`   围绕 y 轴旋转时，z 轴的度数差\r\n\t- `e.absolute ` 表示设备是否返回一个绝对值\r\n\t- `e.compassCalibrated `  设备的指南针是否校准过\r\n- `devicemotion`：设备移动\r\n  - `e.acceleration`  x y z 每个方向上的加速度\r\n  - `e.accelerationIncludingGravity `  在考虑 z 轴自然重力加速度的情况下，x y z 每个方向上的加速度\r\n  - `e.interval `\r\n  - `e.rotationRate ` 一个包含 alpha beta gamma 的对象\r\n\r\n# 事件模拟\r\n\r\n1. 使用 `document.createEvent()` 方法创建一个 event 对象\r\n   - `'UIEvents'`：通用用户界面事件(鼠标事件和键盘事件都继承自这 个事件)\r\n   - `'MouseEvents'`：通用鼠标事件\r\n   - `'HTMLEvents'`：通用 HTML 事件(HTML 事件已经分散到了其他事件大类中，DOM3中没有该类事件)\r\n   - 在 DOM2 中，所有这些字符串都是英文复数形式，但在 DOM3 中，又把它们改成了英文单数形式\r\n2. 初始化事件，每种类型的 event 对象都有特定的方法\r\n3. 使用 `dom.dispatchEvent()` 分发事件\r\n\r\n通过手动分发 input 事件来触发 react onChange 事件：\r\n\r\n```javascript\r\n// init 事件\r\nconst event = document.createEvent('UIEvent')\r\nevent.initEvent('input', true, true)\r\n\r\n// 原生 set ，清空\r\nnativeInputValueSetter!.call(inputRef.current, '')\r\n\r\n// 手动分发事件，触发 react onChange\r\ninputRef.current.dispatchEvent(event)\r\n```\r\n\r\n","meta":{"size":11459,"birthTime":1663496641400.5376,"updateTime":1663496641400.7612}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["JavaScript","Web api","事件"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

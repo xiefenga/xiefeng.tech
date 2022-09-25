@@ -1,0 +1,108 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>diff | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">diff</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><blockquote>
+<p>面试题：请阐述vue的diff算法</p>
+<p>参考回答：</p>
+<p>当组件创建和更新时，vue均会执行内部的update函数，该函数使用render函数生成的虚拟dom树，将新旧两树进行对比，找到差异点，最终更新到真实dom</p>
+<p>对比差异的过程叫diff，vue在内部通过一个叫patch的函数完成该过程</p>
+<p>在对比时，vue采用深度优先、同层比较的方式进行比对。</p>
+<p>在判断两个节点是否相同时，vue是通过虚拟节点的key和tag来进行判断的</p>
+<p>具体来说，首先对根节点进行对比，如果相同则将旧节点关联的真实dom的引用挂到新节点上，然后根据需要更新属性到真实dom，然后再对比其子节点数组；如果不相同，则按照新节点的信息递归创建所有真实dom，同时挂到对应虚拟节点上，然后移除掉旧的dom。</p>
+<p>在对比其子节点数组时，vue对每个子节点数组使用了两个指针，分别指向头尾，然后不断向中间靠拢来进行对比，这样做的目的是尽量复用真实dom，尽量少的销毁和创建真实dom。如果发现相同，则进入和根节点一样的对比流程，如果发现不同，则移动真实dom到合适的位置。</p>
+<p>这样一直递归的遍历下去，直到整棵树完成对比。</p>
+</blockquote>
+<ol>
+<li>
+<p><code>diff</code>的时机</p>
+<p>当组件创建时，以及依赖的属性或数据变化时，会运行一个函数，该函数会做两件事：</p>
+<ul>
+<li>运行<code>_render</code>生成一棵新的虚拟dom树（vnode tree）</li>
+<li>运行<code>_update</code>，传入虚拟dom树的根节点，对新旧两棵树进行对比，最终完成对真实dom的更新</li>
+</ul>
+<p>核心代码如下：</p>
+<pre><code class="language-js">// vue构造函数
+function Vue(){
+  // ... 其他代码
+  var updateComponent = () =&gt; {
+    this._update(this._render())
+  }
+  new Watcher(updateComponent);
+  // ... 其他代码
+}
+</code></pre>
+<p><code>diff</code>就发生在<code>_update</code>函数的运行过程中</p>
+</li>
+<li>
+<p><code>_update</code>函数在干什么</p>
+<p><code>_update</code>函数接收到一个<code>vnode</code>参数，这就是<strong>新</strong>生成的虚拟dom树</p>
+<p>同时，<code>_update</code>函数通过当前组件的<code>_vnode</code>属性，拿到<strong>旧</strong>的虚拟dom树</p>
+<p><code>_update</code>函数首先会给组件的<code>_vnode</code>属性重新赋值，让它指向新树</p>
+<!-- -->&lt;img src=&quot;http://mdrs.yuanjin.tech/img/20210301193804.png&quot; alt=&quot;image-20210301193804498&quot; style=&quot;zoom:50%;&quot; /&gt;<!-- -->
+<p>然后会判断旧树是否存在：</p>
+<ul>
+<li>
+<p>不存在：说明这是第一次加载组件，于是通过内部的<code>patch</code>函数，直接遍历新树，为每个节点生成真实DOM，挂载到每个节点的<code>elm</code>属性上</p>
+<!-- -->&lt;img src=&quot;http://mdrs.yuanjin.tech/img/20210301194237.png&quot; alt=&quot;image-20210301194237825&quot; style=&quot;zoom:43%;&quot; /&gt;<!-- -->
+</li>
+<li>
+<p>存在：说明之前已经渲染过该组件，于是通过内部的<code>patch</code>函数，对新旧两棵树进行对比，以达到下面两个目标：</p>
+<ul>
+<li>完成对所有真实dom的最小化处理</li>
+<li>让新树的节点对应合适的真实dom</li>
+</ul>
+<!-- -->&lt;img src=&quot;http://mdrs.yuanjin.tech/img/20210301195003.png&quot; alt=&quot;image-20210301195003696&quot; style=&quot;zoom:50%;&quot; /&gt;<!-- -->
+</li>
+</ul>
+</li>
+<li>
+<p><code>patch</code>函数的对比流程</p>
+<p><strong>术语解释</strong>：</p>
+<ol>
+<li>「<strong>相同</strong>」：是指两个虚拟节点的标签类型、<code>key</code>值均相同，但<code>input</code>元素还要看<code>type</code>属性</li>
+<li>「<strong>新建元素</strong>」：是指根据一个虚拟节点提供的信息，创建一个真实dom元素，同时挂载到虚拟节点的<code>elm</code>属性上</li>
+<li>「<strong>销毁元素</strong>」：是指：<code>vnode.elm.remove()</code></li>
+<li>「<strong>更新</strong>」：是指对两个虚拟节点进行对比更新，它<strong>仅发生</strong>在两个虚拟节点「相同」的情况下。具体过程稍后描述。</li>
+<li>「<strong>对比子节点</strong>」：是指对两个虚拟节点的子节点进行对比，具体过程稍后描述</li>
+</ol>
+<p><strong>详细流程：</strong></p>
+<ol>
+<li>
+<p><strong>根节点比较</strong></p>
+<!-- -->&lt;img src=&quot;http://mdrs.yuanjin.tech/img/20210301203350.png&quot; alt=&quot;image-20210301203350246&quot; style=&quot;zoom:50%;&quot; /&gt;<!-- -->
+<p><code>patch</code>函数首先对根节点进行比较</p>
+<p>如果两个节点：</p>
+<ul>
+<li>
+<p>「相同」，进入**「更新」流程**</p>
+<ol>
+<li>
+<p>将旧节点的真实dom赋值到新节点：<code>newVnode.elm = oldVnode.elm</code></p>
+</li>
+<li>
+<p>对比新节点和旧节点的属性，有变化的更新到真实dom中</p>
+</li>
+<li>
+<p>当前两个节点处理完毕，开始**「对比子节点」**</p>
+</li>
+</ol>
+</li>
+<li>
+<p>不「相同」</p>
+<ol>
+<li>新节点<strong>递归</strong>「新建元素」</li>
+<li>旧节点「销毁元素」</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>「对比子节点」</strong></p>
+<p>在「对比子节点」时，vue一切的出发点，都是为了：</p>
+<ul>
+<li>尽量啥也别做</li>
+<li>不行的话，尽量仅改动元素属性</li>
+<li>还不行的话，尽量移动元素，而不是删除和创建元素</li>
+<li>还不行的话，删除和创建元素</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol><div><a href="/notes">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"diff","article":{"title":"diff","content":"\u003e 面试题：请阐述vue的diff算法\r\n\u003e\r\n\u003e 参考回答：\r\n\u003e\r\n\u003e 当组件创建和更新时，vue均会执行内部的update函数，该函数使用render函数生成的虚拟dom树，将新旧两树进行对比，找到差异点，最终更新到真实dom\r\n\u003e\r\n\u003e 对比差异的过程叫diff，vue在内部通过一个叫patch的函数完成该过程\r\n\u003e\r\n\u003e 在对比时，vue采用深度优先、同层比较的方式进行比对。\r\n\u003e\r\n\u003e 在判断两个节点是否相同时，vue是通过虚拟节点的key和tag来进行判断的\r\n\u003e\r\n\u003e 具体来说，首先对根节点进行对比，如果相同则将旧节点关联的真实dom的引用挂到新节点上，然后根据需要更新属性到真实dom，然后再对比其子节点数组；如果不相同，则按照新节点的信息递归创建所有真实dom，同时挂到对应虚拟节点上，然后移除掉旧的dom。\r\n\u003e\r\n\u003e 在对比其子节点数组时，vue对每个子节点数组使用了两个指针，分别指向头尾，然后不断向中间靠拢来进行对比，这样做的目的是尽量复用真实dom，尽量少的销毁和创建真实dom。如果发现相同，则进入和根节点一样的对比流程，如果发现不同，则移动真实dom到合适的位置。\r\n\u003e\r\n\u003e 这样一直递归的遍历下去，直到整棵树完成对比。\r\n\r\n1. `diff`的时机\r\n\r\n   当组件创建时，以及依赖的属性或数据变化时，会运行一个函数，该函数会做两件事：\r\n\r\n   - 运行`_render`生成一棵新的虚拟dom树（vnode tree）\r\n   - 运行`_update`，传入虚拟dom树的根节点，对新旧两棵树进行对比，最终完成对真实dom的更新\r\n\r\n   核心代码如下：\r\n\r\n   ```js\r\n   // vue构造函数\r\n   function Vue(){\r\n     // ... 其他代码\r\n     var updateComponent = () =\u003e {\r\n       this._update(this._render())\r\n     }\r\n     new Watcher(updateComponent);\r\n     // ... 其他代码\r\n   }\r\n   ```\r\n\r\n   `diff`就发生在`_update`函数的运行过程中\r\n\r\n   \r\n\r\n2. `_update`函数在干什么\r\n\r\n   `_update`函数接收到一个`vnode`参数，这就是**新**生成的虚拟dom树\r\n\r\n   同时，`_update`函数通过当前组件的`_vnode`属性，拿到**旧**的虚拟dom树\r\n\r\n   `_update`函数首先会给组件的`_vnode`属性重新赋值，让它指向新树\r\n\r\n   \u003cimg src=\"http://mdrs.yuanjin.tech/img/20210301193804.png\" alt=\"image-20210301193804498\" style=\"zoom:50%;\" /\u003e\r\n\r\n   然后会判断旧树是否存在：\r\n\r\n   - 不存在：说明这是第一次加载组件，于是通过内部的`patch`函数，直接遍历新树，为每个节点生成真实DOM，挂载到每个节点的`elm`属性上\r\n\r\n     \u003cimg src=\"http://mdrs.yuanjin.tech/img/20210301194237.png\" alt=\"image-20210301194237825\" style=\"zoom:43%;\" /\u003e\r\n\r\n   - 存在：说明之前已经渲染过该组件，于是通过内部的`patch`函数，对新旧两棵树进行对比，以达到下面两个目标：\r\n\r\n     - 完成对所有真实dom的最小化处理\r\n     - 让新树的节点对应合适的真实dom\r\n\r\n     \u003cimg src=\"http://mdrs.yuanjin.tech/img/20210301195003.png\" alt=\"image-20210301195003696\" style=\"zoom:50%;\" /\u003e\r\n\r\n3. `patch`函数的对比流程\r\n\r\n   **术语解释**：\r\n\r\n   1. 「**相同**」：是指两个虚拟节点的标签类型、`key`值均相同，但`input`元素还要看`type`属性\r\n   2. 「**新建元素**」：是指根据一个虚拟节点提供的信息，创建一个真实dom元素，同时挂载到虚拟节点的`elm`属性上\r\n   3. 「**销毁元素**」：是指：`vnode.elm.remove()`\r\n   4. 「**更新**」：是指对两个虚拟节点进行对比更新，它**仅发生**在两个虚拟节点「相同」的情况下。具体过程稍后描述。\r\n   5. 「**对比子节点**」：是指对两个虚拟节点的子节点进行对比，具体过程稍后描述\r\n\r\n   **详细流程：**\r\n\r\n   1. **根节点比较**\r\n\r\n      \u003cimg src=\"http://mdrs.yuanjin.tech/img/20210301203350.png\" alt=\"image-20210301203350246\" style=\"zoom:50%;\" /\u003e\r\n\r\n      `patch`函数首先对根节点进行比较\r\n\r\n      如果两个节点：\r\n\r\n      - 「相同」，进入**「更新」流程**\r\n\r\n        1. 将旧节点的真实dom赋值到新节点：`newVnode.elm = oldVnode.elm`\r\n\r\n        2. 对比新节点和旧节点的属性，有变化的更新到真实dom中\r\n        3. 当前两个节点处理完毕，开始**「对比子节点」**\r\n\r\n      - 不「相同」\r\n\r\n        1. 新节点**递归**「新建元素」\r\n        2. 旧节点「销毁元素」\r\n\r\n   2. **「对比子节点」**\r\n\r\n      在「对比子节点」时，vue一切的出发点，都是为了：\r\n\r\n      - 尽量啥也别做\r\n      - 不行的话，尽量仅改动元素属性\r\n      - 还不行的话，尽量移动元素，而不是删除和创建元素\r\n      - 还不行的话，删除和创建元素\r\n\r\n","meta":{"size":4845,"birthTime":1663496641419.2766,"updateTime":1663496641419.4802}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["diff"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

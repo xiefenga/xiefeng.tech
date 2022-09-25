@@ -1,0 +1,118 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>事件循环 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#总览" data-target-id="h1-总览-0">总览</a></li><li><a href="#不同阶段" data-target-id="h1-不同阶段-1">不同阶段</a><ul><li><a href="#timers" data-target-id="h2-timers-0">timers</a></li><li><a href="#pending" data-target-id="h2-pending-1">pending</a></li><li><a href="#poll" data-target-id="h2-poll-2">poll</a></li><li><a href="#check" data-target-id="h2-check-3">check</a></li></ul></li><li><a href="#nextTick" data-target-id="h1-nextTick-2">nextTick</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">事件循环</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>总览</h1>
+<p>Node 的事件循环和浏览器有一些区别，Node 的事件循环分为六个阶段，每个阶段都有一个 FIFO 队列来执行该阶段的回调。</p>
+<p><img src="http://oss.xiefeng.tech/img/20210307153001.png" alt=""/></p>
+<p>当事件循环进入给定的阶段时，它将执行特定于该阶段的任何操作，然后执行该阶段队列中的回调，直到队列用尽或最大回调数已执行。</p>
+<p>当该队列已用尽或达到回调限制，事件循环将移动到下一阶段接着执行。</p>
+<h1>不同阶段</h1>
+<ul>
+<li><strong>timers</strong>：该阶段执行已经被 <code>setTimeout()</code> 和 <code>setInterval()</code> 的调度回调函数</li>
+<li><strong>pending</strong>：系统级回调</li>
+<li><strong>idle, prepare</strong>：仅系统内部使用</li>
+<li><strong>poll</strong>：执行与 I/O 相关的回调（除了关闭的回调函数，那些由计时器和 <code>setImmediate()</code> 调度的之外的几乎所有回调）</li>
+<li><strong>check</strong>：<code>setImmediate()</code> 回调函数在这里执行。</li>
+<li><strong>close</strong>：一些关闭的回调函数，如：<code>socket.on(&#x27;close&#x27;, ...)</code>。</li>
+</ul>
+<p>在每次运行的事件循环之间，Node.js 检查它是否在等待任何异步 I/O 或计时器，如果没有的话，则完全关闭。</p>
+<h2>timers</h2>
+<p>在 Node 中，计时器分为 <code>Immediate</code> 和 <code>Timeout</code> 两类，这两种计时器都是一个 Node 对象。</p>
+<p><code>Timeout</code> 类计时器的回调在该阶段执行，一旦计时器过期，在下一轮事件循环的 timers 阶段就会调用这些回调。</p>
+<p><code>setInterval</code> 和 <code>setTimeout</code> 都可创建该类计时器，在创建该计时器时， <code>delay</code> 参数是可选的，如果没有提供值或指定的值为 0，那么该参数值默认情况下为 1 毫秒。</p>
+<p>和浏览器类似，计时器也是不够准确的，因为不是计时器一过期就会执行，只有到达该阶段才会执行。</p>
+<p>而且计时器并不需要单独的线程去计时，也就是不需要 Node 的 I/O 线程池的参与。</p>
+<p>调用计时器 api 创建的所创建的计时器会被保存在红黑树中，每次轮到事件循环的该阶段从该红黑树中取出定时器对象检查是否查过定时时间。</p>
+<h2>pending</h2>
+<p>此阶段对某些系统操作（如 TCP 错误类型）执行回调。例如：TCP 套接字在尝试连接时接收到 <code>ECONNREFUSED</code>，则某些 *nix 的系统希望等待报告错误。</p>
+<h2>poll</h2>
+<p>I/O 回调在此阶段执行，例如 <code>fs.readFile</code>、<code>http.createServer</code>，而且该阶段是 Node 事件循环中最常呆的阶段。</p>
+<p>轮询阶段所做的事：</p>
+<ol>
+<li>如果该阶段队列不为空，则循环访问回调队列并同步执行它们，直到队列已用尽或者达到了与系统相关的硬性限制</li>
+<li>如果该阶段的队列为空且其他阶段队列不为空，则该阶段结束</li>
+<li>如果该阶段的队列为空且其他阶段队列也为空阻塞</li>
+</ol>
+<pre><code class="language-javascript">const fs = require(&#x27;fs&#x27;);
+
+const start = Date.now();
+
+function sleep(n) {
+  const start = Date.now();
+  while (Date.now() - start &lt; n);
+}
+
+setTimeout(() =&gt; {
+  console.log(&#x27;timeout&#x27;, Date.now() - start);
+}, 100);
+
+
+fs.readFile(&#x27;./index.html&#x27;, () =&gt; {
+  console.log(&#x27;readFile&#x27;, Date.now() - start);
+  sleep(200);
+});
+
+// readFile 3
+// timeout 208
+</code></pre>
+<h2>check</h2>
+<p>只有 <code>setImmediate()</code> 回调会在该阶段中执行。这使能够在 poll 阶段变得空闲时立即执行一些代码。</p>
+<p><code>setImmediate</code> 和 <code>setTimeout</code> 的区别：</p>
+<ol>
+<li>
+<p>两者所属队列不同</p>
+</li>
+<li>
+<p><code>setImmediate</code> 会立即将回调加入 checks 队列，而 <code>setTimeout</code> 会开启计时器线程，等待计时器过期</p>
+</li>
+<li>
+<p><code>setImmediate</code> 比 <code>setTimeout</code> 效率高</p>
+<pre><code class="language-javascript">function test(fn, name) {
+    let i = 0;
+    console.time(name);
+    const run = () =&gt; {
+        i++;
+        if (i &lt; 1000) {
+            fn(run);
+        } else {
+            console.timeEnd(name);
+        }
+    }
+    run();
+}
+
+test(setTimeout, &#x27;setTimeout&#x27;);
+test(setImmediate, &#x27;setImmediate&#x27;);
+// setImmediate: 6.696ms
+// setTimeout: 1.698s
+</code></pre>
+</li>
+<li>
+<p>计时器受进程性能的约束，二者的回调运行顺序非确定，取决于系统当时的状况</p>
+<pre><code class="language-javascript">setTimeout(() =&gt; {
+  console.log(&#x27;timeout&#x27;);
+}, 0);
+
+setImmediate(() =&gt; {
+  console.log(&#x27;immediate&#x27;);
+});
+</code></pre>
+</li>
+</ol>
+<h1>nextTick</h1>
+<p><code>process.nextTick()</code> 是异步 API 的一部分，但从技术上讲不是事件循环的一部分。</p>
+<p>每次执行一个事件循环中<strong>每个阶段</strong>的<strong>每一个回调</strong>之前，必须要<strong>清空</strong> nextTick 队列和 microtask 对列。</p>
+<p>根据语言规范，<code>Promise</code> 对象的回调函数，会进入异步任务里面的 microtask队列。</p>
+<p>但是在 Node 中微任务队列追加在 <code>process.nextTick</code> 队列的后面，而且只有一个队列清空完毕才会清空另一个。</p>
+<pre><code class="language-javascript">process.nextTick(() =&gt; {
+    console.log(1);
+    process.nextTick(() =&gt; {
+        console.log(2)
+    })
+});
+Promise.resolve().then(() =&gt; console.log(3));
+process.nextTick(() =&gt; console.log(4));
+Promise.resolve().then(() =&gt; console.log(5));
+// 1
+// 4
+// 2
+// 3
+// 5
+</code></pre><div><a href="/notes/JavaScript/NodeJS">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"事件循环","article":{"title":"事件循环","content":"# 总览\r\n\r\nNode 的事件循环和浏览器有一些区别，Node 的事件循环分为六个阶段，每个阶段都有一个 FIFO 队列来执行该阶段的回调。\r\n\r\n![](http://oss.xiefeng.tech/img/20210307153001.png)\r\n\r\n当事件循环进入给定的阶段时，它将执行特定于该阶段的任何操作，然后执行该阶段队列中的回调，直到队列用尽或最大回调数已执行。\r\n\r\n当该队列已用尽或达到回调限制，事件循环将移动到下一阶段接着执行。\r\n\r\n# 不同阶段\r\n\r\n- **timers**：该阶段执行已经被 `setTimeout()` 和 `setInterval()` 的调度回调函数\r\n- **pending**：系统级回调\r\n- **idle, prepare**：仅系统内部使用\r\n- **poll**：执行与 I/O 相关的回调（除了关闭的回调函数，那些由计时器和 `setImmediate()` 调度的之外的几乎所有回调）\r\n- **check**：`setImmediate()` 回调函数在这里执行。\r\n- **close**：一些关闭的回调函数，如：`socket.on('close', ...)`。\r\n\r\n在每次运行的事件循环之间，Node.js 检查它是否在等待任何异步 I/O 或计时器，如果没有的话，则完全关闭。\r\n\r\n## timers\r\n\r\n在 Node 中，计时器分为 `Immediate` 和 `Timeout` 两类，这两种计时器都是一个 Node 对象。\r\n\r\n`Timeout` 类计时器的回调在该阶段执行，一旦计时器过期，在下一轮事件循环的 timers 阶段就会调用这些回调。\r\n\r\n`setInterval` 和 `setTimeout` 都可创建该类计时器，在创建该计时器时， `delay` 参数是可选的，如果没有提供值或指定的值为 0，那么该参数值默认情况下为 1 毫秒。\r\n\r\n和浏览器类似，计时器也是不够准确的，因为不是计时器一过期就会执行，只有到达该阶段才会执行。\r\n\r\n而且计时器并不需要单独的线程去计时，也就是不需要 Node 的 I/O 线程池的参与。\r\n\r\n调用计时器 api 创建的所创建的计时器会被保存在红黑树中，每次轮到事件循环的该阶段从该红黑树中取出定时器对象检查是否查过定时时间。\r\n\r\n## pending\r\n\r\n此阶段对某些系统操作（如 TCP 错误类型）执行回调。例如：TCP 套接字在尝试连接时接收到 `ECONNREFUSED`，则某些 *nix 的系统希望等待报告错误。\r\n\r\n## poll\r\n\r\nI/O 回调在此阶段执行，例如 `fs.readFile`、`http.createServer`，而且该阶段是 Node 事件循环中最常呆的阶段。\r\n\r\n轮询阶段所做的事：\r\n\r\n1. 如果该阶段队列不为空，则循环访问回调队列并同步执行它们，直到队列已用尽或者达到了与系统相关的硬性限制\r\n2. 如果该阶段的队列为空且其他阶段队列不为空，则该阶段结束\r\n3. 如果该阶段的队列为空且其他阶段队列也为空阻塞\r\n\r\n```javascript\r\nconst fs = require('fs');\r\n\r\nconst start = Date.now();\r\n\r\nfunction sleep(n) {\r\n  const start = Date.now();\r\n  while (Date.now() - start \u003c n);\r\n}\r\n\r\nsetTimeout(() =\u003e {\r\n  console.log('timeout', Date.now() - start);\r\n}, 100);\r\n\r\n\r\nfs.readFile('./index.html', () =\u003e {\r\n  console.log('readFile', Date.now() - start);\r\n  sleep(200);\r\n});\r\n\r\n// readFile 3\r\n// timeout 208\r\n```\r\n\r\n## check\r\n\r\n只有 `setImmediate()` 回调会在该阶段中执行。这使能够在 poll 阶段变得空闲时立即执行一些代码。\r\n\r\n`setImmediate` 和 `setTimeout` 的区别：\r\n\r\n1. 两者所属队列不同\r\n2. `setImmediate` 会立即将回调加入 checks 队列，而 `setTimeout` 会开启计时器线程，等待计时器过期\r\n\r\n3. `setImmediate` 比 `setTimeout` 效率高\r\n\r\n\t```javascript\r\n\tfunction test(fn, name) {\r\n\t    let i = 0;\r\n\t    console.time(name);\r\n\t    const run = () =\u003e {\r\n\t        i++;\r\n\t        if (i \u003c 1000) {\r\n\t            fn(run);\r\n\t        } else {\r\n\t            console.timeEnd(name);\r\n\t        }\r\n\t    }\r\n\t    run();\r\n\t}\r\n\t\r\n\ttest(setTimeout, 'setTimeout');\r\n\ttest(setImmediate, 'setImmediate');\r\n\t// setImmediate: 6.696ms\r\n\t// setTimeout: 1.698s\r\n\t```\r\n\r\n4. 计时器受进程性能的约束，二者的回调运行顺序非确定，取决于系统当时的状况\r\n\r\n\t```javascript\r\n\tsetTimeout(() =\u003e {\r\n\t  console.log('timeout');\r\n\t}, 0);\r\n\t\r\n\tsetImmediate(() =\u003e {\r\n\t  console.log('immediate');\r\n\t});\r\n\t```\r\n\r\n# nextTick\r\n\r\n`process.nextTick()` 是异步 API 的一部分，但从技术上讲不是事件循环的一部分。\r\n\r\n每次执行一个事件循环中**每个阶段**的**每一个回调**之前，必须要**清空** nextTick 队列和 microtask 对列。\r\n\r\n根据语言规范，`Promise` 对象的回调函数，会进入异步任务里面的 microtask队列。\r\n\r\n但是在 Node 中微任务队列追加在 `process.nextTick` 队列的后面，而且只有一个队列清空完毕才会清空另一个。\r\n\r\n```javascript\r\nprocess.nextTick(() =\u003e {\r\n    console.log(1);\r\n    process.nextTick(() =\u003e {\r\n        console.log(2)\r\n    })\r\n});\r\nPromise.resolve().then(() =\u003e console.log(3));\r\nprocess.nextTick(() =\u003e console.log(4));\r\nPromise.resolve().then(() =\u003e console.log(5));\r\n// 1\r\n// 4\r\n// 2\r\n// 3\r\n// 5\r\n```","meta":{"size":5041,"birthTime":1663496641394.9033,"updateTime":1663496641395.0254}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["JavaScript","NodeJS","事件循环"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

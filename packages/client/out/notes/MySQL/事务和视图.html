@@ -1,0 +1,148 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>事务和视图 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#事务" data-target-id="h1-事务-0">事务</a><ul><li><a href="#属性" data-target-id="h2-属性-0">属性</a></li><li><a href="#术语" data-target-id="h2-术语-1">术语</a></li><li><a href="#类别" data-target-id="h2-类别-2">类别</a></li><li><a href="#隔离" data-target-id="h2-隔离-3">隔离</a><ul><li><a href="#并发问题" data-target-id="h3-并发问题-0">并发问题</a></li><li><a href="#隔离级别" data-target-id="h3-隔离级别-1">隔离级别</a></li></ul></li><li><a href="#创建" data-target-id="h2-创建-4">创建</a></li></ul></li><li><a href="#视图" data-target-id="h1-视图-1">视图</a><ul><li><a href="#创建" data-target-id="h2-创建-5">创建</a></li><li><a href="#使用" data-target-id="h2-使用-6">使用</a></li><li><a href="#修改" data-target-id="h2-修改-7">修改</a></li><li><a href="#删除" data-target-id="h2-删除-8">删除</a></li><li><a href="#更新" data-target-id="h2-更新-9">更新</a></li></ul></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">事务和视图</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>事务</h1>
+<p>事务处理是一种机制，用来管理必须成批执行的MySQL操作，以保证数据库不包含不完整的操作结果。</p>
+<h2>属性</h2>
+<ol>
+<li>原子性：事务是一个不可分割的工作单位，事务中的操作要么都发生，要么都不发生</li>
+<li>一致性：事务必须使数据库从一个一致性状态变换到另外一个一致性状态</li>
+<li>隔离性：一个事务内部的操作及使用的数据对并发的其他事务是隔离的，并发执行的各个事务之间不能互相干扰</li>
+<li>持久性：一个事务一旦被提交，它对数据库中数据的改变就是永久性的，接下来的其他操作和数据库故障不应该对其有任何影响</li>
+</ol>
+<h2>术语</h2>
+<ul>
+<li>事务：一组 SQL 语句</li>
+<li>回退：撤销指定 SQL 语句的过程</li>
+<li>提交：将为存储的 SQL 语句结果写入数据库表</li>
+<li>保留点：事务处理中设置的临时占位符，可以回退到保留点</li>
+</ul>
+<h2>类别</h2>
+<p><strong>隐式事务</strong>：事务没有明显的开启和结束的标记</p>
+<ul>
+<li>
+<p>默认的 MySQL 行为是自动提交所有的更改，也就是隐式的事务。</p>
+</li>
+<li>
+<p>像 <code>INSERT</code>、<code>UPDATE</code>、<code>DELETE</code> 语句都会自动提交。</p>
+</li>
+</ul>
+<p><strong>显式事务</strong>：事务具有明显的开启和结束的标记</p>
+<ul>
+<li>必须先设置自动提交功能为禁用</li>
+<li><code>SET autocommit = 0;</code></li>
+</ul>
+<h2>隔离</h2>
+<h3>并发问题</h3>
+<p>对于同时运行的多个事务, 当这些事务访问数据库中相同的数据时, 如果没有采取必要的隔离机制, 就会导致各种并发问题</p>
+<p>对于两个事务T1、T2</p>
+<ul>
+<li>脏读：T1读取的是已经被T2更新但还没有被提交的字段，若T2 回滚,，T1读取的内容就是临时且无效的</li>
+<li>不可重复读：T1读取了一个字段，然后T2更新提交了该字段，T1再次读取同一个字段， 值就不同了</li>
+<li>幻读：T1从一个表中读取了一个字段， 然后T2在该表中插入了一些新的行，如果T1再次读取同一个表,，就会多出几行</li>
+</ul>
+<h3>隔离级别</h3>
+<p>数据库系统必须具有隔离并发运行各个事务的能力, 使它们不会相互影响, 避免各种并发问题。</p>
+<p>一个事务与其他事务隔离的程度称为隔离级别：</p>
+<ul>
+<li><code>READ UNCOMMITTED</code>：读取未提交的数据</li>
+<li><code>READ COMMITTED</code>：读取已提交的数据</li>
+<li><code>REPEATABLE READ</code>：可重复读，确保事务可以多次从一个字段中读取相同的值，在这个事务持续期间禁止其他事务对该字段的更新</li>
+<li><code>SERIALIZABLE</code>：串行化，在该事务的持续期间禁止其他事务对该表执行插入、更新、删除，解决了所有并发问题，性能低</li>
+</ul>
+<p>MySQL默认隔离级别为 <code>REPEATABLE READ</code></p>
+<p>每个数据库连接都有一个全局变量 <code>@@tx_isolation</code>, 表示当前的事务隔离级别</p>
+<ul>
+<li>
+<p>查看当前的隔离级别：<code>SELECT @@tx_isolation;</code></p>
+</li>
+<li>
+<p>设置当前 MySQL 连接的隔离级别：<code>SET TRANSACTION ISOLATION LEVEL READ COMMITTED;</code></p>
+</li>
+<li>
+<p>设置数据库系统的全局的隔离级别：<code>SET globaltransaction ISOLATION LEVEL READ COMMITTED;</code></p>
+</li>
+</ul>
+<h2>创建</h2>
+<ul>
+<li>使用 <code>START TRANSACTION</code> 标识开始事务</li>
+<li>使用 <code>ROLLBACK</code> 回退操作<!-- -->
+<ul>
+<li><code>ROLLBACK</code> 回退整个操作</li>
+<li><code>ROLLBACK TO savepointname</code> 回退到保留点</li>
+</ul>
+</li>
+<li>使用 <code>COMMIT</code> 执行提交操作</li>
+<li>使用 <code>SAVEPOINT</code> 创建保留点</li>
+<li><code>ROLLBACK</code> 和 <code>COMMIT</code> 都会结束事务</li>
+</ul>
+<pre><code class="language-mysql">SET autocommit = 0; -- 关闭自动提交
+START TRANSACTION;	-- 开始事务
+DELETE 
+FROM
+	orderitems 
+WHERE
+	order_num = 20010;
+SAVEPOINT delete1;	-- 设置保留点
+DELETE 
+FROM
+	orders 
+WHERE
+	order_num = 20010;
+COMMIT;	-- 提交
+ROLLBACK;	-- 整个回退
+ROLLBACK TO delete1;	-- 回退到保留点
+</code></pre>
+<p><strong>回退的要求</strong></p>
+<ul>
+<li><code>INSERT</code>、<code>UPDATE</code>、<code>DELETE</code> 可以回退</li>
+<li><code>CREATE</code>、<code>DROP</code>、<code>TRANSACTION</code> 回退无法被撤销</li>
+</ul>
+<h1>视图</h1>
+<p>视图是一种虚拟存在的表，是用来查看存储在别处的数据的一种方式，视图本身不包含数据。</p>
+<p>本质上视图就是一些 SQL 语句，使用时就使用这些 SQL 语句查询并返回查询结果。</p>
+<p>视图使用和使用表一样，同样可以进行增删改查，但一般不增删改只是用于查询。</p>
+<h2>创建</h2>
+<pre><code class="language-mysql">CREATE VIEW myv1 AS 
+SELECT
+    last_name,
+    department_name,
+    job_title 
+FROM
+	employees e
+	JOIN departments d ON e.department_id = d.department_id
+	JOIN jobs j ON j.job_id = e.job_id;
+</code></pre>
+<h2>使用</h2>
+<pre><code class="language-mysql">SELECT
+	* 
+FROM
+	myv1 
+WHERE
+	last_name LIKE &#x27;%a%&#x27;;
+</code></pre>
+<h2>修改</h2>
+<p><strong>方式一</strong></p>
+<pre><code class="language-mysql">CREATE OR REPLACE VIEW 视图名 AS 查询语句;
+</code></pre>
+<p><strong>方式二</strong></p>
+<pre><code class="language-mysql">ALTER VIEW 视图名 AS 查询语句;
+</code></pre>
+<h2>删除</h2>
+<pre><code class="language-mysql">DROP VIEW emp_v1, emp_v2, myv3;
+</code></pre>
+<h2>更新</h2>
+<p>更新一个视图会更新其基表，因为视图和表的使用是一样的所以更新的语法也相同。</p>
+<p>大部分情况都不能更新视图：</p>
+<ul>
+<li>分组</li>
+<li>连接</li>
+<li>子查询</li>
+<li>联合查询</li>
+<li>聚集函数</li>
+<li><code>DISTINCT</code></li>
+</ul>
+<pre><code class="language-mysql">-- 插入
+INSERT INTO myv1 VALUES ( &#x27;张飞&#x27;, &#x27;zf@qq.com&#x27; );
+-- 修改
+UPDATE myv1  SET last_name = &#x27;张无忌&#x27; WHERE last_name = &#x27;张飞&#x27;;
+-- 删除
+DELETE FROM myv1 WHERE last_name = &#x27;张无忌&#x27;;
+</code></pre><div><a href="/notes/MySQL">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"事务和视图","article":{"title":"事务和视图","content":"# 事务\r\n\r\n事务处理是一种机制，用来管理必须成批执行的MySQL操作，以保证数据库不包含不完整的操作结果。\r\n\r\n## 属性\r\n\r\n1. 原子性：事务是一个不可分割的工作单位，事务中的操作要么都发生，要么都不发生\r\n2. 一致性：事务必须使数据库从一个一致性状态变换到另外一个一致性状态\r\n3. 隔离性：一个事务内部的操作及使用的数据对并发的其他事务是隔离的，并发执行的各个事务之间不能互相干扰\r\n4. 持久性：一个事务一旦被提交，它对数据库中数据的改变就是永久性的，接下来的其他操作和数据库故障不应该对其有任何影响\r\n\r\n## 术语\r\n\r\n- 事务：一组 SQL 语句\r\n- 回退：撤销指定 SQL 语句的过程\r\n- 提交：将为存储的 SQL 语句结果写入数据库表\r\n- 保留点：事务处理中设置的临时占位符，可以回退到保留点\r\n\r\n## 类别\r\n\r\n**隐式事务**：事务没有明显的开启和结束的标记\r\n\r\n- 默认的 MySQL 行为是自动提交所有的更改，也就是隐式的事务。\r\n\r\n- 像 `INSERT`、`UPDATE`、`DELETE` 语句都会自动提交。\r\n\r\n**显式事务**：事务具有明显的开启和结束的标记\r\n\r\n- 必须先设置自动提交功能为禁用\r\n- `SET autocommit = 0;`\r\n\r\n## 隔离\r\n\r\n### 并发问题\r\n\r\n对于同时运行的多个事务, 当这些事务访问数据库中相同的数据时, 如果没有采取必要的隔离机制, 就会导致各种并发问题\r\n\r\n对于两个事务T1、T2\r\n\r\n- 脏读：T1读取的是已经被T2更新但还没有被提交的字段，若T2 回滚,，T1读取的内容就是临时且无效的\r\n- 不可重复读：T1读取了一个字段，然后T2更新提交了该字段，T1再次读取同一个字段， 值就不同了\r\n- 幻读：T1从一个表中读取了一个字段， 然后T2在该表中插入了一些新的行，如果T1再次读取同一个表,，就会多出几行\r\n\r\n### 隔离级别\r\n\r\n数据库系统必须具有隔离并发运行各个事务的能力, 使它们不会相互影响, 避免各种并发问题。\r\n\r\n一个事务与其他事务隔离的程度称为隔离级别：\r\n\r\n- `READ UNCOMMITTED`：读取未提交的数据\r\n- `READ COMMITTED`：读取已提交的数据\r\n- `REPEATABLE READ`：可重复读，确保事务可以多次从一个字段中读取相同的值，在这个事务持续期间禁止其他事务对该字段的更新\r\n- `SERIALIZABLE`：串行化，在该事务的持续期间禁止其他事务对该表执行插入、更新、删除，解决了所有并发问题，性能低\r\n\r\nMySQL默认隔离级别为 `REPEATABLE READ`\r\n\r\n每个数据库连接都有一个全局变量 `@@tx_isolation`, 表示当前的事务隔离级别\r\n\r\n- 查看当前的隔离级别：`SELECT @@tx_isolation;`\r\n\r\n- 设置当前 MySQL 连接的隔离级别：`SET TRANSACTION ISOLATION LEVEL READ COMMITTED;`\r\n\r\n- 设置数据库系统的全局的隔离级别：`SET globaltransaction ISOLATION LEVEL READ COMMITTED;`\r\n\r\n## 创建\r\n\r\n- 使用 `START TRANSACTION` 标识开始事务\r\n- 使用 `ROLLBACK` 回退操作\r\n\t- `ROLLBACK` 回退整个操作\r\n\t- `ROLLBACK TO savepointname` 回退到保留点\r\n- 使用 `COMMIT` 执行提交操作\r\n- 使用 `SAVEPOINT` 创建保留点\r\n- `ROLLBACK` 和 `COMMIT` 都会结束事务\r\n\r\n```mysql\r\nSET autocommit = 0; -- 关闭自动提交\r\nSTART TRANSACTION;\t-- 开始事务\r\nDELETE \r\nFROM\r\n\torderitems \r\nWHERE\r\n\torder_num = 20010;\r\nSAVEPOINT delete1;\t-- 设置保留点\r\nDELETE \r\nFROM\r\n\torders \r\nWHERE\r\n\torder_num = 20010;\r\nCOMMIT;\t-- 提交\r\nROLLBACK;\t-- 整个回退\r\nROLLBACK TO delete1;\t-- 回退到保留点\r\n```\r\n\r\n**回退的要求**\r\n\r\n- `INSERT`、`UPDATE`、`DELETE` 可以回退\r\n- `CREATE`、`DROP`、`TRANSACTION` 回退无法被撤销\r\n\r\n# 视图\r\n\r\n视图是一种虚拟存在的表，是用来查看存储在别处的数据的一种方式，视图本身不包含数据。\r\n\r\n本质上视图就是一些 SQL 语句，使用时就使用这些 SQL 语句查询并返回查询结果。\r\n\r\n视图使用和使用表一样，同样可以进行增删改查，但一般不增删改只是用于查询。\r\n\r\n## 创建\r\n\r\n```mysql\r\nCREATE VIEW myv1 AS \r\nSELECT\r\n    last_name,\r\n    department_name,\r\n    job_title \r\nFROM\r\n\temployees e\r\n\tJOIN departments d ON e.department_id = d.department_id\r\n\tJOIN jobs j ON j.job_id = e.job_id;\r\n```\r\n\r\n## 使用\r\n\r\n```mysql\r\nSELECT\r\n\t* \r\nFROM\r\n\tmyv1 \r\nWHERE\r\n\tlast_name LIKE '%a%';\r\n```\r\n\r\n## 修改\r\n\r\n**方式一**\r\n\r\n```mysql\r\nCREATE OR REPLACE VIEW 视图名 AS 查询语句;\r\n```\r\n\r\n**方式二**\r\n\r\n```mysql\r\nALTER VIEW 视图名 AS 查询语句;\r\n```\r\n\r\n## 删除\r\n\r\n```mysql\r\nDROP VIEW emp_v1, emp_v2, myv3;\r\n```\r\n\r\n## 更新\r\n\r\n更新一个视图会更新其基表，因为视图和表的使用是一样的所以更新的语法也相同。\r\n\r\n大部分情况都不能更新视图：\r\n\r\n- 分组\r\n- 连接\r\n- 子查询\r\n- 联合查询\r\n- 聚集函数\r\n- `DISTINCT`\r\n\r\n```mysql\r\n-- 插入\r\nINSERT INTO myv1 VALUES ( '张飞', 'zf@qq.com' );\r\n-- 修改\r\nUPDATE myv1  SET last_name = '张无忌' WHERE last_name = '张飞';\r\n-- 删除\r\nDELETE FROM myv1 WHERE last_name = '张无忌';\r\n```\r\n\r\n","meta":{"size":5178,"birthTime":1663496641412.3164,"updateTime":1663496641412.493}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["MySQL","事务和视图"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>静态化 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#纯静态化" data-target-id="h2-纯静态化-0">纯静态化</a></li><li><a href="#SSG" data-target-id="h2-SSG-1">SSG</a></li><li><a href="#SSR" data-target-id="h2-SSR-2">SSR</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">静态化</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><p>当一个页面不存在 <code>getServerSideProps</code> 或者 <code>getInitialProps</code></p>
+<p>Next.js 会自动确定页面是静态的，可以进行预渲染</p>
+<p>静态化发生在构建阶段</p>
+<h2>纯静态化</h2>
+<p>纯静态化就是将页面组件打包成一个静态的 HTML 文件，请求时直接返回该静态页面无需再运行一次组件</p>
+<p>对于无需请求的页面可以采用该方案</p>
+<p>对于没有 <code>getServerSideProps</code> 或 <code>getStaticProps</code> 的页面 nextjs 在构建阶段会自动将页面静态化</p>
+<h2>SSG</h2>
+<p>server static generator</p>
+<p>某些页面需要获取外部数据进行预渲染，nextjs 提供了 <a href="https://nextjs.org/docs/basic-features/pages#static-generation-with-data">Static Generation with data</a> 功能</p>
+<p>如果一个页面导出了这两个中函数的一个，对于该页面 nextjs 在构建时会做 SSG</p>
+<ul>
+<li><code>getStaticProps</code></li>
+<li><code>getStaticPaths</code></li>
+</ul>
+<p>这两个函数都会在构建时运行，在开发阶段每次请求这两个都会运行</p>
+<p><code>getStaticProps</code> 用于在构建时请求数据生成静态 html + json</p>
+<ul>
+<li>其中静态 html 中包含了请求的数据，实现了预渲染</li>
+<li>另外请求得到的数据会另外生成一个 json 文件用于在客户端渲染跳到该路由时无数据的情况</li>
+</ul>
+<p><code>getStaticPaths</code> 用于对动态路由做预渲染处理</p>
+<ul>
+<li>该函数在构建时被调用，用于指定要预渲染可能的路径（例如可以获取所有电影 id）</li>
+<li>一般需要配合 <code>getStaticProps</code> 接着获取详情页信息</li>
+<li>构建时会根据函数返回的所有 <code>path</code>，生成这些静态页面</li>
+<li>该函数返回的 <code>fallback</code> 属性<!-- -->
+<ul>
+<li>如果为 <code>false</code>，对于没有准备的路径，返回 404</li>
+<li>对于非 <code>false</code> 的情况，对于没有准备的路径，服务端会运行 <code>getStaticProps</code> 生成 HTML + json<!-- -->
+<ul>
+<li><code>true</code>：对于直接的详情页访问，会先返回 <code>[id].html</code> 然后通过 JSON 更新页面</li>
+<li><code>blocking</code>：会在服务端运行完 <code>getStaticProps</code> 函数后渲染有数据的页面</li>
+<li>对于客户端的 javascript 跳转都会等待 <code>getStaticProps</code> 运行完通过 JSON 渲染有数据的页面</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>SSR</h2>
+<p>对于具有  <code>getServerSideProps</code> 或者 <code>getInitialProps</code> 的页面</p>
+<p>无论是请求服务器该页面还是客户端跳转该页面，服务器都会运行该函数请求获取数据，进行渲染</p><div><a href="/notes/SSR">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"静态化","article":{"title":"静态化","content":"当一个页面不存在 `getServerSideProps` 或者 `getInitialProps`\n\nNext.js 会自动确定页面是静态的，可以进行预渲染\n\n静态化发生在构建阶段\n\n## 纯静态化\n\n纯静态化就是将页面组件打包成一个静态的 HTML 文件，请求时直接返回该静态页面无需再运行一次组件\n\n对于无需请求的页面可以采用该方案\n\n对于没有 `getServerSideProps` 或 `getStaticProps` 的页面 nextjs 在构建阶段会自动将页面静态化\n\n## SSG\n\nserver static generator\n\n某些页面需要获取外部数据进行预渲染，nextjs 提供了 [Static Generation with data](https://nextjs.org/docs/basic-features/pages#static-generation-with-data) 功能\n\n如果一个页面导出了这两个中函数的一个，对于该页面 nextjs 在构建时会做 SSG \n\n- `getStaticProps` \n- `getStaticPaths` \n\n这两个函数都会在构建时运行，在开发阶段每次请求这两个都会运行\n\n`getStaticProps` 用于在构建时请求数据生成静态 html + json\n\n- 其中静态 html 中包含了请求的数据，实现了预渲染\n- 另外请求得到的数据会另外生成一个 json 文件用于在客户端渲染跳到该路由时无数据的情况\n\n`getStaticPaths` 用于对动态路由做预渲染处理\n\n- 该函数在构建时被调用，用于指定要预渲染可能的路径（例如可以获取所有电影 id）\n- 一般需要配合 `getStaticProps` 接着获取详情页信息\n- 构建时会根据函数返回的所有 `path`，生成这些静态页面\n- 该函数返回的 `fallback` 属性\n  - 如果为 `false`，对于没有准备的路径，返回 404\n  - 对于非 `false` 的情况，对于没有准备的路径，服务端会运行 `getStaticProps` 生成 HTML + json\n    - `true`：对于直接的详情页访问，会先返回 `[id].html` 然后通过 JSON 更新页面\n    - `blocking`：会在服务端运行完 `getStaticProps` 函数后渲染有数据的页面\n    - 对于客户端的 javascript 跳转都会等待 `getStaticProps` 运行完通过 JSON 渲染有数据的页面\n\n## SSR\n\n对于具有  `getServerSideProps` 或者 `getInitialProps` 的页面\n\n无论是请求服务器该页面还是客户端跳转该页面，服务器都会运行该函数请求获取数据，进行渲染","meta":{"size":2274,"birthTime":1663496641417.6829,"updateTime":1663496641417.9607}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["SSR","静态化"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

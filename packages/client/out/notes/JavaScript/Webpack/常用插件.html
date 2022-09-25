@@ -1,0 +1,72 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>常用插件 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#内置插件" data-target-id="h2-内置插件-0">内置插件</a><ul><li><a href="#DefinePlugin" data-target-id="h3-DefinePlugin-0">DefinePlugin</a></li><li><a href="#BannerPlugin" data-target-id="h3-BannerPlugin-1">BannerPlugin</a></li><li><a href="#ProvidePlugin" data-target-id="h3-ProvidePlugin-2">ProvidePlugin</a></li></ul></li><li><a href="#html-webpack-plugin" data-target-id="h2-html-webpack-plugin-1">html-webpack-plugin</a></li><li><a href="#clean-webpack-plugin" data-target-id="h2-clean-webpack-plugin-2">clean-webpack-plugin</a></li><li><a href="#copy-webpack-plugin" data-target-id="h2-copy-webpack-plugin-3">copy-webpack-plugin</a></li><li><a href="#file-loader" data-target-id="h2-file-loader-4">file-loader</a></li><li><a href="#url-loader" data-target-id="h2-url-loader-5">url-loader</a></li><li><a href="#路径问题" data-target-id="h2-路径问题-6">路径问题</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">常用插件</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h2>内置插件</h2>
+<p>所有的 webpack 内置插件都作为 webpack 的静态属性存在</p>
+<pre><code class="language-javascript">const webpack = require(&quot;webpack&quot;)
+
+new webpack.插件名(options)
+</code></pre>
+<h3>DefinePlugin</h3>
+<p>全局常量定义插件，当 webpack 编译完成后，会自动将源码中的变量替换为常量值</p>
+<pre><code class="language-javascript">new webpack.DefinePlugin({
+	&#x27;process.env.NODE_ENV&#x27;: &#x27;development&#x27;
+})
+</code></pre>
+<h3>BannerPlugin</h3>
+<p>可以为每个 chunk 生成的文件头部添加一行注释</p>
+<pre><code class="language-javascript">new webpack.BannerPlugin({
+  banner: `
+auth: xiefeng
+time: ${new Date().toLocaleDateString()}`
+})
+</code></pre>
+<h3>ProvidePlugin</h3>
+<p>自动加载模块，不再需要 import 或 require</p>
+<pre><code class="language-javascript">new webpack.ProvidePlugin({
+  $: &#x27;jquery&#x27;,
+  _: &#x27;lodash&#x27;
+})
+</code></pre>
+<h2>html-webpack-plugin</h2>
+<ul>
+<li>不配置任何选项会默认将 <code>entry</code> 配置中所有入口 thunk 和 <code>extract-text-webpack-plugin</code> 抽取的 css 都插入到文件中</li>
+<li>该插件一个实例生成一个html文件，多页应用需要实例化该插件多次</li>
+<li>html模板文件中支持模板引擎语法来获取该配置项值：<code> &lt;title&gt; &lt;%= htmlWebpackPlugin.options.title %&gt; &lt;/title&gt;</code></li>
+</ul>
+<h2>clean-webpack-plugin</h2>
+<p>在构建过程中清除 webpack 打包目录下的文件，默认清除所有</p>
+<h2>copy-webpack-plugin</h2>
+<p>用来复制一个单独的文件或者整个目录到新建的文件夹下</p>
+<pre><code class="language-javascript">new CopyPlugin([
+  { from: &quot;./public&quot;, to: &quot;./&quot; }
+])
+</code></pre>
+<h2>file-loader</h2>
+<p>生成依赖的文件到输出目录，然后将模块文件的到处设置为文件的相对路径</p>
+<pre><code class="language-javascript">//file-loader
+function loader(source){
+  // source：文件内容
+  // 1. 生成一个具有相同文件内容的文件到输出目录
+  // 2. 返回一段代码   export default &quot;文件名&quot;
+}
+</code></pre>
+<h2>url-loader</h2>
+<p>将依赖的文件转换为：导出一个base64格式的字符串</p>
+<pre><code class="language-javascript">//file-loader
+function loader(source){
+  // source：文件内容
+  // 1. 根据buffer生成一个base64编码
+  // 2. 返回一段代码   export default &quot;base64编码&quot;
+}
+</code></pre>
+<h2>路径问题</h2>
+<p>在使用 file-loader 或 url-loader 时，可能会遇到一个路径相关的非常有趣的问题</p>
+<p>比如，通过 webpack 打包产生这样的目录结构：</p>
+<pre><code class="language-yml">dist
+    |—— img
+        |—— a.png  #file-loader生成的文件
+    |—— scripts
+        |—— main.js  #export default &quot;img/a.png&quot;
+    |—— html
+        |—— index.html #&lt;script src=&quot;../scripts/main.js&quot; &gt;&lt;/script&gt;
+</code></pre>
+<p>这种问题发生的根本原因：产生路径时 loader 或 plugin 只有相对于 dist 目录的路径</p>
+<p>这个问题需要依靠 webpack 的 publicPath 配置项解决</p><div><a href="/notes/JavaScript/Webpack">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"常用插件","article":{"title":"常用插件","content":"## 内置插件\n\n所有的 webpack 内置插件都作为 webpack 的静态属性存在\n\n```javascript\nconst webpack = require(\"webpack\")\n\nnew webpack.插件名(options)\n```\n\n### DefinePlugin\n\n全局常量定义插件，当 webpack 编译完成后，会自动将源码中的变量替换为常量值\n\n```javascript\nnew webpack.DefinePlugin({\n\t'process.env.NODE_ENV': 'development'\n})\n```\n\n### BannerPlugin\n\n可以为每个 chunk 生成的文件头部添加一行注释\n\n```javascript\nnew webpack.BannerPlugin({\n  banner: `\nauth: xiefeng\ntime: ${new Date().toLocaleDateString()}`\n})\n```\n\n### ProvidePlugin\n\n自动加载模块，不再需要 import 或 require \n\n```javascript\nnew webpack.ProvidePlugin({\n  $: 'jquery',\n  _: 'lodash'\n})\n```\n\n## html-webpack-plugin\n\n- 不配置任何选项会默认将 `entry` 配置中所有入口 thunk 和 `extract-text-webpack-plugin` 抽取的 css 都插入到文件中\n- 该插件一个实例生成一个html文件，多页应用需要实例化该插件多次\n- html模板文件中支持模板引擎语法来获取该配置项值：` \u003ctitle\u003e \u003c%= htmlWebpackPlugin.options.title %\u003e \u003c/title\u003e`\n\n## clean-webpack-plugin\n\n在构建过程中清除 webpack 打包目录下的文件，默认清除所有\n\n## copy-webpack-plugin\n\n用来复制一个单独的文件或者整个目录到新建的文件夹下\n\n```javascript\nnew CopyPlugin([\n  { from: \"./public\", to: \"./\" }\n])\n```\n\n## file-loader\n\n生成依赖的文件到输出目录，然后将模块文件的到处设置为文件的相对路径\n\n```javascript\n//file-loader\nfunction loader(source){\n  // source：文件内容\n  // 1. 生成一个具有相同文件内容的文件到输出目录\n  // 2. 返回一段代码   export default \"文件名\"\n}\n```\n\n## url-loader\n\n将依赖的文件转换为：导出一个base64格式的字符串\n\n```javascript\n//file-loader\nfunction loader(source){\n  // source：文件内容\n  // 1. 根据buffer生成一个base64编码\n  // 2. 返回一段代码   export default \"base64编码\"\n}\n```\n\n## 路径问题\n\n在使用 file-loader 或 url-loader 时，可能会遇到一个路径相关的非常有趣的问题\n\n比如，通过 webpack 打包产生这样的目录结构：\n\n```yml\ndist\n    |—— img\n        |—— a.png  #file-loader生成的文件\n    |—— scripts\n        |—— main.js  #export default \"img/a.png\"\n    |—— html\n        |—— index.html #\u003cscript src=\"../scripts/main.js\" \u003e\u003c/script\u003e\n```\n\n这种问题发生的根本原因：产生路径时 loader 或 plugin 只有相对于 dist 目录的路径\n\n这个问题需要依靠 webpack 的 publicPath 配置项解决","meta":{"size":2606,"birthTime":1663496641402.9795,"updateTime":1663496641403.1055}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["JavaScript","Webpack","常用插件"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

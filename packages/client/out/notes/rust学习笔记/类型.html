@@ -1,0 +1,261 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>类型 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#原生类型" data-target-id="h2-原生类型-0">原生类型</a><ul><li><a href="#标量类型" data-target-id="h3-标量类型-0">标量类型</a></li><li><a href="#复合类型" data-target-id="h3-复合类型-1">复合类型</a></li></ul></li><li><a href="#Slice类型" data-target-id="h2-Slice类型-1">Slice类型</a></li><li><a href="#字符串" data-target-id="h2-字符串-2">字符串</a><ul><li><a href="#转换" data-target-id="h3-转换-2">转换</a></li><li><a href="#拼接" data-target-id="h3-拼接-3">拼接</a></li></ul></li><li><a href="#结构体" data-target-id="h2-结构体-3">结构体</a><ul><li><a href="#所有权" data-target-id="h3-所有权-4">所有权</a></li><li><a href="#元祖结构体" data-target-id="h3-元祖结构体-5">元祖结构体</a></li><li><a href="#单元结构体" data-target-id="h3-单元结构体-6">单元结构体</a></li></ul></li><li><a href="#枚举" data-target-id="h2-枚举-4">枚举</a></li><li><a href="#impl 实现" data-target-id="h2-impl 实现-5">impl 实现</a><ul><li><a href="#方法" data-target-id="h3-方法-7">方法</a></li><li><a href="#关联函数" data-target-id="h3-关联函数-8">关联函数</a></li></ul></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">类型</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h2>原生类型</h2>
+<p>rust 提供的原生类型（primitives）分为<strong>标量类型</strong>（scalar）和<strong>复合类型</strong>（compound）</p>
+<h3>标量类型</h3>
+<p>标量（<em>scalar</em>）类型代表一个单独的值</p>
+<ul>
+<li>
+<p>数值类型</p>
+<ul>
+<li>
+<p>整数类型</p>
+<ul>
+<li>有符号整数：<code>i8</code>、<code>i16</code>、<code>i32</code>、<code>i64</code>、<code>i128</code> 和 <code>isize</code></li>
+<li>无符号整数： <code>u8</code>、<code>u16</code>、<code>u32</code>、<code>u64</code>、<code>u128</code> 和 <code>usize</code></li>
+</ul>
+</li>
+<li>
+<p>浮点数类型： <code>f32</code>、<code>f64</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p>字符类型 <code>char</code>：单个 Unicode 字符，每个都占 4 字节</p>
+</li>
+<li>
+<p>布尔类型 <code>bool</code>：<code>true</code> 或 <code>false</code></p>
+</li>
+<li>
+<p>元类型(unit type)：唯一值 <code>()</code>，本质上是一个空元组</p>
+</li>
+</ul>
+<p>元类型有些类似于 JavaScript 中的 <code>undefined</code>，函数的默认返回值就是 <code>()</code></p>
+<p><code>()</code> 的应用非常广泛，除了作为返回值，还被大量使用在数据结构中：</p>
+<ul>
+<li>比如  <code>Result&lt;(), Error&gt;</code> 表示返回的错误类型中，我们只关心错误，不关心成功的值</li>
+<li>比如  <code>HashSet&lt;T&gt;</code> 实际上是 <code>HashMap&lt;K, ()&gt;</code> 的一个类型别名</li>
+</ul>
+<p>数值字面量可以采用的书写形式：</p>
+<ul>
+<li>通过前缀 <code>0x</code>、<code>0o</code>、<code>0b</code> 分别采用十六进制、八进制、二进制</li>
+<li>可以使用下划线，例如：<code>1_000</code>、<code>0.000_001</code></li>
+<li>可以在字面量结尾标明类型：<code>100_i8</code>、<code>1.0f32</code></li>
+<li>可以使用单字节字符带前缀的方式（<code>b&#x27;A&#x27;</code>）表示 <code>u8</code>，也就是 ASCII 编码</li>
+</ul>
+<p>只有是同类型的数值类型，才可以进行运算</p>
+<p><code>isize</code> 和 <code>usize</code> 类型依赖运行程序的计算机架构，整数默认是 <code>i32</code>，浮点数默认为 <code>f64</code></p>
+<p>数值类型的特点：</p>
+<ul>
+<li>类型转换必须是显式的：rust 不会进行隐式类型转换</li>
+<li>数值上可以使用方法：例如使用 <code>x.is_nan()</code> 判断浮点计算结果合不合法</li>
+</ul>
+<p><strong>关于溢出</strong></p>
+<p>在 debug 模式编译时，Rust 检查整形溢出的问题并使程序 <em>panic</em>，在 release 构建中 Rust 不检测溢出</p>
+<h3>复合类型</h3>
+<ul>
+<li>元组（tuple）：如 <code>(1, true)</code></li>
+<li>数组（array）：如 <code>[1, 2, 3]</code></li>
+</ul>
+<p>元组可以包含各种类型值，可以拥有任意多个值，元祖的访问使用 <code>.index</code></p>
+<pre><code class="language-rust">let tuple = (10, &quot;fadaf&quot;, 1.0);
+
+println!(&quot;{}&quot;, tuple.0);
+</code></pre>
+<p>元组太长会无法直接打印，测试应该是长度不能超过 12</p>
+<pre><code class="language-rust">let too_long_tuple = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
+println!(&quot;too long tuple: {:?}&quot;, too_long_tuple);
+</code></pre>
+<p>数组的类型注解为 <code>[T; length]</code>，数组的元素类型大小和长度固定（数组的长度必须在编译期就已知），存储在栈上性能非常优秀</p>
+<pre><code class="language-rust">let arr: [i32; 2] = [1, 2];
+
+// 初始化 5 个 10
+let arr = [10; 5];
+</code></pre>
+<p>在使用索引访问数组元素时，rust 会进行边界检查，越界的话程序会出现 <strong>panic</strong></p>
+<h2>Slice类型</h2>
+<p>slice 允许我们引用集合中一段连续的元素序列，而不是引用整个集合</p>
+<ul>
+<li>切片类型和数组类似，但其指向的数据大小在编译时是不确定的</li>
+<li>切片的长度并不是固定的，而是取决于使用时指定的起始和结束位置</li>
+<li>创建切片的代价非常小，因为切片只是针对底层数组/字符串的一个引用</li>
+<li>切片是本质上一个双字对象（占 <code>2 * usize</code> 大小），第一个字是指向数据的指针，第二个字是切片的长度</li>
+</ul>
+<!-- -->&lt;img src=&quot;https://kaisery.github.io/trpl-zh-cn/img/trpl04-06.svg&quot; style=&quot;width:25%;&quot; /&gt;<!-- -->
+<p><strong>字符串切片</strong></p>
+<pre><code class="language-rust">let s = String::from(&quot;hello world&quot;);
+
+let hello: &amp;str = &amp;s[..5];
+let world: &amp;str = &amp;s[6..11];
+</code></pre>
+<p>字符串字面值被储存在二进制文件中，其类型也是为 <code>&amp;str</code>，其本质就是一个指向二进制程序特定位置的 slice</p>
+<p>在对字符串使用切片语法时需要格外小心，切片的索引必须落在字符之间的边界位置，也就是 UTF-8 字符的边界</p>
+<p>也可以使用切片引用数组的一部分，其类型注解为 <code>&amp;[T]</code></p>
+<pre><code class="language-rust">let a = [1, 2, 3, 4, 5];
+
+let slice: &amp;[i32] = &amp;a[1..3];
+</code></pre>
+<h2>字符串</h2>
+<p>Rust 中的字符是 Unicode 类型，每个字符占据 4 个字节内存空间。</p>
+<p>但是字符串采用 UTF-8 编码，也就是字符串中的字符所占的字节数是变化的(1 - 4)，这样有助于大幅降低字符串所占用的内存空间。</p>
+<p>String 内部使用 [ <code>u8</code> ] 字节数组存储数据，所以实际存储的内容数量可能和字符数不同</p>
+<p>Rust 不允许使用索引访问字符串，因为采用 UTF-8 存储内部的字节数组和字符不一定对应，而且如果要索引对应字符的话，这样无法保证性能表现是 O(1)</p>
+<p>Rust 在语言级别，只有一种字符串类型： <code>str</code>，它通常是以引用类型/字符串切片 <code>&amp;str</code> 出现</p>
+<p><code>str</code> 类型被硬编码进可执行文件，无法被修改，正常情况下我们无法使用该类型，如果要使用需要配合 <code>Box</code></p>
+<h3>转换</h3>
+<p><code>&amp;str</code> =&gt; <code>String</code></p>
+<ul>
+<li><code>String::from(&quot;hello,world&quot;)</code></li>
+<li><code>&quot;hello,world&quot;.to_string()</code></li>
+</ul>
+<p><code>String</code> =&gt;  <code>&amp;str</code></p>
+<ul>
+<li><code>&amp;s</code></li>
+<li><code>&amp;s[..]</code></li>
+<li><code>s.as_str()</code></li>
+</ul>
+<p>String 能够直接取引用转换的原因是 <code>deref</code> 隐式强制转换</p>
+<h3>拼接</h3>
+<p>使用 <code>+</code>、<code>+=</code> 可以进行字符串的连接，使用 <code>+</code> 本质上调用的是 string 的 <code>add</code> 方法，所有权会转移</p>
+<pre><code class="language-rust">let s1 = String::from(&quot;hello,&quot;);
+let s2 = String::from(&quot;world!&quot;);
+// 在下句中，s1的所有权被转移走了，因此后面不能再使用s1
+let s3 = s1 + &amp;s2;
+assert_eq!(s3,&quot;hello,world!&quot;);
+</code></pre>
+<h2>结构体</h2>
+<p>使用 <code>struct</code> 关键字定义结构体</p>
+<pre><code class="language-rust">struct User {
+    active: bool,
+    username: String,
+    email: String,
+    sign_in_count: u64,
+}
+</code></pre>
+<p>结构体的实例的创建和 <strong>ES6</strong> 中对象字面量的语法类似，不同的是需要带上结构体的名称</p>
+<pre><code class="language-rust">User {
+  email: String::from(&quot;someone@example.com&quot;),
+  username: String::from(&quot;someusername123&quot;),
+  active: true,
+  sign_in_count: 1,
+}
+
+// 简化
+User {
+  email,
+  username,
+  active: true,
+  sign_in_count: 1,
+}
+// 根据已有的结构体实例，创建新的结构体实例
+User {
+  active: user1.active,
+  username: user1.username,
+  email: String::from(&quot;another@example.com&quot;),
+  sign_in_count: user1.sign_in_count,
+}
+// 结构体更新语法
+User {
+  email: String::from(&quot;another@example.com&quot;),
+  ..user1
+}
+</code></pre>
+<p>使用<strong>结构体更新语法</strong>创建新结构体类似于 ES6 中的展开运算符，但是结构体更新语法<strong>只能用在结尾</strong>，且不会覆盖已有的字段</p>
+<h3>所有权</h3>
+<p>结构体实例会拥有其字段的所有权，<strong>结构体更新语法会造成所有权的移动</strong>，旧的结构体会失效</p>
+<p>可以使结构体存储被其他对象拥有的数据的引用，不过这么做的话需要用上<strong>生命周期</strong></p>
+<h3>元祖结构体</h3>
+<p>可以定义与元组类似的结构体</p>
+<pre><code class="language-rust">struct Color(i32, i32, i32);
+struct Point(i32, i32, i32);
+
+fn main() {
+    let black = Color(0, 0, 0);
+    let origin = Point(0, 0, 0);
+}
+</code></pre>
+<p>元组结构体实例类似于元组，可以进行解构，也通过 <code>.index</code> 进行访问</p>
+<h3>单元结构体</h3>
+<p>一个没有任何字段的结构体，被称为<strong>类单元结构体</strong>（Unit-like Struct），类似于 <code>()</code> 类型</p>
+<p>单元结构体一般在想要在某个类型上实现 trait 但不需要在其中存储数据的时候使用（也就是不关心该类型的内容, 只关心它的行为）</p>
+<pre><code class="language-rust">struct AlwaysEqual;
+
+impl SomeTrait for AlwaysEqual { }
+
+fn main() {
+    let subject = AlwaysEqual;
+}
+</code></pre>
+<h2>枚举</h2>
+<p>枚举类型是一个类型，它会包含所有可能的<strong>枚举成员</strong>, 而<strong>枚举值</strong>是该类型中的具体某个成员的<strong>实例</strong></p>
+<p><strong>任何类型的数据都可以放入枚举成员中</strong>：字符串、数值、结构体甚至另一个枚举</p>
+<pre><code class="language-rust">enum Message {
+  Quit,
+  Move { x: i32, y: i32 },
+  Write(String),
+  ChangeColor(i32, i32, i32),
+}
+</code></pre>
+<ul>
+<li><code>Quit</code> 没有任何关联数据</li>
+<li><code>Move</code> 包含一个匿名结构体</li>
+<li><code>Write</code> 包含一个 <code>String</code> 字符串</li>
+<li><code>ChangeColor</code> 包含三个 <code>i32</code></li>
+</ul>
+<p>枚举的使用需要通过 <code>::</code> 命名空间来使用</p>
+<pre><code class="language-rust">let message = Message::Move { x: 1, y: 3 };
+</code></pre>
+<p>C语言风格的枚举定义</p>
+<pre><code class="language-rust">enum Number {
+    Zero,
+    One,
+    Two,
+}
+
+enum Number1 {
+    Zero = 0,
+    One,
+    Two,
+}
+
+// C-like enum
+enum Number2 {
+    Zero = 0,
+    One = 1,
+    Two = 2,
+}
+
+assert_eq!(Number::One as u8, Number1::One as u8);
+assert_eq!(Number1::One as u8, Number2::One as u8);
+</code></pre>
+<p>枚举不能直接进行比较 <code>==</code></p>
+<p><strong>Option</strong></p>
+<p>rust 中使用 Option 枚举替代 null 来表达空值</p>
+<pre><code class="language-rust">enum Option&lt;T&gt; {
+    Some(T),
+    None,
+}
+</code></pre>
+<h2>impl 实现</h2>
+<p>可以通过 <code>impl</code> 块给结构体和枚举实现方法和关联函数，一个结构体可以定义多个 <code>impl</code> 块</p>
+<h3>方法</h3>
+<p>方法的第一个参数必须为 <code>self</code>，其类型为 <code>Self</code> 相关（<code>impl</code> 块内，<code>Self</code> 指代被实现方法的结构体类型），指代此类型的<strong>实例</strong></p>
+<p>根据 rust 的所有权、可变等概念 <code>self</code> 可取的类型为 <code>Self</code>、<code>&amp;Self</code>、<code>&amp;mut Self</code>、<code>mut Self</code></p>
+<p>该参数对应可以缩写为 <code>&amp;self</code>、<code>&amp;mut self</code>、<code>self</code>、<code>mut self</code></p>
+<pre><code class="language-rust">impl Rectangle {
+    fn area(&amp;self) -&gt; u32 {
+        self.width * self.height
+    }
+}
+</code></pre>
+<p>C/C++ 中使用 <code>.</code> 直接在结构体上调用成员，使用 <code>-&gt;</code> 在一个结构体指针上调用成员</p>
+<p>Rust 中没有 <code>-&gt;</code> 运算符，但是有一个<strong>自动引用和解引用</strong>的功能</p>
+<p>当使用 <code>object.do</code> 调用时，Rust 会自动为 <code>object</code> 添加 <code>&amp;</code>、<code>&amp;mut</code> 或 <code>*</code> 以便使 <code>object</code> 与方法签名匹配</p>
+<h3>关联函数</h3>
+<p>定义在 <code>impl</code> 中且没有 <code>self</code> 的函数被称之为<strong>关联函数</strong>，因为它们与 <code>impl</code> 后面命名的类型相关</p>
+<p>关联函数通过结构体命名空间来调用 <code>::</code>，不和实例关联</p>
+<pre><code class="language-rust">impl Rectangle {
+    fn new(width: u32, height: u32) -&gt; Rectangle {
+        Rectangle { width, height }
+    }
+}
+let rec = Rectangle::new(10, 20);
+</code></pre><div><a href="/notes/rust%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"类型","article":{"title":"类型","content":"## 原生类型\n\nrust 提供的原生类型（primitives）分为**标量类型**（scalar）和**复合类型**（compound）\n\n### 标量类型\n\n标量（*scalar*）类型代表一个单独的值\n\n- 数值类型\n  - 整数类型\n    - 有符号整数：`i8`、`i16`、`i32`、`i64`、`i128` 和 `isize` \n    - 无符号整数： `u8`、`u16`、`u32`、`u64`、`u128` 和 `usize` \n\n  - 浮点数类型： `f32`、`f64` \n\n- 字符类型 `char`：单个 Unicode 字符，每个都占 4 字节\n- 布尔类型 `bool`：`true` 或 `false` \n- 元类型(unit type)：唯一值 `()`，本质上是一个空元组\n\n元类型有些类似于 JavaScript 中的 `undefined`，函数的默认返回值就是 `()` \n\n`()` 的应用非常广泛，除了作为返回值，还被大量使用在数据结构中：\n\n- 比如  `Result\u003c(), Error\u003e` 表示返回的错误类型中，我们只关心错误，不关心成功的值\n- 比如  `HashSet\u003cT\u003e` 实际上是 `HashMap\u003cK, ()\u003e` 的一个类型别名\n\n数值字面量可以采用的书写形式：\n\n- 通过前缀 `0x`、`0o`、`0b` 分别采用十六进制、八进制、二进制\n- 可以使用下划线，例如：`1_000`、`0.000_001` \n- 可以在字面量结尾标明类型：`100_i8`、`1.0f32` \n- 可以使用单字节字符带前缀的方式（`b'A'`）表示 `u8`，也就是 ASCII 编码\n\n只有是同类型的数值类型，才可以进行运算\n\n`isize` 和 `usize` 类型依赖运行程序的计算机架构，整数默认是 `i32`，浮点数默认为 `f64` \n\n数值类型的特点：\n\n- 类型转换必须是显式的：rust 不会进行隐式类型转换\n- 数值上可以使用方法：例如使用 `x.is_nan()` 判断浮点计算结果合不合法\n\n**关于溢出** \n\n在 debug 模式编译时，Rust 检查整形溢出的问题并使程序 *panic*，在 release 构建中 Rust 不检测溢出\n\n### 复合类型\n\n-  元组（tuple）：如 `(1, true)` \n- 数组（array）：如 `[1, 2, 3]` \n\n元组可以包含各种类型值，可以拥有任意多个值，元祖的访问使用 `.index` \n\n```rust\nlet tuple = (10, \"fadaf\", 1.0);\n\nprintln!(\"{}\", tuple.0);\n```\n\n元组太长会无法直接打印，测试应该是长度不能超过 12 \n\n```rust\nlet too_long_tuple = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);\nprintln!(\"too long tuple: {:?}\", too_long_tuple);\n```\n\n数组的类型注解为 `[T; length]`，数组的元素类型大小和长度固定（数组的长度必须在编译期就已知），存储在栈上性能非常优秀\n\n```rust\nlet arr: [i32; 2] = [1, 2];\n\n// 初始化 5 个 10\nlet arr = [10; 5];\n```\n\n在使用索引访问数组元素时，rust 会进行边界检查，越界的话程序会出现 **panic** \n\n## Slice类型\n\nslice 允许我们引用集合中一段连续的元素序列，而不是引用整个集合\n\n- 切片类型和数组类似，但其指向的数据大小在编译时是不确定的\n- 切片的长度并不是固定的，而是取决于使用时指定的起始和结束位置\n- 创建切片的代价非常小，因为切片只是针对底层数组/字符串的一个引用\n- 切片是本质上一个双字对象（占 `2 * usize` 大小），第一个字是指向数据的指针，第二个字是切片的长度\n\n\u003cimg src=\"https://kaisery.github.io/trpl-zh-cn/img/trpl04-06.svg\" style=\"width:25%;\" /\u003e\n\n**字符串切片** \n\n```rust\nlet s = String::from(\"hello world\");\n\nlet hello: \u0026str = \u0026s[..5];\nlet world: \u0026str = \u0026s[6..11];\n```\n\n字符串字面值被储存在二进制文件中，其类型也是为 `\u0026str`，其本质就是一个指向二进制程序特定位置的 slice\n\n在对字符串使用切片语法时需要格外小心，切片的索引必须落在字符之间的边界位置，也就是 UTF-8 字符的边界\n\n也可以使用切片引用数组的一部分，其类型注解为 `\u0026[T]` \n\n```rust\nlet a = [1, 2, 3, 4, 5];\n\nlet slice: \u0026[i32] = \u0026a[1..3];\n```\n\n## 字符串\n\nRust 中的字符是 Unicode 类型，每个字符占据 4 个字节内存空间。\n\n但是字符串采用 UTF-8 编码，也就是字符串中的字符所占的字节数是变化的(1 - 4)，这样有助于大幅降低字符串所占用的内存空间。\n\nString 内部使用 [ `u8` ] 字节数组存储数据，所以实际存储的内容数量可能和字符数不同\n\nRust 不允许使用索引访问字符串，因为采用 UTF-8 存储内部的字节数组和字符不一定对应，而且如果要索引对应字符的话，这样无法保证性能表现是 O(1)\n\nRust 在语言级别，只有一种字符串类型： `str`，它通常是以引用类型/字符串切片 `\u0026str` 出现\n\n`str` 类型被硬编码进可执行文件，无法被修改，正常情况下我们无法使用该类型，如果要使用需要配合 `Box`\n\n### 转换\n\n `\u0026str` =\u003e `String` \n\n- `String::from(\"hello,world\")` \n- `\"hello,world\".to_string()` \n\n `String` =\u003e  `\u0026str` \n\n- `\u0026s` \n- `\u0026s[..]` \n- `s.as_str()` \n\nString 能够直接取引用转换的原因是 `deref` 隐式强制转换\n\n### 拼接\n\n使用 `+`、`+=` 可以进行字符串的连接，使用 `+` 本质上调用的是 string 的 `add` 方法，所有权会转移\n\n```rust\nlet s1 = String::from(\"hello,\");\nlet s2 = String::from(\"world!\");\n// 在下句中，s1的所有权被转移走了，因此后面不能再使用s1\nlet s3 = s1 + \u0026s2;\nassert_eq!(s3,\"hello,world!\");\n```\n\n\n\n## 结构体\n\n使用 `struct` 关键字定义结构体\n\n```rust\nstruct User {\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n```\n\n结构体的实例的创建和 **ES6** 中对象字面量的语法类似，不同的是需要带上结构体的名称\n\n```rust\nUser {\n  email: String::from(\"someone@example.com\"),\n  username: String::from(\"someusername123\"),\n  active: true,\n  sign_in_count: 1,\n}\n\n// 简化\nUser {\n  email,\n  username,\n  active: true,\n  sign_in_count: 1,\n}\n// 根据已有的结构体实例，创建新的结构体实例\nUser {\n  active: user1.active,\n  username: user1.username,\n  email: String::from(\"another@example.com\"),\n  sign_in_count: user1.sign_in_count,\n}\n// 结构体更新语法\nUser {\n  email: String::from(\"another@example.com\"),\n  ..user1\n}\n```\n\n使用**结构体更新语法**创建新结构体类似于 ES6 中的展开运算符，但是结构体更新语法**只能用在结尾**，且不会覆盖已有的字段\n\n### 所有权\n\n结构体实例会拥有其字段的所有权，**结构体更新语法会造成所有权的移动**，旧的结构体会失效\n\n可以使结构体存储被其他对象拥有的数据的引用，不过这么做的话需要用上**生命周期** \n\n### 元祖结构体\n\n可以定义与元组类似的结构体\n\n```rust\nstruct Color(i32, i32, i32);\nstruct Point(i32, i32, i32);\n\nfn main() {\n    let black = Color(0, 0, 0);\n    let origin = Point(0, 0, 0);\n}\n```\n\n元组结构体实例类似于元组，可以进行解构，也通过 `.index` 进行访问\n\n### 单元结构体\n\n一个没有任何字段的结构体，被称为**类单元结构体**（Unit-like Struct），类似于 `()` 类型\n\n单元结构体一般在想要在某个类型上实现 trait 但不需要在其中存储数据的时候使用（也就是不关心该类型的内容, 只关心它的行为）\n\n```rust\nstruct AlwaysEqual;\n\nimpl SomeTrait for AlwaysEqual { }\n\nfn main() {\n    let subject = AlwaysEqual;\n}\n```\n\n## 枚举\n\n枚举类型是一个类型，它会包含所有可能的**枚举成员**, 而**枚举值**是该类型中的具体某个成员的**实例** \n\n**任何类型的数据都可以放入枚举成员中**：字符串、数值、结构体甚至另一个枚举\n\n```rust\nenum Message {\n  Quit,\n  Move { x: i32, y: i32 },\n  Write(String),\n  ChangeColor(i32, i32, i32),\n}\n```\n\n- `Quit` 没有任何关联数据\n- `Move` 包含一个匿名结构体\n- `Write` 包含一个 `String` 字符串\n- `ChangeColor` 包含三个 `i32` \n\n枚举的使用需要通过 `::` 命名空间来使用\n\n```rust\nlet message = Message::Move { x: 1, y: 3 };\n```\n\nC语言风格的枚举定义\n\n```rust\nenum Number {\n    Zero,\n    One,\n    Two,\n}\n\nenum Number1 {\n    Zero = 0,\n    One,\n    Two,\n}\n\n// C-like enum\nenum Number2 {\n    Zero = 0,\n    One = 1,\n    Two = 2,\n}\n\nassert_eq!(Number::One as u8, Number1::One as u8);\nassert_eq!(Number1::One as u8, Number2::One as u8);\n```\n\n枚举不能直接进行比较 `==` \n\n**Option**\n\nrust 中使用 Option 枚举替代 null 来表达空值\n\n```rust\nenum Option\u003cT\u003e {\n    Some(T),\n    None,\n}\n```\n\n## impl 实现\n\n可以通过 `impl` 块给结构体和枚举实现方法和关联函数，一个结构体可以定义多个 `impl` 块\n\n### 方法\n\n方法的第一个参数必须为 `self`，其类型为 `Self` 相关（`impl` 块内，`Self` 指代被实现方法的结构体类型），指代此类型的**实例** \n\n根据 rust 的所有权、可变等概念 `self` 可取的类型为 `Self`、`\u0026Self`、`\u0026mut Self`、`mut Self` \n\n该参数对应可以缩写为 `\u0026self`、`\u0026mut self`、`self`、`mut self` \n\n```rust\nimpl Rectangle {\n    fn area(\u0026self) -\u003e u32 {\n        self.width * self.height\n    }\n}\n```\n\nC/C++ 中使用 `.` 直接在结构体上调用成员，使用 `-\u003e` 在一个结构体指针上调用成员\n\nRust 中没有 `-\u003e` 运算符，但是有一个**自动引用和解引用**的功能\n\n当使用 `object.do` 调用时，Rust 会自动为 `object` 添加 `\u0026`、`\u0026mut` 或 `*` 以便使 `object` 与方法签名匹配\n\n### 关联函数\n\n定义在 `impl` 中且没有 `self` 的函数被称之为**关联函数**，因为它们与 `impl` 后面命名的类型相关\n\n关联函数通过结构体命名空间来调用 `::`，不和实例关联\n\n```rust\nimpl Rectangle {\n    fn new(width: u32, height: u32) -\u003e Rectangle {\n        Rectangle { width, height }\n    }\n}\nlet rec = Rectangle::new(10, 20);\n```\n\n\n\n","meta":{"size":9705,"birthTime":1663496641424.897,"updateTime":1663496641425.2244}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["rust学习笔记","类型"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

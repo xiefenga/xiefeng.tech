@@ -1,0 +1,169 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>CPU | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#寄存器" data-target-id="h1-寄存器-0">寄存器</a></li><li><a href="#CPU位数" data-target-id="h1-CPU位数-1">CPU位数</a></li><li><a href="#寻址方式" data-target-id="h1-寻址方式-2">寻址方式</a></li><li><a href="#段寄存器" data-target-id="h1-段寄存器-3">段寄存器</a><ul><li><a href="#代码段" data-target-id="h2-代码段-0">代码段</a></li><li><a href="#数据段" data-target-id="h2-数据段-1">数据段</a></li><li><a href="#栈段" data-target-id="h2-栈段-2">栈段</a></li></ul></li><li><a href="#字的存储" data-target-id="h1-字的存储-4">字的存储</a></li><li><a href="#内存地址空间" data-target-id="h1-内存地址空间-5">内存地址空间</a></li><li><a href="#栈机制" data-target-id="h1-栈机制-6">栈机制</a></li><li><a href="#标志寄存器" data-target-id="h1-标志寄存器-7">标志寄存器</a><ul><li><a href="#ZF标志" data-target-id="h2-ZF标志-3">ZF标志</a></li><li><a href="#PF标志" data-target-id="h2-PF标志-4">PF标志</a></li><li><a href="#SF标志" data-target-id="h2-SF标志-5">SF标志</a></li><li><a href="#CF标志" data-target-id="h2-CF标志-6">CF标志</a></li><li><a href="#OF标志" data-target-id="h2-OF标志-7">OF标志</a></li><li><a href="#DF标志" data-target-id="h2-DF标志-8">DF标志</a></li></ul></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">CPU</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>寄存器</h1>
+<p>对于一个汇编程序员来说，CPU 中主要的部件是寄存器。寄存器是程序员可以用指令读写的部件，通过控制寄存器来控制 CPU。</p>
+<p>8086 有14个寄存器：AX、BX、CX、DX、SI、DI、SP、BP、IP、CS、SS、DS、ES、PSW。</p>
+<p>8086 的寄存器都是16位的，而上一代 CPU 的寄存器都是8位的；</p>
+<p>为了保证兼容，8086 的 AX、BX、CX、DX 寄存器每个都可以拆分为独立的 2 个寄存器来使用。</p>
+<ul>
+<li>AX可以分为 AH 和 AL</li>
+<li>BX可以分为 BH 和 BL</li>
+<li>CX可以分为 CH 和 CL</li>
+<li>DX可以分为 DH 和 DL</li>
+</ul>
+<p>L 代表低8位，H代表高8位：</p>
+<p><img src="http://oss.xiefeng.tech/img/20210516152518.png" alt=""/></p>
+<h1>CPU位数</h1>
+<blockquote>
+<p>字长是指计算机内部参与运算的数的位数。它决定着计算机内部寄存器、ALU和数据总线的位数，直接影响着机器的硬件规模和造价。</p>
+</blockquote>
+<p>8086是16位结构 CPU，16位结构代表的意义：</p>
+<ol>
+<li>运算器一次最多可以处理 16 位的数据</li>
+<li>寄存器的最大宽度为 16 位</li>
+<li>寄存器和运算器之间的通路为 16 位</li>
+<li>字长为 16 位</li>
+<li>数据总线宽度 16 位</li>
+</ol>
+<h1>寻址方式</h1>
+<p>CPU 的位数和地址总线的宽度没关系，8086是16位 CPU，地址总线的宽度为 20，达到了 1M 寻址能力。</p>
+<p>寻址能力：存储器的每个存储单元都能存储 1 Byte，1 位宽度的地址总线的寻址能力为 2 个存储单元 =&gt; 2 B</p>
+<p>8086CPU的寻址能力：$2^{20}=2^{10}*2^{10} B = 2^{10} KB = 1 M$</p>
+<p>8086为16位结构，如果简单的直接将地址从内部简单的发出，那么寻址能力就只有 16 位所能达到的 64 KB。</p>
+<p>8086采用一种在内部使用两个16位地址合成的方法来形成一个20位物理地址。</p>
+<p><img src="http://oss.xiefeng.tech/img/20210516112515.png" alt=""/></p>
+<p>地址加法器采用 <code>物理地址 = 段地址 * 16 + 偏移地址</code> 的方式合成物理地址。</p>
+<p>这种寻址方式的本质含义：CPU 在访问内存时，将基础地址和偏移地址相加，得到内存单元的物理地址</p>
+<h1>段寄存器</h1>
+<p>8086通过段地址和偏移地址形成物理地址，段地址存储在段寄存器中。</p>
+<p>8086具有4个段寄存器：CS、DS、SS、ES。</p>
+<h2>代码段</h2>
+<ul>
+<li>CS：代码段寄存器（code segment）</li>
+<li>IP：指令指针寄存器（instruction pointer）</li>
+</ul>
+<p>PC 和 CS:IP 的区别：PC是计算机科学中的一个术语，CS 和 IP 是 x86 兼容 CPU 上实现 PC 的具体措施。</p>
+<p>在 8086 机中，CS:IP 指向当前执行的指令。</p>
+<p>8086 CPU工作过程：</p>
+<ol>
+<li>从 CS:IP 指向的地址读取指令，读取的指令进入<strong>指令缓冲器</strong></li>
+<li>IP = IP + 指令长度，从而指向下一条指令</li>
+<li>执行指令，接着重复过程</li>
+</ol>
+<p>更改 CS、IP 的值：8086 中 <code>mov</code> 指令可以更改大部分寄存器的值，但对于 CS 和 IP 只能通过 <code>jmp</code> 指令更改</p>
+<ul>
+<li><code>jmp 段地址:偏移地址</code></li>
+<li><code>jmp 合法寄存器</code>：仅修改 IP 的值</li>
+</ul>
+<pre><code class="language-assembly">jmp 2AE3:3 ; CS = 2AE3 IP = 0003
+
+jmp ax ; IP = ax
+</code></pre>
+<p><strong>CPU 如何知道指令的长度：</strong></p>
+<blockquote>
+<p>实际上是在设计cpu芯片时，就要考虑设计什么样的指令，指令长度，执行时间，影响哪些寄存器，然后给每个指令一个二进制码，当执行到某个指令的第一个字节时（或者更多更细分）就识别出是什么指令了，芯片硬件做相应的动作。</p>
+</blockquote>
+<p><img src="http://oss.xiefeng.tech/img/20210529201835.png" alt=""/></p>
+<h2>数据段</h2>
+<p>CPU 要读写一个内存单元时，必须先给出这个内存单元的地址。</p>
+<p>8086中，内存地址由段地址和偏移地址组成，8086中有一个 DS 寄存器，存放需要访问的数据的段地址。</p>
+<p>8086不支持将数据直接送入段寄存器的操作，所以需要通过其他寄存器来辅助。</p>
+<p>偏移地址通过 <code>[x]</code> 给出</p>
+<pre><code class="language-assembly">mov bx,1000H
+mov ds,bx
+mov al,[0]
+</code></pre>
+<h2>栈段</h2>
+<p>SS：栈顶的段地址</p>
+<p>SP：栈顶的偏移地址</p>
+<p>在任意时刻 SS:SP 指向栈顶元素，在执行 push 和 pop 指令时，CPU 从 SS 和 SP 获取到栈顶地址。</p>
+<h1>字的存储</h1>
+<p>8086寄存器可以存下一个字，但是内存单元是字节单元，一个字需要用两个地址连续的内存单元来存放。</p>
+<p>字单元：存放一个字型数据的内存单元，即由两个地址连续的内存单元组成。</p>
+<p>N地址字单元：起始地址为N的字单元。</p>
+<p>任何两个连续的内存单元，可以将它们看成两个内存单元，也可看成一个地址为 N 的字单元。</p>
+<p><code>mov</code> 指令可以在寄存器和内存之间进行字数据传送，由于 8086 的数据总线宽度为 16，可以一次性传递一个字。</p>
+<h1>内存地址空间</h1>
+<p>一台 PC 上会装有多个存储器芯片，例如：RAM、ROM、显卡的 RAM</p>
+<p>PC 上的所有存储器，在物理上是独立的期间，但是都和 CPU 的总线相连，CPU 都是通过控制线发出读写命令。</p>
+<p>CPU 在操纵它们的时候，将它们当作一整块逻辑存储器来使用，每个物理存储器在这个逻辑存储器中占一个地址段。</p>
+<h1>栈机制</h1>
+<p>CPU 提供了相关的指令<strong>以栈的方式</strong>访问内存空间，在基于8086编程时，可以将一段内存当作栈来使用。</p>
+<p>栈顶为低地址部分，栈底为高地址部分。</p>
+<p>8086提供了入栈和出栈的指令：</p>
+<ul>
+<li><code>push ax</code>：将 ax 中的数据入栈</li>
+<li><code>pop ax</code>：将栈顶元素出栈放入 ax</li>
+</ul>
+<p>在任意时刻，SS:SP 指向栈顶元素，push 和 pop 执行执行时，CPU 都会从 SS 和 SP 中得到栈顶地址。</p>
+<p>8086的入栈和出栈都是以字为单位进行的，初始化 SS:SP 时，SP 的地址应当设置为栈底 + 2</p>
+<p>push 执行过程：</p>
+<ol>
+<li>SP = SP - 2，即 SS:SP 指向新的栈顶单元</li>
+<li>将 push 的寄存器中的数据送入栈顶的内存单元中</li>
+</ol>
+<p>pop 执行过程：</p>
+<ol>
+<li>将 SS:SP 指向的内存单元处的数据送入 pop 的寄存器内</li>
+<li>SP = SP + 2，即 SS:SP 指向新的栈顶单元</li>
+</ol>
+<p>8086不会保证我们对栈的操作是不会超界的，8086只知道栈顶在何处，不知道我们安排的栈空间有多大。</p>
+<p>就像 CPU 只知道当前执行的指令在何处，而不知道有多少指令要去执行。</p>
+<h1>标志寄存器</h1>
+<p>标志寄存器是一种特殊的寄存器，它的作用有三种：</p>
+<ol>
+<li>存储相关指令的某些执行结果</li>
+<li>为 CPU 执行相关指令提供行为依据</li>
+<li>控制 CPU 的相关工作方式</li>
+</ol>
+<p>标志寄存器中存储的信息通常被称为 PSW（程序状态字），可以设置一组控制与状态寄存器，也可以专设一个 PSW 寄存器。</p>
+<p>8086 CPU 只有一个标志寄存器，这个寄存器 16 位每一位都有专门的含义，按位起作用。</p>
+<p>但 8086 只使用了 0、2、4、6、7、8、9、10、11 这几位。</p>
+<p><strong>相关指令：</strong> 指的就是那些执行完会影响标志寄存器的指令，在 8086 中这些指令大都是运算指令（add、sub、and等），像 mov、push 等传送指令是不会影响标志寄存器的。</p>
+<h2>ZF标志</h2>
+<p>ZF 是零标志位（zore flag），标志寄存器的第 6 位，它记录相关指令执行后结果是否为 0。</p>
+<p>如果结果为 0，则该标志位值为 1；如果结果不为 0，则该标志位为 0。</p>
+<pre><code class="language-assembly">mov ax, 1
+sub ax, 1 ; zf = 1
+
+add ax, 1 ; zf = 0
+</code></pre>
+<h2>PF标志</h2>
+<p>PF 是奇偶标志位，标志寄存器的第 2 位，它记录相关指令执行后，其结果的所有 bit 位中 1 的个数是为偶数。</p>
+<p>当结果中的 1 的个数为<strong>偶数</strong>，PF = 1，否则 PF = 0</p>
+<pre><code class="language-assembly">mov al, 1
+and al, 10 ; al = 00001011B  PF = 0
+</code></pre>
+<h2>SF标志</h2>
+<p>SF 是符号标志位，标志寄存器的第 7 位，记录的是相关指令结束后，结果是否为负数。</p>
+<p>在计算机中，都是用补码来存储数据，同样一个数据即可以看作是有符号数，也可以看成无符号数。</p>
+<pre><code class="language-assembly">mov al, 10000001B
+add a1, 1 ; al = 10000010B
+</code></pre>
+<p><code>10000010</code> 既可以看成无符号数 130，也可以看成 -126。</p>
+<p>CPU 在进行运算的时候就包含了两种含义，但 CPU 做的仅仅就是补码的相加而已。</p>
+<p>重要的是我们是如何看待的，是无符号数相加还是有符号数相加，CPU 应当用一种信息来记录，以便我们获取我们需要的结果。</p>
+<p>SF 标志位记录的是 <strong>有符号数</strong> 运算结果是否为负数，就是将结果看作有符号数，该数是否为负数。</p>
+<p>如果为负数，则 SF = 1；如果我们将数据当作 <strong>无符号数</strong>，则 SF 标志位对我们无意义。</p>
+<pre><code class="language-assembly">mov al, 10000001B
+add a1, 1 ; SF = 1 
+</code></pre>
+<p><strong>add 等运算指令一定会影响到 SF 寄存器的值，即使我们用不上该寄存器的值。</strong></p>
+<h2>CF标志</h2>
+<p>CF 是进位标志位，标志寄存器的第 0 位，记录了 <strong>无符号数</strong> 运算结果的最高有效位向更高位的进位制或借位值。</p>
+<p>由于计算机中是二进制元素，进位和借位的值只能是 0 或 1。</p>
+<pre><code class="language-assembly">mov al, 98H
+add al, al ; 98H + 98H = 130H = 1 0011 0000B al = 30H CF = 1
+</code></pre>
+<h2>OF标志</h2>
+<p>OF 是溢出标志位，标志寄存器的第 11 位，记录的是 <strong>有符号数</strong> 运算结果是否发生溢出。</p>
+<p>如果发生溢出，OF = 1，否则 OF = 0</p>
+<pre><code class="language-assembly">mov al, 98
+add al, 99 ; 98 + 99 = 197 = 11000101B = -72 OF = 1
+</code></pre>
+<h2>DF标志</h2>
+<p>DF 是方向标志位，用于控制在串处理指令中每次操作后 si、di 的增减。</p>
+<p>DF = 0，每次操作后 si、di 递增；DF = 1，每次操作后si、di 递减。</p>
+<p>8086 提供了两条指令对 DF 进行设置：</p>
+<ul>
+<li>cld：将 DF 设置为 0</li>
+<li>std：将 DF 设置为 1</li>
+</ul><div><a href="/notes/%E6%B1%87%E7%BC%96">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"CPU","article":{"title":"CPU","content":"# 寄存器\r\n\r\n对于一个汇编程序员来说，CPU 中主要的部件是寄存器。寄存器是程序员可以用指令读写的部件，通过控制寄存器来控制 CPU。\r\n\r\n8086 有14个寄存器：AX、BX、CX、DX、SI、DI、SP、BP、IP、CS、SS、DS、ES、PSW。\r\n\r\n8086 的寄存器都是16位的，而上一代 CPU 的寄存器都是8位的；\r\n\r\n为了保证兼容，8086 的 AX、BX、CX、DX 寄存器每个都可以拆分为独立的 2 个寄存器来使用。\r\n\r\n- AX可以分为 AH 和 AL\r\n- BX可以分为 BH 和 BL\r\n- CX可以分为 CH 和 CL\r\n- DX可以分为 DH 和 DL\r\n\r\nL 代表低8位，H代表高8位：\r\n\r\n![](http://oss.xiefeng.tech/img/20210516152518.png)\r\n\r\n# CPU位数\r\n\r\n\u003e 字长是指计算机内部参与运算的数的位数。它决定着计算机内部寄存器、ALU和数据总线的位数，直接影响着机器的硬件规模和造价。\r\n\r\n8086是16位结构 CPU，16位结构代表的意义：\r\n\r\n1. 运算器一次最多可以处理 16 位的数据\r\n2. 寄存器的最大宽度为 16 位\r\n3. 寄存器和运算器之间的通路为 16 位\r\n4. 字长为 16 位\r\n5. 数据总线宽度 16 位\r\n\r\n# 寻址方式\r\n\r\nCPU 的位数和地址总线的宽度没关系，8086是16位 CPU，地址总线的宽度为 20，达到了 1M 寻址能力。\r\n\r\n寻址能力：存储器的每个存储单元都能存储 1 Byte，1 位宽度的地址总线的寻址能力为 2 个存储单元 =\u003e 2 B\r\n\r\n8086CPU的寻址能力：$2^{20}=2^{10}*2^{10} B = 2^{10} KB = 1 M$\r\n\r\n8086为16位结构，如果简单的直接将地址从内部简单的发出，那么寻址能力就只有 16 位所能达到的 64 KB。\r\n\r\n8086采用一种在内部使用两个16位地址合成的方法来形成一个20位物理地址。\r\n\r\n![](http://oss.xiefeng.tech/img/20210516112515.png)\r\n\r\n地址加法器采用 `物理地址 = 段地址 * 16 + 偏移地址` 的方式合成物理地址。\r\n\r\n这种寻址方式的本质含义：CPU 在访问内存时，将基础地址和偏移地址相加，得到内存单元的物理地址\r\n\r\n# 段寄存器\r\n\r\n8086通过段地址和偏移地址形成物理地址，段地址存储在段寄存器中。\r\n\r\n8086具有4个段寄存器：CS、DS、SS、ES。\r\n\r\n## 代码段\r\n\r\n- CS：代码段寄存器（code segment）\r\n- IP：指令指针寄存器（instruction pointer）\r\n\r\nPC 和 CS:IP 的区别：PC是计算机科学中的一个术语，CS 和 IP 是 x86 兼容 CPU 上实现 PC 的具体措施。\r\n\r\n在 8086 机中，CS:IP 指向当前执行的指令。\r\n\r\n8086 CPU工作过程：\r\n\r\n1. 从 CS:IP 指向的地址读取指令，读取的指令进入**指令缓冲器**\r\n2. IP = IP + 指令长度，从而指向下一条指令\r\n3. 执行指令，接着重复过程\r\n\r\n更改 CS、IP 的值：8086 中 `mov` 指令可以更改大部分寄存器的值，但对于 CS 和 IP 只能通过 `jmp` 指令更改\r\n\r\n- `jmp 段地址:偏移地址`\r\n- `jmp 合法寄存器`：仅修改 IP 的值\r\n\r\n```assembly\r\njmp 2AE3:3 ; CS = 2AE3 IP = 0003\r\n\r\njmp ax ; IP = ax\r\n```\r\n\r\n**CPU 如何知道指令的长度：**\r\n\r\n\u003e 实际上是在设计cpu芯片时，就要考虑设计什么样的指令，指令长度，执行时间，影响哪些寄存器，然后给每个指令一个二进制码，当执行到某个指令的第一个字节时（或者更多更细分）就识别出是什么指令了，芯片硬件做相应的动作。\r\n\r\n![](http://oss.xiefeng.tech/img/20210529201835.png)\r\n\r\n## 数据段\r\n\r\nCPU 要读写一个内存单元时，必须先给出这个内存单元的地址。\r\n\r\n8086中，内存地址由段地址和偏移地址组成，8086中有一个 DS 寄存器，存放需要访问的数据的段地址。\r\n\r\n8086不支持将数据直接送入段寄存器的操作，所以需要通过其他寄存器来辅助。\r\n\r\n偏移地址通过 `[x]` 给出\r\n\r\n```assembly\r\nmov bx,1000H\r\nmov ds,bx\r\nmov al,[0]\r\n```\r\n\r\n## 栈段\r\n\r\nSS：栈顶的段地址\r\n\r\nSP：栈顶的偏移地址\r\n\r\n在任意时刻 SS:SP 指向栈顶元素，在执行 push 和 pop 指令时，CPU 从 SS 和 SP 获取到栈顶地址。\r\n\r\n# 字的存储\r\n\r\n8086寄存器可以存下一个字，但是内存单元是字节单元，一个字需要用两个地址连续的内存单元来存放。\r\n\r\n字单元：存放一个字型数据的内存单元，即由两个地址连续的内存单元组成。\r\n\r\nN地址字单元：起始地址为N的字单元。\r\n\r\n任何两个连续的内存单元，可以将它们看成两个内存单元，也可看成一个地址为 N 的字单元。\r\n\r\n`mov` 指令可以在寄存器和内存之间进行字数据传送，由于 8086 的数据总线宽度为 16，可以一次性传递一个字。\r\n\r\n# 内存地址空间\r\n\r\n一台 PC 上会装有多个存储器芯片，例如：RAM、ROM、显卡的 RAM\r\n\r\nPC 上的所有存储器，在物理上是独立的期间，但是都和 CPU 的总线相连，CPU 都是通过控制线发出读写命令。\r\n\r\nCPU 在操纵它们的时候，将它们当作一整块逻辑存储器来使用，每个物理存储器在这个逻辑存储器中占一个地址段。\r\n\r\n# 栈机制\r\n\r\nCPU 提供了相关的指令**以栈的方式**访问内存空间，在基于8086编程时，可以将一段内存当作栈来使用。\r\n\r\n栈顶为低地址部分，栈底为高地址部分。\r\n\r\n8086提供了入栈和出栈的指令：\r\n\r\n- `push ax`：将 ax 中的数据入栈\r\n- `pop ax`：将栈顶元素出栈放入 ax \r\n\r\n在任意时刻，SS:SP 指向栈顶元素，push 和 pop 执行执行时，CPU 都会从 SS 和 SP 中得到栈顶地址。\r\n\r\n8086的入栈和出栈都是以字为单位进行的，初始化 SS:SP 时，SP 的地址应当设置为栈底 + 2\r\n\r\npush 执行过程：\r\n\r\n1. SP = SP - 2，即 SS:SP 指向新的栈顶单元\r\n2. 将 push 的寄存器中的数据送入栈顶的内存单元中\r\n\r\npop 执行过程：\r\n\r\n1. 将 SS:SP 指向的内存单元处的数据送入 pop 的寄存器内\r\n2. SP = SP + 2，即 SS:SP 指向新的栈顶单元\r\n\r\n8086不会保证我们对栈的操作是不会超界的，8086只知道栈顶在何处，不知道我们安排的栈空间有多大。\r\n\r\n就像 CPU 只知道当前执行的指令在何处，而不知道有多少指令要去执行。\r\n\r\n# 标志寄存器\r\n\r\n标志寄存器是一种特殊的寄存器，它的作用有三种：\r\n\r\n1. 存储相关指令的某些执行结果\r\n2. 为 CPU 执行相关指令提供行为依据\r\n3. 控制 CPU 的相关工作方式\r\n\r\n标志寄存器中存储的信息通常被称为 PSW（程序状态字），可以设置一组控制与状态寄存器，也可以专设一个 PSW 寄存器。\r\n\r\n8086 CPU 只有一个标志寄存器，这个寄存器 16 位每一位都有专门的含义，按位起作用。\r\n\r\n但 8086 只使用了 0、2、4、6、7、8、9、10、11 这几位。\r\n\r\n**相关指令：** 指的就是那些执行完会影响标志寄存器的指令，在 8086 中这些指令大都是运算指令（add、sub、and等），像 mov、push 等传送指令是不会影响标志寄存器的。\r\n\r\n## ZF标志\r\n\r\nZF 是零标志位（zore flag），标志寄存器的第 6 位，它记录相关指令执行后结果是否为 0。\r\n\r\n如果结果为 0，则该标志位值为 1；如果结果不为 0，则该标志位为 0。\r\n\r\n```assembly\r\nmov ax, 1\r\nsub ax, 1 ; zf = 1\r\n\r\nadd ax, 1 ; zf = 0\r\n```\r\n\r\n## PF标志\r\n\r\nPF 是奇偶标志位，标志寄存器的第 2 位，它记录相关指令执行后，其结果的所有 bit 位中 1 的个数是为偶数。\r\n\r\n当结果中的 1 的个数为**偶数**，PF = 1，否则 PF = 0\r\n\r\n```assembly\r\nmov al, 1\r\nand al, 10 ; al = 00001011B  PF = 0\r\n```\r\n\r\n## SF标志\r\n\r\nSF 是符号标志位，标志寄存器的第 7 位，记录的是相关指令结束后，结果是否为负数。\r\n\r\n在计算机中，都是用补码来存储数据，同样一个数据即可以看作是有符号数，也可以看成无符号数。\r\n\r\n```assembly\r\nmov al, 10000001B\r\nadd a1, 1 ; al = 10000010B\r\n```\r\n\r\n`10000010` 既可以看成无符号数 130，也可以看成 -126。\r\n\r\nCPU 在进行运算的时候就包含了两种含义，但 CPU 做的仅仅就是补码的相加而已。\r\n\r\n重要的是我们是如何看待的，是无符号数相加还是有符号数相加，CPU 应当用一种信息来记录，以便我们获取我们需要的结果。\r\n\r\nSF 标志位记录的是 **有符号数** 运算结果是否为负数，就是将结果看作有符号数，该数是否为负数。\r\n\r\n如果为负数，则 SF = 1；如果我们将数据当作 **无符号数**，则 SF 标志位对我们无意义。\r\n\r\n```assembly\r\nmov al, 10000001B\r\nadd a1, 1 ; SF = 1 \r\n```\r\n\r\n**add 等运算指令一定会影响到 SF 寄存器的值，即使我们用不上该寄存器的值。**\r\n\r\n## CF标志\r\n\r\nCF 是进位标志位，标志寄存器的第 0 位，记录了 **无符号数** 运算结果的最高有效位向更高位的进位制或借位值。\r\n\r\n由于计算机中是二进制元素，进位和借位的值只能是 0 或 1。\r\n\r\n```assembly\r\nmov al, 98H\r\nadd al, al ; 98H + 98H = 130H = 1 0011 0000B al = 30H CF = 1\r\n```\r\n\r\n## OF标志\r\n\r\nOF 是溢出标志位，标志寄存器的第 11 位，记录的是 **有符号数** 运算结果是否发生溢出。\r\n\r\n如果发生溢出，OF = 1，否则 OF = 0\r\n\r\n```assembly\r\nmov al, 98\r\nadd al, 99 ; 98 + 99 = 197 = 11000101B = -72 OF = 1\r\n```\r\n\r\n## DF标志\r\n\r\nDF 是方向标志位，用于控制在串处理指令中每次操作后 si、di 的增减。\r\n\r\nDF = 0，每次操作后 si、di 递增；DF = 1，每次操作后si、di 递减。\r\n\r\n8086 提供了两条指令对 DF 进行设置：\r\n\r\n- cld：将 DF 设置为 0\r\n- std：将 DF 设置为 1\r\n","meta":{"size":9629,"birthTime":1663496641432.1326,"updateTime":1663496641432.4866}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["汇编","CPU"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

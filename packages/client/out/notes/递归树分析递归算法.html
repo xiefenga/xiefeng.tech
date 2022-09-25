@@ -1,0 +1,34 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>递归树分析递归算法 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#递归树" data-target-id="h1-递归树-0">递归树</a></li><li><a href="#时间复杂度" data-target-id="h1-时间复杂度-1">时间复杂度</a><ul><li><a href="#fib" data-target-id="h2-fib-0">fib</a></li><li><a href="#其他" data-target-id="h2-其他-1">其他</a></li></ul></li><li><a href="#空间复杂度" data-target-id="h1-空间复杂度-2">空间复杂度</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">递归树分析递归算法</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>递归树</h1>
+<p>递归的思想是将大问题分解为小问题，然后再将小问题分解为小小问题。这样一层一层地分解，直到问题的数据规模被分解得足够小，不用继续递归分解为止。</p>
+<p>如果把这个一层一层的分解过程画成图，它其实就是一棵树。给这棵树起一个名字，叫作<strong>递归树</strong>。</p>
+<p>以递归求解fib为例：</p>
+<pre><code class="language-javascript">function fib(n) {
+    return n &lt;= 2 ? 1 : fib(n -1) + fib(n - 2);
+}
+</code></pre>
+<p>递归树就长这个样子：</p>
+<p><img src="http://oss.xiefeng.tech/img/20210406095225.png" alt=""/></p>
+<h1>时间复杂度</h1>
+<p>使用递归树分析时间复杂度的思路是：</p>
+<ol>
+<li>让递归树中的每个结点表示一个单一子问题的代价</li>
+<li>在创建递归树之后，对树的每层的各子问题的代价进行求和，得到每一层的代价</li>
+<li>将所有层的代价加起来，得到整棵递归树的总代价，这个总代价就是递归式的解</li>
+</ol>
+<h2>fib</h2>
+<p>可以将该算法的时间复杂度表达式写出来 <code>T(n) = T(n-1) + T(n - 2)</code></p>
+<p>每一个节点的代价为 <code>O(1)</code>，画出递归树就是这个样子：</p>
+<p><img src="http://oss.xiefeng.tech/img/20210406102000.png" alt=""/></p>
+<p>所以 <code>T(n) = 1 + 2 + 4 + .....</code>，所以使用递归树求解需要直到数的高度。</p>
+<p>对于 fib 来说，树的高度介于 $n$ 和 $\frac n 2$ 之间。</p>
+<p>当树高为 $n$ 时：$T(n) = 1 + 2 + 4 + ... + 2^{n-1} = 2^n-1$，所以$T(n) = O(2^n-1)$</p>
+<p>当树高为 $\frac n 2$ 时：$T(n) = 1 + 2 + 4 + ... + 2^{\frac n 2-1} = 2^{\frac n 2}-1$，所以 $T(n) = O(2^{\frac n 2}-1)$</p>
+<p>所以 fib 的时间复杂度介于 $O(2^n-1)$ 和 $O(2^{\frac n 2}-1)$ 之间，但是可以得出该算法的时间复杂度在指数级别 $O(2^n)$</p>
+<h2>其他</h2>
+<p>只要写出了复杂度的表达式就可以构造递归树将每一层的复杂度相加得到最终结果。</p>
+<p>比如 <code>T(n) = 2 * T(n / 2) + n</code></p>
+<p><img src="http://oss.xiefeng.tech/img/20210406103537.png" alt=""/></p>
+<p><img src="http://oss.xiefeng.tech/img/20210406103616.png" alt=""/></p>
+<p><a href="https://www.bilibili.com/video/BV1sE411Z71P?p=1&amp;t=169https://www.bilibili.com/video/BV1sE411Z71P?p=1&amp;t=169">https://www.bilibili.com/video/BV1sE411Z71P?p=1&amp;t=169https://www.bilibili.com/video/BV1sE411Z71P?p=1&amp;t=169</a></p>
+<h1>空间复杂度</h1>
+<p>递归的空间复杂度比较好分析，就是递归深度 * 每一个节点所占的空间。</p><div><a href="/notes">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"递归树分析递归算法","article":{"title":"递归树分析递归算法","content":"# 递归树\r\n\r\n递归的思想是将大问题分解为小问题，然后再将小问题分解为小小问题。这样一层一层地分解，直到问题的数据规模被分解得足够小，不用继续递归分解为止。\r\n\r\n如果把这个一层一层的分解过程画成图，它其实就是一棵树。给这棵树起一个名字，叫作**递归树**。\r\n\r\n以递归求解fib为例：\r\n\r\n```javascript\r\nfunction fib(n) {\r\n    return n \u003c= 2 ? 1 : fib(n -1) + fib(n - 2);\r\n}\r\n```\r\n\r\n递归树就长这个样子：\r\n\r\n![](http://oss.xiefeng.tech/img/20210406095225.png)\r\n\r\n# 时间复杂度\r\n\r\n使用递归树分析时间复杂度的思路是：\r\n\r\n1. 让递归树中的每个结点表示一个单一子问题的代价\r\n2. 在创建递归树之后，对树的每层的各子问题的代价进行求和，得到每一层的代价\r\n3. 将所有层的代价加起来，得到整棵递归树的总代价，这个总代价就是递归式的解\r\n\r\n## fib\r\n\r\n可以将该算法的时间复杂度表达式写出来 `T(n) = T(n-1) + T(n - 2)`\r\n\r\n每一个节点的代价为 `O(1)`，画出递归树就是这个样子：\r\n\r\n![](http://oss.xiefeng.tech/img/20210406102000.png)\r\n\r\n所以 `T(n) = 1 + 2 + 4 + .....`，所以使用递归树求解需要直到数的高度。\r\n\r\n对于 fib 来说，树的高度介于 $n$ 和 $\\frac n 2$ 之间。\r\n\r\n当树高为 $n$ 时：$T(n) = 1 + 2 + 4 + ... + 2^{n-1} = 2^n-1$，所以$T(n) = O(2^n-1)$\r\n\r\n当树高为 $\\frac n 2$ 时：$T(n) = 1 + 2 + 4 + ... + 2^{\\frac n 2-1} = 2^{\\frac n 2}-1$，所以 $T(n) = O(2^{\\frac n 2}-1)$\r\n\r\n所以 fib 的时间复杂度介于 $O(2^n-1)$ 和 $O(2^{\\frac n 2}-1)$ 之间，但是可以得出该算法的时间复杂度在指数级别 $O(2^n)$\r\n\r\n## 其他\r\n\r\n只要写出了复杂度的表达式就可以构造递归树将每一层的复杂度相加得到最终结果。\r\n\r\n比如 `T(n) = 2 * T(n / 2) + n`\r\n\r\n![](http://oss.xiefeng.tech/img/20210406103537.png)\r\n\r\n![](http://oss.xiefeng.tech/img/20210406103616.png)\r\n\r\nhttps://www.bilibili.com/video/BV1sE411Z71P?p=1\u0026t=169https://www.bilibili.com/video/BV1sE411Z71P?p=1\u0026t=169\r\n\r\n# 空间复杂度\r\n\r\n递归的空间复杂度比较好分析，就是递归深度 * 每一个节点所占的空间。","meta":{"size":2223,"birthTime":1663496641492.7693,"updateTime":1663496641492.9636}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["递归树分析递归算法"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

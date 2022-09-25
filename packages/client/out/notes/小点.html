@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>小点 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#包装类型" data-target-id="h2-包装类型-0">包装类型</a></li><li><a href="#Object.is 的区别" data-target-id="h2-Object.is 的区别-1">Object.is 的区别</a></li><li><a href="#类数组转数组" data-target-id="h2-类数组转数组-2">类数组转数组</a></li><li><a href="#关于this" data-target-id="h2-关于this-3">关于this</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">小点</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h2>包装类型</h2>
+<p>为了便于操作基本类型的值，在调用基本类型的属性或方法时 JavaScript 会在后台隐式地将基本类型的值转换为对象</p>
+<p>使用 <code>Object</code> 函数可以显式地将基本类型转换为包装类型</p>
+<pre><code class="language-javascript">Object(1) // Number {1}
+Object(&#x27;abc&#x27;) // String {&#x27;abc&#x27;}
+Object(true) // Boolean {true}
+Object(1n) // BigInt {1n}
+Object(Symbol()) // Symbol {Symbol(), description: undefined}
+</code></pre>
+<p>使用 <code>valueOf</code> 方法可以将包装类型倒转成基本类型</p>
+<pre><code class="language-javascript">new String(&#x27;abc&#x27;).valueOf() // &#x27;abc&#x27;
+</code></pre>
+<h2>Object.is 的区别</h2>
+<ul>
+<li>使用 <code>==</code> 进行相等判断时，如果两边的类型不一致，则会进行强制类型转化后再进行比较</li>
+<li>使用 <code>===</code> 进行相等判断时，如果两边的类型不一致时，不会做强制类型准换，直接返回 false</li>
+<li>使用 <code>Object.is</code> 来进行相等判断时，一般情况下和三等号的判断相同，它处理了一些特殊的情况，比如 -0 和 +0 不再相等，两个 NaN 是相等的</li>
+</ul>
+<h2>类数组转数组</h2>
+<ul>
+<li><code>[].slice.call(x)</code></li>
+<li><code>Array.prototype.slice.call(x)</code></li>
+<li><code>Array.from(x)</code></li>
+<li><code>[...x]</code></li>
+<li><code>Array.prototype.concat.apply([], x)</code></li>
+</ul>
+<p>规范对 slice 方法的定义：不要求 this 必须是数组，根据对象的 <strong>length</strong> 属性，从0到length-1去把类数组对象对应的值取出来，放到前面声明的数组 A 里，最终再return A</p>
+<p><a href="https://segmentfault.com/a/1190000017292302">https://segmentfault.com/a/1190000017292302</a></p>
+<h2>关于this</h2><div><a href="/notes">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"小点","article":{"title":"小点","content":"## 包装类型\n\n为了便于操作基本类型的值，在调用基本类型的属性或方法时 JavaScript 会在后台隐式地将基本类型的值转换为对象\n\n\n\n使用 `Object` 函数可以显式地将基本类型转换为包装类型\n\n```javascript\nObject(1) // Number {1}\nObject('abc') // String {'abc'}\nObject(true) // Boolean {true}\nObject(1n) // BigInt {1n}\nObject(Symbol()) // Symbol {Symbol(), description: undefined}\n```\n\n使用 `valueOf` 方法可以将包装类型倒转成基本类型\n\n```javascript\nnew String('abc').valueOf() // 'abc'\n```\n\n## Object.is 的区别\n\n- 使用 `==` 进行相等判断时，如果两边的类型不一致，则会进行强制类型转化后再进行比较\n- 使用 `===` 进行相等判断时，如果两边的类型不一致时，不会做强制类型准换，直接返回 false\n- 使用 `Object.is` 来进行相等判断时，一般情况下和三等号的判断相同，它处理了一些特殊的情况，比如 -0 和 +0 不再相等，两个 NaN 是相等的\n\n\n\n## 类数组转数组\n\n- `[].slice.call(x)` \n- `Array.prototype.slice.call(x)` \n- `Array.from(x)` \n- `[...x]` \n- `Array.prototype.concat.apply([], x)` \n\n规范对 slice 方法的定义：不要求 this 必须是数组，根据对象的 **length** 属性，从0到length-1去把类数组对象对应的值取出来，放到前面声明的数组 A 里，最终再return A\n\nhttps://segmentfault.com/a/1190000017292302\n\n\n\n## 关于this\n\n","meta":{"size":1457,"birthTime":1663496641429.1006,"updateTime":1663496641429.3708}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["小点"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

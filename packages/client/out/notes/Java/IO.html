@@ -1,0 +1,347 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>IO | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#字节流" data-target-id="h1-字节流-0">字节流</a></li><li><a href="#字符流" data-target-id="h1-字符流-1">字符流</a></li><li><a href="#转换流" data-target-id="h1-转换流-2">转换流</a></li><li><a href="#缓冲流" data-target-id="h1-缓冲流-3">缓冲流</a></li><li><a href="#输出流" data-target-id="h1-输出流-4">输出流</a></li><li><a href="#标准输入" data-target-id="h1-标准输入-5">标准输入</a></li><li><a href="#数据流" data-target-id="h1-数据流-6">数据流</a></li><li><a href="#对象流" data-target-id="h1-对象流-7">对象流</a></li><li><a href="#try-with-resources" data-target-id="h1-try-with-resources-8">try-with-resources</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">IO</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h1>字节流</h1>
+<ul>
+<li>字节流的基类是 <code>InputStream</code> 和 <code>OutputStream</code></li>
+<li>字节流每次读写以字节为单位</li>
+<li>常用的字节流有 <code>FileInputStream</code> 、<code>FileOutputStream</code></li>
+</ul>
+<p><img src="http://oss.xiefeng.tech/img/20210426090358.png" alt="字节流继承关系"/></p>
+<p>字节流的读写是以字节为单位进行读写，<code>InputStream</code> 提供了三种方式让我们进行读：</p>
+<ul>
+<li><code>int read()</code></li>
+<li><code>int read(byte[] b)</code></li>
+<li><code>int read(byte[] b, int off, int len)</code></li>
+</ul>
+<p><code>read()</code> 方法每次读取一个字节，读取的字节会以 <code>int</code> 形式返回，返回 <code>-1</code> 表明读取完毕。</p>
+<p>后两个方法是传入 <code>byte</code> 数组作为缓冲区，返回值为写入数组的数据长度，返回 <code>-1</code> 表明读取完毕。</p>
+<p><code>read</code> 方法都是调用一次读取一次，连续读需要连续调用。</p>
+<pre><code class="language-java">public static void byteStreamInput() {
+    try(InputStream is = new FileInputStream(new File(&quot;test.md&quot;));) {
+        byte[] data = new byte[1024];
+        int len;
+        while ((len = is.read(data)) != -1) {
+            System.out.print(new String(data, len));
+        }
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<p><code>OutputStream</code> 同样也提供了类似的方式进行写入：</p>
+<ul>
+<li><code>void write(int b)</code></li>
+<li><code>void write(byte[] b)</code></li>
+<li><code>void write(byte[] b, int off, int len)</code></li>
+</ul>
+<p>输出流在创建的时候可以选择是覆盖还是追加，构造函数有一个重载可以传入第二个参数 <code>true</code></p>
+<pre><code class="language-java">public static void byteStreamOutput() {
+    try(OutputStream os = new FileOutputStream(new File(&quot;test.txt&quot;));) {
+        os.write(68);
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<p>使用字节流可以读取任何内容，但是读取中文的文本文件不是很适合，因为文本文件采用了各种编码方式仅仅使用字节流读取然后将每个字节转为 <code>char</code> 会产生乱码。</p>
+<h1>字符流</h1>
+<ul>
+<li>最终继承自 <code>Reader</code>、<code>Writer</code></li>
+<li>读取的单位以字符为单位</li>
+<li>常用的是字符流有 <code>FileReader</code> 、<code>FileWriter</code></li>
+</ul>
+<p><img src="http://oss.xiefeng.tech/img/20210426093904.png" alt="字符流继承关系"/></p>
+<p><code>Reader</code> 同样也提供了类似的读取方式：</p>
+<ul>
+<li><code>int read()</code></li>
+<li><code>int read(char[] b)</code></li>
+<li><code>int read(char[] b, int off, int len)</code></li>
+</ul>
+<p>字符流的读取返回的都是以字符为单位，<code>read</code> 以 <code>int</code> 的形式返回单个字符的编码。</p>
+<p>和字节流相同返回 <code>-1</code> 代表文件读取完毕。</p>
+<pre><code class="language-java">public static void charStreamInput() {
+    try(Reader reader = new FileReader(new File(&quot;test.md&quot;))) {
+        int data;
+        while ((data = reader.read()) != -1) {
+            System.out.print((char)data);
+        }
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<p><code>Writer</code> 提供了一些写入方式：</p>
+<ul>
+<li><code>void write(int c)</code></li>
+<li><code>void write(char[] buf)</code></li>
+<li><code>void write(char[] buf, int off, int len)</code></li>
+<li><code>void write(String str)</code></li>
+<li><code>void write(String str, int off, int len)</code></li>
+</ul>
+<p>和字节流一样，构造函数有一个追加的重载，传入第二个参数 <code>true</code>，即可将写入的内容以追加的方式写入</p>
+<pre><code class="language-java">public static void charStreamOutput() {
+    try(Writer writer = new FileWriter(new File(&quot;test.txt&quot;), true)) {
+        writer.write(&quot;ssss&quot;);
+        writer.write(&quot;ssss&quot;);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<p>Writer 也实现了 <code>append</code> 方法，按名字来看这个方法做的应该是追加写入，但是这个方法本质上是直接调用的 <code>write</code>。</p>
+<p>当没有传入第二个参数时，该函数也是覆盖写入。</p>
+<p>区别的话就是：</p>
+<ul>
+<li>可以传入 <code>null</code> 写入 <code>&quot;null&quot;</code></li>
+<li>该方法返回 <code>this</code> 可以链式调用</li>
+</ul>
+<pre><code class="language-java">public static void charStreamOutput() {
+    try(Writer writer = new FileWriter(new File(&quot;test.txt&quot;), true)) {
+        writer.append(&quot;ssss&quot;).append(&quot;ssss&quot;);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<h1>转换流</h1>
+<p>在字符流的继承关系中存在 <code>InputStreamReader</code> 和 <code>OutputStreamWriter</code> 两个类，这两个类可以将字节流转换成字符流。</p>
+<p>这两个类实现了字符流的所有功能，字符流本质上也是依赖字节流实现，这两个类比较通用传入字节流帮你实现字符流。</p>
+<p>实际上，常用的 <code>FileReader</code> 和 <code>FileWriter</code> 继承自这两个类并且没有做任何扩展，在内部构造了一个字节流来实现字符流。</p>
+<pre><code class="language-java">public class FileReader extends InputStreamReader {
+
+    public FileReader(String fileName) throws FileNotFoundException {
+        super(new FileInputStream(fileName));
+    }
+
+    public FileReader(File file) throws FileNotFoundException {
+        super(new FileInputStream(file));
+    }
+
+    public FileReader(FileDescriptor fd) {
+        super(new FileInputStream(fd));
+    }
+
+}
+</code></pre>
+<p>这两个类不仅 <code>FileReader</code> 和 <code>FileWriter</code> 内部使用了，我们也可以在需要将字节流转为字符流时借助这两个类。</p>
+<p>在转换时可以传入编码，而不是使用默认的编码。</p>
+<h1>缓冲流</h1>
+<p>字节流、字符流，都是无缓冲的 I/O 流，每个读写操作均由底层操作系统直接处理，这样每个读写操作通常会触发磁盘访问，因此大量的读写操作，可能会使程序的效率大大降低。</p>
+<p>**缓冲输入流：**从缓冲区读取数据，并且只有当缓冲区为空时才调用本地的输入 API</p>
+<p>**缓冲输出流：**将数据写入缓冲区，并且只有当缓冲区已满时才调用本地的输出 API</p>
+<p>在字符流和字节流的继承体系中，存在着 <code>Bufferd</code> 开头的流：</p>
+<ul>
+<li><code>BufferedInputStream</code>、<code>BufferedOutputStream</code></li>
+<li><code>BufferedReader</code>、<code>BufferedWriter</code></li>
+</ul>
+<p>缓冲流的默认缓冲区大小是 8192 字节（8KB），可以通过构造方法传参设置缓冲区大小。</p>
+<p>缓冲流的使用方式：将无缓冲流传递给缓冲流的构造方法（将无缓冲流包装成缓冲流），API 和原始流的使用都是一样的。</p>
+<p><code>BufferedReader</code> 扩展了一个方法 <code>readLine</code> 一行一行的读取内容，结束返回 <code>null</code>。</p>
+<pre><code class="language-java">public static void bufferStreamInput() {
+    try(BufferedReader reader = new BufferedReader(new FileReader(&quot;test.md&quot;))) {
+        String data = null;
+        while ((data = reader.readLine()) != null) {
+            System.out.println(data);
+        }
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<p><code>BufferedWriter</code> 也扩展了一个方法 <code>newLine</code> 用于写入一个换行符。</p>
+<pre><code class="language-java">public static void bufferedStreamOuput() {
+    try(BufferedWriter writer = new BufferedWriter(new FileWriter(&quot;test.txt&quot;))){
+        writer.write(&quot;hehe&quot;);
+        writer.newLine();
+        writer.write(&quot;lala&quot;);
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<p>当缓冲流中的缓冲区没有满时，数据是不会写入文件的。当缓冲流被关闭时会刷新缓冲区，如果当流没有关闭时需要刷新缓冲区可以使用 <code>flush</code> 方法手动刷新缓冲区将数据写入磁盘。</p>
+<h1>输出流</h1>
+<p>有两个输出流：<code>PrintStream</code> 和 <code>PrintWriter</code> 一个属于字节流，一个属于字符流。</p>
+<p>通过传入相应的流（字符流，字节流）构造这两个流的实例，这两个流的 API 差不多，可以直接通过 <code>print</code> 方法来进行写入操作。</p>
+<p><code>PrintStream</code> 虽然是字节流，但是内部利用了字符流实现了很多功能。这两个流都可以创建格式化输出的流，但是 <code>PrintWriter</code> 更常用。</p>
+<pre><code class="language-java">public static void main(String[] args) {
+    try(PrintWriter pw = new PrintWriter(new FileWriter(&quot;test.txt&quot;))) {
+        pw.println(&quot;aaaa&quot;);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<p><code>System.out</code> 为一个 <code>PrintStream</code>，且默认使用的流是标准输出流。</p>
+<p><code>System.setOut</code> 可以重新设置 <code>System.out</code> 这个 <code>PrintStream</code> 内部所使用的字节流。</p>
+<p>怎么创建标准输出流？</p>
+<ul>
+<li>
+<p><code>FileOutputStream</code> 和 <code>FileWriter</code> 的构造函数都有有一个重载，通过传入文件描述符创建流。</p>
+</li>
+<li>
+<p><code>FileDescriptor</code> 有三个静态属性：<code>out</code>、<code>err</code>、<code>in</code> 对应着标准输出和输入。</p>
+</li>
+<li>
+<p>通过传入 <code>FileDescriptor.out</code> 即可创建标准输出流。</p>
+</li>
+</ul>
+<pre><code class="language-java">public static void main(String[] args) {
+    try {
+        System.setOut(new PrintStream(new FileOutputStream(&quot;test.txt&quot;)));
+        System.out.print(&quot;aaa&quot;);  // 输出到文件
+        System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+        System.out.print(&quot;aaaa&quot;); // 控制台输出
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<h1>标准输入</h1>
+<p>通过 <code>FileDescriptor.in</code> 可创建标准输入流，利用 <code>FileInputStream</code> 或 <code>FileReader</code> 即可创建标准输入流。</p>
+<p><code>System.in</code> 是 <code>InputStream</code> 类型，默认使用的就是标准输入流，可以通过 <code>System.setIn</code> 修改。</p>
+<p>利用标准输入可以从控制台读取数据。</p>
+<pre><code class="language-java">public static void main(String[] args) {
+    try(InputStream is = new FileInputStream(FileDescriptor.in)) {
+        int data;
+        while ((data = is.read()) != (char)&#x27;\n&#x27;) {
+            System.out.print((char)data);
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<p><code>java.util.Scanner</code> 是一个可以使用正则表达式来解析基本类型和字符串的简单文本扫描器。</p>
+<p>它默认利用空白（空格\制表符\行终止符）作为分隔符将输入分隔成多个 token。</p>
+<p><code>Scanner</code> 构造函数具有一个根据 <code>InputStream</code> 读取数据的重载，利用这个重载创建的对象可以根据标准输入读取数据。</p>
+<pre><code class="language-java">public static void main(String[] args) {
+    Scanner scanner = new Scanner(System.in);
+    System.out.print(scanner.nextLine());
+}
+</code></pre>
+<h1>数据流</h1>
+<p>数据流支持基本类型、字符串类型的 IO 操作。<code>DataInputStream</code> 、<code>DataOutputStream</code> 都是字节流，但是提供了方法可以直接读写基本类型和字符串。</p>
+<p>写入和读取的顺序必须相同，不然读取的结果是错误的。</p>
+<pre><code class="language-java">public static void main(String[] args) {
+    dataStreamOutput();
+    dataStreamInput();
+}
+
+public static void dataStreamOutput() {
+    try(DataOutputStream os = new DataOutputStream(new FileOutputStream(&quot;test.txt&quot;))){
+        os.writeInt(98);
+        os.writeBoolean(true);
+        os.writeUTF(&quot;hahahahah&quot;);
+        os.writeDouble(9.0);
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+public static void dataStreamInput() {
+    try(DataInputStream is = new DataInputStream(new FileInputStream(&quot;test.txt&quot;))) {
+        System.out.println(is.readInt());
+        System.out.println(is.readBoolean());
+        System.out.println(is.readUTF());
+        System.out.println(is.readDouble());
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<h1>对象流</h1>
+<p><img src="http://oss.xiefeng.tech/img/20210427164305.png" alt=""/></p>
+<p>对象流和数据流都是字节流，对象流用于支持引用类型的 IO 操作。</p>
+<p>只有实现了 <code>java.io.Serializable</code> 接口的类才能使用对象流进行 IO 操作，<code>Serializable</code> 是一个标记接口，不要求实现任何方法。</p>
+<p>**序列化：**将对象转换为可以存储或传输的数据，<code>ObjectOutputStream</code> 可以实现对象的序列化</p>
+<p>**反序列化：**从序列化后的数据中恢复出对象，<code>ObjectInputStream</code> 可以实现对象的反序列化</p>
+<pre><code class="language-java">class Person implements Serializable {
+    public String name;
+    public int age;
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    @Override
+    public String toString() {
+        return &quot;Person{&quot; + &quot;name=&#x27;&quot; + name + &#x27;\&#x27;&#x27; + &quot;, age=&quot; + age + &#x27;}&#x27;;
+    }
+}
+</code></pre>
+<p>一个对象要能够被序列化，不仅需要自己实现了 <code>Serializable</code> 接口，内部使用的引用类型也要实现该接口。</p>
+<p>通过 <code>writeObject</code> 和 <code>readObject</code> 方法可以序列化反序列化对象。</p>
+<pre><code class="language-java">public static void main(String[] args) {
+    objectStreamOutput();
+    objectStreamInput();
+}
+
+public static void objectStreamOutput() {
+    try(ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(&quot;test.txt&quot;))) {
+        Person p = new Person(&quot;jack&quot;, 18);
+        os.writeObject(p);
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+public static void objectStreamInput() {
+    try(ObjectInputStream is = new ObjectInputStream(new FileInputStream(&quot;test.txt&quot;))) {
+        Person p = (Person) is.readObject();
+        System.out.println(p);
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+    }
+}
+// Person{name=&#x27;jack&#x27;, age=18}
+</code></pre>
+<p>通过 <code>transient</code> 关键字修饰某些成员变量，序列化是即可忽略这些实例变量。</p>
+<p><code>serialVersionUID</code>：每一个可序列化类都有一个这个属性，相当于类的版本号。</p>
+<ul>
+<li>默认情况下会根据类的详细信息计算出该值，一旦类的信息发生修改，这个值就会发生改变</li>
+<li>如果序列化、反序列时 <code>serialVersionUID</code> 的值不同，会认定为序列化、反序列时的类不兼容，会抛出 <code>java.io.InvalidClassException</code> 异常</li>
+<li>强烈建议每一个可序列化类都自定义该值<!-- -->
+<ul>
+<li>该值是 <code>static final long</code></li>
+<li>建议声明为 <code>private</code></li>
+<li>如果没有自定义该值，编译器会有警告</li>
+</ul>
+</li>
+</ul>
+<h1>try-with-resources</h1>
+<p>编写 IO 的代码十分的麻烦，<code>try-catch</code> 写的十分恶心人，Java 7 开始推出的 try-with-resources 用于解决这个问题。</p>
+<p>语句语法格式：</p>
+<pre><code class="language-java">try(资源1;资源2;...) {
+    
+} catch(Exception e) {
+    
+} finally {
+    
+}
+</code></pre>
+<ul>
+<li><code>try</code> 后面可以声明多个资源</li>
+<li>实现了 <code>java.lang.AutoCloseable</code> 接口的就可以称为资源</li>
+<li>可以省略 <code>catch</code> 和 <code>finally</code></li>
+<li>不管 <code>try</code> 是否正常结束都会调用每一资源的 <code>close</code> 方法，意味着不再需要我们手动调用</li>
+<li><code>close</code> 的调用顺序与资源的声明顺序相反</li>
+<li>调用完所有的 <code>close</code> 之后，再执行 <code>finally</code></li>
+</ul><div><a href="/notes/Java">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"IO","article":{"title":"IO","content":"# 字节流\r\n\r\n- 字节流的基类是 `InputStream` 和 `OutputStream`\r\n- 字节流每次读写以字节为单位\r\n- 常用的字节流有 `FileInputStream` 、`FileOutputStream`\r\n\r\n![字节流继承关系](http://oss.xiefeng.tech/img/20210426090358.png)\r\n\r\n字节流的读写是以字节为单位进行读写，`InputStream` 提供了三种方式让我们进行读：\r\n\r\n- `int read()`\r\n- `int read(byte[] b)`\r\n- `int read(byte[] b, int off, int len)`\r\n\r\n`read()` 方法每次读取一个字节，读取的字节会以 `int` 形式返回，返回 `-1` 表明读取完毕。\r\n\r\n后两个方法是传入 `byte` 数组作为缓冲区，返回值为写入数组的数据长度，返回 `-1` 表明读取完毕。\r\n\r\n`read` 方法都是调用一次读取一次，连续读需要连续调用。\r\n\r\n```java\r\npublic static void byteStreamInput() {\r\n    try(InputStream is = new FileInputStream(new File(\"test.md\"));) {\r\n        byte[] data = new byte[1024];\r\n        int len;\r\n        while ((len = is.read(data)) != -1) {\r\n            System.out.print(new String(data, len));\r\n        }\r\n    } catch (FileNotFoundException e) {\r\n        e.printStackTrace();\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n```\r\n\r\n`OutputStream` 同样也提供了类似的方式进行写入：\r\n\r\n- `void write(int b)`\r\n- `void write(byte[] b)`\r\n- `void write(byte[] b, int off, int len)`\r\n\r\n输出流在创建的时候可以选择是覆盖还是追加，构造函数有一个重载可以传入第二个参数 `true`\r\n\r\n```java\r\npublic static void byteStreamOutput() {\r\n    try(OutputStream os = new FileOutputStream(new File(\"test.txt\"));) {\r\n        os.write(68);\r\n    } catch (FileNotFoundException e) {\r\n        e.printStackTrace();\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n```\r\n\r\n使用字节流可以读取任何内容，但是读取中文的文本文件不是很适合，因为文本文件采用了各种编码方式仅仅使用字节流读取然后将每个字节转为 `char` 会产生乱码。\r\n\r\n# 字符流\r\n\r\n- 最终继承自 `Reader`、`Writer`\r\n- 读取的单位以字符为单位\r\n- 常用的是字符流有 `FileReader` 、`FileWriter`\r\n\r\n![字符流继承关系](http://oss.xiefeng.tech/img/20210426093904.png)\r\n\r\n`Reader` 同样也提供了类似的读取方式：\r\n\r\n- `int read()`\r\n- `int read(char[] b)`\r\n- `int read(char[] b, int off, int len)`\r\n\r\n字符流的读取返回的都是以字符为单位，`read` 以 `int` 的形式返回单个字符的编码。\r\n\r\n和字节流相同返回 `-1` 代表文件读取完毕。\r\n\r\n```java\r\npublic static void charStreamInput() {\r\n    try(Reader reader = new FileReader(new File(\"test.md\"))) {\r\n        int data;\r\n        while ((data = reader.read()) != -1) {\r\n            System.out.print((char)data);\r\n        }\r\n    } catch (FileNotFoundException e) {\r\n        e.printStackTrace();\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n```\r\n\r\n`Writer` 提供了一些写入方式：\r\n\r\n- `void write(int c)`\r\n- `void write(char[] buf)`\r\n- `void write(char[] buf, int off, int len)`\r\n- `void write(String str)`\r\n- `void write(String str, int off, int len)`\r\n\r\n和字节流一样，构造函数有一个追加的重载，传入第二个参数 `true`，即可将写入的内容以追加的方式写入\r\n\r\n```java\r\npublic static void charStreamOutput() {\r\n    try(Writer writer = new FileWriter(new File(\"test.txt\"), true)) {\r\n        writer.write(\"ssss\");\r\n        writer.write(\"ssss\");\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n```\r\n\r\nWriter 也实现了 `append` 方法，按名字来看这个方法做的应该是追加写入，但是这个方法本质上是直接调用的 `write`。\r\n\r\n当没有传入第二个参数时，该函数也是覆盖写入。\r\n\r\n区别的话就是：\r\n\r\n- 可以传入 `null` 写入 `\"null\"` \r\n- 该方法返回 `this` 可以链式调用\r\n\r\n```java\r\npublic static void charStreamOutput() {\r\n    try(Writer writer = new FileWriter(new File(\"test.txt\"), true)) {\r\n        writer.append(\"ssss\").append(\"ssss\");\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n```\r\n\r\n# 转换流\r\n\r\n在字符流的继承关系中存在 `InputStreamReader` 和 `OutputStreamWriter` 两个类，这两个类可以将字节流转换成字符流。\r\n\r\n这两个类实现了字符流的所有功能，字符流本质上也是依赖字节流实现，这两个类比较通用传入字节流帮你实现字符流。\r\n\r\n实际上，常用的 `FileReader` 和 `FileWriter` 继承自这两个类并且没有做任何扩展，在内部构造了一个字节流来实现字符流。\r\n\r\n```java\r\npublic class FileReader extends InputStreamReader {\r\n\r\n    public FileReader(String fileName) throws FileNotFoundException {\r\n        super(new FileInputStream(fileName));\r\n    }\r\n\r\n    public FileReader(File file) throws FileNotFoundException {\r\n        super(new FileInputStream(file));\r\n    }\r\n\r\n    public FileReader(FileDescriptor fd) {\r\n        super(new FileInputStream(fd));\r\n    }\r\n\r\n}\r\n```\r\n\r\n这两个类不仅 `FileReader` 和 `FileWriter` 内部使用了，我们也可以在需要将字节流转为字符流时借助这两个类。\r\n\r\n在转换时可以传入编码，而不是使用默认的编码。\r\n\r\n# 缓冲流\r\n\r\n字节流、字符流，都是无缓冲的 I/O 流，每个读写操作均由底层操作系统直接处理，这样每个读写操作通常会触发磁盘访问，因此大量的读写操作，可能会使程序的效率大大降低。\r\n\r\n**缓冲输入流：**从缓冲区读取数据，并且只有当缓冲区为空时才调用本地的输入 API\r\n\r\n**缓冲输出流：**将数据写入缓冲区，并且只有当缓冲区已满时才调用本地的输出 API\r\n\r\n在字符流和字节流的继承体系中，存在着 `Bufferd` 开头的流：\r\n\r\n- `BufferedInputStream`、`BufferedOutputStream`\r\n- `BufferedReader`、`BufferedWriter`\r\n\r\n缓冲流的默认缓冲区大小是 8192 字节（8KB），可以通过构造方法传参设置缓冲区大小。\r\n\r\n缓冲流的使用方式：将无缓冲流传递给缓冲流的构造方法（将无缓冲流包装成缓冲流），API 和原始流的使用都是一样的。\r\n\r\n`BufferedReader` 扩展了一个方法 `readLine` 一行一行的读取内容，结束返回 `null`。\r\n\r\n```java\r\npublic static void bufferStreamInput() {\r\n    try(BufferedReader reader = new BufferedReader(new FileReader(\"test.md\"))) {\r\n        String data = null;\r\n        while ((data = reader.readLine()) != null) {\r\n            System.out.println(data);\r\n        }\r\n    } catch (FileNotFoundException e) {\r\n        e.printStackTrace();\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n```\r\n\r\n`BufferedWriter` 也扩展了一个方法 `newLine` 用于写入一个换行符。\r\n\r\n```java\r\npublic static void bufferedStreamOuput() {\r\n    try(BufferedWriter writer = new BufferedWriter(new FileWriter(\"test.txt\"))){\r\n        writer.write(\"hehe\");\r\n        writer.newLine();\r\n        writer.write(\"lala\");\r\n    } catch (FileNotFoundException e) {\r\n        e.printStackTrace();\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n```\r\n\r\n当缓冲流中的缓冲区没有满时，数据是不会写入文件的。当缓冲流被关闭时会刷新缓冲区，如果当流没有关闭时需要刷新缓冲区可以使用 `flush` 方法手动刷新缓冲区将数据写入磁盘。\r\n\r\n# 输出流\r\n\r\n有两个输出流：`PrintStream` 和 `PrintWriter` 一个属于字节流，一个属于字符流。\r\n\r\n通过传入相应的流（字符流，字节流）构造这两个流的实例，这两个流的 API 差不多，可以直接通过 `print` 方法来进行写入操作。\r\n\r\n`PrintStream` 虽然是字节流，但是内部利用了字符流实现了很多功能。这两个流都可以创建格式化输出的流，但是 `PrintWriter` 更常用。\r\n\r\n```java\r\npublic static void main(String[] args) {\r\n    try(PrintWriter pw = new PrintWriter(new FileWriter(\"test.txt\"))) {\r\n        pw.println(\"aaaa\");\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n```\r\n\r\n`System.out` 为一个 `PrintStream`，且默认使用的流是标准输出流。\r\n\r\n`System.setOut` 可以重新设置 `System.out` 这个 `PrintStream` 内部所使用的字节流。\r\n\r\n怎么创建标准输出流？\r\n\r\n- `FileOutputStream` 和 `FileWriter` 的构造函数都有有一个重载，通过传入文件描述符创建流。\r\n\r\n- `FileDescriptor` 有三个静态属性：`out`、`err`、`in` 对应着标准输出和输入。\r\n- 通过传入 `FileDescriptor.out` 即可创建标准输出流。\r\n\r\n```java\r\npublic static void main(String[] args) {\r\n    try {\r\n        System.setOut(new PrintStream(new FileOutputStream(\"test.txt\")));\r\n        System.out.print(\"aaa\");  // 输出到文件\r\n        System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));\r\n        System.out.print(\"aaaa\"); // 控制台输出\r\n    } catch (FileNotFoundException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n```\r\n\r\n# 标准输入\r\n\r\n通过 `FileDescriptor.in` 可创建标准输入流，利用 `FileInputStream` 或 `FileReader` 即可创建标准输入流。\r\n\r\n`System.in` 是 `InputStream` 类型，默认使用的就是标准输入流，可以通过 `System.setIn` 修改。\r\n\r\n利用标准输入可以从控制台读取数据。\r\n\r\n```java\r\npublic static void main(String[] args) {\r\n    try(InputStream is = new FileInputStream(FileDescriptor.in)) {\r\n        int data;\r\n        while ((data = is.read()) != (char)'\\n') {\r\n            System.out.print((char)data);\r\n        }\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n```\r\n\r\n`java.util.Scanner` 是一个可以使用正则表达式来解析基本类型和字符串的简单文本扫描器。\r\n\r\n它默认利用空白（空格\\制表符\\行终止符）作为分隔符将输入分隔成多个 token。\r\n\r\n`Scanner` 构造函数具有一个根据 `InputStream` 读取数据的重载，利用这个重载创建的对象可以根据标准输入读取数据。\r\n\r\n```java\r\npublic static void main(String[] args) {\r\n    Scanner scanner = new Scanner(System.in);\r\n    System.out.print(scanner.nextLine());\r\n}\r\n```\r\n\r\n# 数据流\r\n\r\n数据流支持基本类型、字符串类型的 IO 操作。`DataInputStream` 、`DataOutputStream` 都是字节流，但是提供了方法可以直接读写基本类型和字符串。\r\n\r\n写入和读取的顺序必须相同，不然读取的结果是错误的。\r\n\r\n```java\r\npublic static void main(String[] args) {\r\n    dataStreamOutput();\r\n    dataStreamInput();\r\n}\r\n\r\npublic static void dataStreamOutput() {\r\n    try(DataOutputStream os = new DataOutputStream(new FileOutputStream(\"test.txt\"))){\r\n        os.writeInt(98);\r\n        os.writeBoolean(true);\r\n        os.writeUTF(\"hahahahah\");\r\n        os.writeDouble(9.0);\r\n    } catch (FileNotFoundException e) {\r\n        e.printStackTrace();\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n\r\npublic static void dataStreamInput() {\r\n    try(DataInputStream is = new DataInputStream(new FileInputStream(\"test.txt\"))) {\r\n        System.out.println(is.readInt());\r\n        System.out.println(is.readBoolean());\r\n        System.out.println(is.readUTF());\r\n        System.out.println(is.readDouble());\r\n    } catch (FileNotFoundException e) {\r\n        e.printStackTrace();\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n```\r\n\r\n# 对象流\r\n\r\n![](http://oss.xiefeng.tech/img/20210427164305.png)\r\n\r\n对象流和数据流都是字节流，对象流用于支持引用类型的 IO 操作。\r\n\r\n只有实现了 `java.io.Serializable` 接口的类才能使用对象流进行 IO 操作，`Serializable` 是一个标记接口，不要求实现任何方法。\r\n\r\n**序列化：**将对象转换为可以存储或传输的数据，`ObjectOutputStream` 可以实现对象的序列化\r\n\r\n**反序列化：**从序列化后的数据中恢复出对象，`ObjectInputStream` 可以实现对象的反序列化\r\n\r\n```java\r\nclass Person implements Serializable {\r\n    public String name;\r\n    public int age;\r\n    public Person(String name, int age) {\r\n        this.name = name;\r\n        this.age = age;\r\n    }\r\n    @Override\r\n    public String toString() {\r\n        return \"Person{\" + \"name='\" + name + '\\'' + \", age=\" + age + '}';\r\n    }\r\n}\r\n```\r\n\r\n一个对象要能够被序列化，不仅需要自己实现了 `Serializable` 接口，内部使用的引用类型也要实现该接口。\r\n\r\n通过 `writeObject` 和 `readObject` 方法可以序列化反序列化对象。\r\n\r\n```java\r\npublic static void main(String[] args) {\r\n    objectStreamOutput();\r\n    objectStreamInput();\r\n}\r\n\r\npublic static void objectStreamOutput() {\r\n    try(ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(\"test.txt\"))) {\r\n        Person p = new Person(\"jack\", 18);\r\n        os.writeObject(p);\r\n    } catch (FileNotFoundException e) {\r\n        e.printStackTrace();\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n\r\npublic static void objectStreamInput() {\r\n    try(ObjectInputStream is = new ObjectInputStream(new FileInputStream(\"test.txt\"))) {\r\n        Person p = (Person) is.readObject();\r\n        System.out.println(p);\r\n    } catch (FileNotFoundException e) {\r\n        e.printStackTrace();\r\n    } catch (IOException e) {\r\n        e.printStackTrace();\r\n    } catch (ClassNotFoundException e) {\r\n        e.printStackTrace();\r\n    }\r\n}\r\n// Person{name='jack', age=18}\r\n```\r\n\r\n通过 `transient` 关键字修饰某些成员变量，序列化是即可忽略这些实例变量。\r\n\r\n`serialVersionUID`：每一个可序列化类都有一个这个属性，相当于类的版本号。\r\n\r\n- 默认情况下会根据类的详细信息计算出该值，一旦类的信息发生修改，这个值就会发生改变\r\n- 如果序列化、反序列时 `serialVersionUID` 的值不同，会认定为序列化、反序列时的类不兼容，会抛出 `java.io.InvalidClassException` 异常\r\n- 强烈建议每一个可序列化类都自定义该值\r\n\t- 该值是 `static final long`\r\n\t- 建议声明为 `private`\r\n\t- 如果没有自定义该值，编译器会有警告\r\n\r\n# try-with-resources\r\n\r\n编写 IO 的代码十分的麻烦，`try-catch` 写的十分恶心人，Java 7 开始推出的 try-with-resources 用于解决这个问题。\r\n\r\n语句语法格式：\r\n\r\n```java\r\ntry(资源1;资源2;...) {\r\n    \r\n} catch(Exception e) {\r\n    \r\n} finally {\r\n    \r\n}\r\n```\r\n\r\n- `try` 后面可以声明多个资源\r\n- 实现了 `java.lang.AutoCloseable` 接口的就可以称为资源\r\n- 可以省略 `catch` 和 `finally`\r\n- 不管 `try` 是否正常结束都会调用每一资源的 `close` 方法，意味着不再需要我们手动调用\r\n- `close` 的调用顺序与资源的声明顺序相反\r\n- 调用完所有的 `close` 之后，再执行 `finally`","meta":{"size":14907,"birthTime":1663496641380.3167,"updateTime":1663496641380.5232}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["Java","IO"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

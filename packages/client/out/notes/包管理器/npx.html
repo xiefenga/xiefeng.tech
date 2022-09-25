@@ -1,0 +1,61 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>npx | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#npx" data-target-id="h2-npx-0">npx</a><ul><li><a href="#本地命令" data-target-id="h3-本地命令-0">本地命令</a></li><li><a href="#未安装命令" data-target-id="h3-未安装命令-1">未安装命令</a></li><li><a href="#其他版本Node" data-target-id="h3-其他版本Node-2">其他版本Node</a></li><li><a href="#远程代码" data-target-id="h3-远程代码-3">远程代码</a></li><li><a href="#参数" data-target-id="h3-参数-4">参数</a></li></ul></li><li><a href="#npm init" data-target-id="h2-npm init-1">npm init</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">npx</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h2>npx</h2>
+<h3>本地命令</h3>
+<p>使用 <code>npx</code> 可以快捷的运行项目中安装的模块命令</p>
+<pre><code class="language-shell">npx tsc --init
+</code></pre>
+<p>npx 的原理很简单，在运行的时候从 <code>node_modules/.bin</code> 和 <code>$PATH</code> 中检查命令是否存在</p>
+<p>由于 npx 会检查环境变量 <code>$PATH</code>，所以也可以调用系统命令</p>
+<pre><code class="language-shell">npx ls # ls
+</code></pre>
+<h3>未安装命令</h3>
+<p><code>npx</code> 可以无需先安装模块即可运行命令，这非常有用：</p>
+<ol>
+<li>不需要安装任何东西。</li>
+<li>可以使用 <code>@version</code> 语法运行同一命令的不同版本</li>
+</ol>
+<pre><code class="language-shell">npx uglify-js@3.1.0 main.js -o ./dist/main.js
+</code></pre>
+<p>当执行的某个命令在本地无法找到时，<code>npx</code> 会下载同名的包到一个临时目录并执行命令</p>
+<p><code>npx</code> 对于包名和命令名的策略：</p>
+<ul>
+<li>
+<p>当需要下载的包只有一个 <code>bin</code> 时可以不指定命令的名称</p>
+</li>
+<li>
+<p>当需要下载的包有多个 <code>bin</code> 并且执行的命令和包名相同无需指定命令的名称</p>
+</li>
+</ul>
+<pre><code class="language-shell">npx package@version ...args
+</code></pre>
+<ul>
+<li>如果命令名称和需要下载的包名不一致时，可以通过参数手动指定包名</li>
+</ul>
+<pre><code class="language-shel">npx -p @vue/cli vue create vue-app
+</code></pre>
+<p>对于 <code>@vue/cli</code> 包来说，其只有一个命令 <code>vue</code>，所以可以有两种使用方式：</p>
+<pre><code class="language-shell">npx @vue/cli create my-vue-app
+npx -p @vue/cli vue create vue-app
+</code></pre>
+<p>只要 npx 后面的模块无法在本地发现，就会下载同名模块</p>
+<h3>其他版本Node</h3>
+<p>本质上就是执行未安装包的命令，npm 上有作为包发布的不同版本的 node</p>
+<pre><code class="language-shell">npx node@10 -v #v10.18.1
+npx node@12 -v #v12.14.1
+</code></pre>
+<h3>远程代码</h3>
+<p> npx 可以执行 GitHub 上面的模块源码</p>
+<pre><code class="language-shell"># 执行 Gist 代码
+npx https://gist.github.com/zkat/4bc19503fe9e9309e2bfaa2c58074d32
+
+# 执行仓库代码
+npx github:piuccio/cowsay hello
+</code></pre>
+<p>远程代码必须是一个模块，即必须包含 <code>package.json</code> 和入口脚本</p>
+<h3>参数</h3>
+<p><a href="https://www.ruanyifeng.com/blog/2019/02/npx.html">https://www.ruanyifeng.com/blog/2019/02/npx.html</a></p>
+<h2>npm init</h2>
+<p><code>npm init</code> 除了初始化 <code>package.json</code> 之外，也有和 <code>yarn create</code> 相同的作用</p>
+<pre><code class="language-shell">npm init 包名 # 等效于 npx create-包名 
+npm init @命名空间 # 等效于 npx @命名空间/create
+npm init @命名空间/包名 # 等效于 npx @命名空间/create-包名
+</code></pre><div><a href="/notes/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"npx","article":{"title":"npx","content":"## npx\n\n### 本地命令\n\n使用 `npx` 可以快捷的运行项目中安装的模块命令\n\n```shell\nnpx tsc --init\n```\n\nnpx 的原理很简单，在运行的时候从 `node_modules/.bin` 和 `$PATH` 中检查命令是否存在\n\n由于 npx 会检查环境变量 `$PATH`，所以也可以调用系统命令\n\n```shell\nnpx ls # ls\n```\n\n### 未安装命令\n\n`npx` 可以无需先安装模块即可运行命令，这非常有用：\n\n1. 不需要安装任何东西。\n2. 可以使用 `@version` 语法运行同一命令的不同版本\n\n```shell\nnpx uglify-js@3.1.0 main.js -o ./dist/main.js\n```\n\n当执行的某个命令在本地无法找到时，`npx` 会下载同名的包到一个临时目录并执行命令\n\n`npx` 对于包名和命令名的策略：\n\n- 当需要下载的包只有一个 `bin` 时可以不指定命令的名称\n\n- 当需要下载的包有多个 `bin` 并且执行的命令和包名相同无需指定命令的名称\n\n```shell\nnpx package@version ...args\n```\n\n- 如果命令名称和需要下载的包名不一致时，可以通过参数手动指定包名\n\n```shel\nnpx -p @vue/cli vue create vue-app\n```\n\n对于 `@vue/cli` 包来说，其只有一个命令 `vue`，所以可以有两种使用方式：\n\n```shell\nnpx @vue/cli create my-vue-app\nnpx -p @vue/cli vue create vue-app\n```\n\n只要 npx 后面的模块无法在本地发现，就会下载同名模块\n\n### 其他版本Node\n\n本质上就是执行未安装包的命令，npm 上有作为包发布的不同版本的 node \n\n```shell\nnpx node@10 -v #v10.18.1\nnpx node@12 -v #v12.14.1\n```\n\n### 远程代码\n\n npx 可以执行 GitHub 上面的模块源码\n\n```shell\n# 执行 Gist 代码\nnpx https://gist.github.com/zkat/4bc19503fe9e9309e2bfaa2c58074d32\n\n# 执行仓库代码\nnpx github:piuccio/cowsay hello\n```\n\n远程代码必须是一个模块，即必须包含 `package.json` 和入口脚本\n\n### 参数\n\nhttps://www.ruanyifeng.com/blog/2019/02/npx.html\n\n## npm init\n\n`npm init` 除了初始化 `package.json` 之外，也有和 `yarn create` 相同的作用\n\n```shell\nnpm init 包名 # 等效于 npx create-包名 \nnpm init @命名空间 # 等效于 npx @命名空间/create\nnpm init @命名空间/包名 # 等效于 npx @命名空间/create-包名\n```\n\n","meta":{"size":2222,"birthTime":1663496641428.4897,"updateTime":1663496641428.7666}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["包管理器","npx"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

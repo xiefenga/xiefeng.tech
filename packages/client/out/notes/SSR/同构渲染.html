@@ -1,0 +1,180 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>同构渲染 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#同构渲染" data-target-id="h2-同构渲染-0">同构渲染</a></li><li><a href="#入口" data-target-id="h2-入口-1">入口</a></li><li><a href="#样式处理" data-target-id="h2-样式处理-2">样式处理</a></li><li><a href="#兼容路由" data-target-id="h2-兼容路由-3">兼容路由</a></li><li><a href="#兼容Redux" data-target-id="h2-兼容Redux-4">兼容Redux</a><ul><li><a href="#数据请求" data-target-id="h3-数据请求-0">数据请求</a></li><li><a href="#数据脱水" data-target-id="h3-数据脱水-1">数据脱水</a></li></ul></li><li><a href="#脱水" data-target-id="h2-脱水-5">脱水</a></li><li><a href="#注水" data-target-id="h2-注水-6">注水</a></li><li><a href="#整体思路" data-target-id="h2-整体思路-7">整体思路</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">同构渲染</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h2>同构渲染</h2>
+<p>同构渲染是实现 SSR 的一种方式</p>
+<blockquote>
+<p><strong>同构</strong>的概念最早是angular2在beat版中提出来的(2016年)， 那时叫angular isomorphism，是一个类似于草案的策略， 是为了解决angular 1.x时代的SPA首屏慢及SEO问题而提出的</p>
+</blockquote>
+<blockquote>
+<p><strong>同构渲染</strong>加入一个中间层的概念，中间层从后端接过渲染的逻辑，首次渲染时使用 Node.js 生成 HTML，后续客户端交互包括当前页路由切换直接在客户端完成。一般来说同构渲染是介于前后端中的共有部分</p>
+</blockquote>
+<p>同构的核心是客户端和服务端共用一套渲染代码， 服务端需要使用可以识别 javascript 的引擎</p>
+<p>一套代码在服务器上运行一遍，得到完整的页面结构，到达浏览器又运行一遍，注册事件让页面可交互</p>
+<p><img src="https://oss.xiefeng.tech/images/20220816105806.png" alt=""/></p>
+<h2>入口</h2>
+<p>实现同构渲染需要在服务端运行组件代码生成 HTML 字符串，客户端运行组件代码对已有的 DOM 注册事件</p>
+<p>服务端使用 <code>renderToString</code> 可以将组件树渲染成 HTML 字符串</p>
+<p>客户端使用 <code>hydrate</code> 在服务器渲染的容器中对 <code>HTML</code> 的内容进行水合操作</p>
+<p>因为客户端需要运行 JavaScript 进行注水，所以服务器返回的 HTML 中除了静态的页面结构还需要已经打包好的 JavaScript 文件</p>
+<pre><code class="language-react">// client.js
+import Root from &#x27;@/Root&#x27;
+import { hydrateRoot } from &#x27;react-dom/client&#x27;
+
+hydrateRoot(document.getElementById(&#x27;root&#x27;), &lt;Root /&gt;)
+
+// server.js
+import Root from &#x27;@/Root&#x27;
+import { renderToString } from &#x27;react-dom/server&#x27;
+
+app.use(express.static(&#x27;./public&#x27;))
+
+app.get(&#x27;*&#x27;, async (req, res) =&gt; {
+  const ssrString = renderToString(&lt;Root location={req.path} /&gt;)
+  const scripts = await readdir(&#x27;./public/js&#x27;)
+  const html = await renderTemplate(template, { ssrString, scripts })
+  res.send(html)
+})
+</code></pre>
+<pre><code class="language-ejs">// template.ejs
+...
+&lt;body&gt;
+  &lt;div id=&quot;root&quot;&gt;&lt;%- ssrString %&gt;&lt;/div&gt;
+  &lt;% scripts.forEach(script =&gt; { %&gt;
+  &lt;script src=&quot;/js/&lt;%= script %&gt;&quot;&gt;&lt;/script&gt;
+  &lt;% }) %&gt;
+&lt;/body&gt;
+</code></pre>
+<h2>样式处理</h2>
+<p>服务端和客户端对于 CSS 的处理有些许不同，对于 CSS 的解析是相同的（例如使用：css-loader）</p>
+<ul>
+<li>
+<p>客户端可能需要将样式插入页面（style-loader）或者生成 CSS 文件（mini-css-extract-plugin）</p>
+</li>
+<li>
+<p>服务端不能也不可以运行插入样式的代码，也不需要重复的生成 CSS 文件，对于普通 CSS 可以什么也不做</p>
+</li>
+</ul>
+<p>对于使用 CSS modules 的情况，需要保证客户端和服务端得到类名相同</p>
+<p>在客户端可以使用 <code>style-loader</code> 或者 <code>mini-css-extract-plugin</code> 处理 <code>style-loader</code> 生成的 CSS modules 代码并导出类名</p>
+<p>在服务端可以使用 <code>isomorphic-style-loader</code> 实现相同的效果，原理和 <code>style-loader</code> 相似</p>
+<h2>兼容路由</h2>
+<p>浏览器的请求达到服务器，服务器渲染的应该是相应路由对应的页面组件</p>
+<p>客户端可以使用 <code>BrowserRouter</code> 进行路由的选择，服务器端是没有办法使用 web api 进行路由匹配的</p>
+<p>借助 <code>react-router</code> 提供的 <code>StaticRouter</code> 组件，通过传入 <code>location</code> 属性可以找到相应组件</p>
+<pre><code class="language-react">import { BrowserRouter } from &#x27;react-router-dom&#x27;
+import { StaticRouter } from &#x27;react-router-dom/server&#x27;
+
+import App from &#x27;./App&#x27;
+import { isBrowser } from &#x27;./utils/env&#x27;
+
+const Router = isBrowser ? BrowserRouter : StaticRouter
+
+export default function Root(props) {
+  const routerProps = isBrowser ? {} : { location: props.location }
+  return (
+    &lt;Router {...routerProps}&gt;
+      &lt;App /&gt;
+    &lt;/Router&gt;
+  )
+}
+</code></pre>
+<h2>兼容Redux</h2>
+<p>redux 本身是不依赖环境的，react-redux 也只是依赖 react</p>
+<p>客户端服务端都可以运行，可以直接使用</p>
+<p>需要注意的一点是，服务端的仓库应当是一个请求对应一个仓库，每个服务端仓库都需要脱水注入页面</p>
+<pre><code class="language-react">import { makeStore } from &#x27;./store&#x27;
+import { Provider } from &#x27;react-redux&#x27;
+
+const Router = isBrowser ? BrowserRouter : StaticRouter
+
+const clientStore = makeStore()
+
+export default function Root(props) {
+  const routerProps = isBrowser ? {} : { location: props.location }
+  const store = isBrowser ? clientStore : props.store
+  return (
+    &lt;Provider store={store}&gt;
+      &lt;Router {...routerProps}&gt;
+        &lt;App /&gt;
+      &lt;/Router&gt;
+    &lt;/Provider&gt;
+  )
+}
+</code></pre>
+<h3>数据请求</h3>
+<p>有些路由是需要加载数据的，在 SSR 的时候应当服务器请求数据，获取数据渲染成完整页面</p>
+<p>如果是返回的页面是个空列表，还需要客户端再请求一次就失去了 SSR 的意义</p>
+<p>给需要获取数据的组件添加静态方法 <code>getInitialData</code> 获取数据</p>
+<p>服务端在渲染之前调用匹配到路由的静态方法获取数据写入仓库，再开始渲染组件</p>
+<pre><code class="language-react">app.get(&#x27;*&#x27;, async (req, res) =&gt; {
+  const store = makeStore()
+
+  const matches = matchRoutes(routes, req.path)
+  .filter(route =&gt; !!route.getInitialData)
+
+  await Promise.all(
+    matches.map(route =&gt; Promise.resolve(route.getInitialData(store)))
+  )
+
+  const ssrString = renderToString(&lt;Root location={req.path} store={store} /&gt;)
+  const scripts = await readdir(&#x27;./public/js&#x27;)
+  const storeState = store.getState()
+  const ssrPath = req.path
+  
+  const renderData = { ssrString, scripts, styles, storeState, ssrPath }
+  const html = await renderTemplate(template, renderData)
+  res.send(html)
+})
+</code></pre>
+<h3>数据脱水</h3>
+<pre><code class="language-ejs">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+  &lt;head&gt;
+    &lt;script&gt;
+      window.INITIAL_STORE_STATE = &lt;%- JSON.stringify(storeState) %&gt;
+       window.SSR_REQUEST_PATH = &quot;&lt;%= ssrPath %&gt;&quot;
+    &lt;/script&gt;
+  &lt;/head&gt;
+  ...
+&lt;/html&gt;
+</code></pre>
+<h2>脱水</h2>
+<ul>
+<li>组件被序列化成了静态的 HTML 片段</li>
+<li>仓库数据被序列化为 JSON 传到客户端</li>
+</ul>
+<pre><code class="language-ejs">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+  &lt;head&gt;
+    &lt;script&gt;
+      window.INITIAL_STORE_STATE = &lt;%- JSON.stringify(storeState) %&gt;
+        window.SSR_REQUEST_PATH = &quot;&lt;%= ssrPath %&gt;&quot;
+    &lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id=&quot;root&quot;&gt;&lt;%- ssrString %&gt;&lt;/div&gt;
+    &lt;% scripts.forEach(script =&gt; { %&gt;
+    &lt;script src=&quot;/js/&lt;%= script %&gt;&quot;&gt;&lt;/script&gt;
+    &lt;% }) %&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h2>注水</h2>
+<p>客户端 JavaScript 加载完成后执行 react 同构方法 <code>hydrate</code></p>
+<ul>
+<li><code>hydrate</code> 类似于 <code>render</code> 方法，用于二次渲染</li>
+<li><code>hydrate</code> 会复用原本已经存在的 DOM 节点，只进行事件的绑定</li>
+<li><code>hydrate</code> 主要用于二次渲染服务端渲染的节点，提高首次加载体验</li>
+</ul>
+<pre><code class="language-react">import Root from &#x27;@/Root&#x27;
+import { hydrateRoot } from &#x27;react-dom/client&#x27;
+
+hydrateRoot(document.getElementById(&#x27;root&#x27;), &lt;Root /&gt;)
+</code></pre>
+<h2>整体思路</h2>
+<ol>
+<li>后端根据路径找到需要渲染的页面组件</li>
+<li>调用组件初始化时需要请求的接口，同步获取到数据（写入仓库）</li>
+<li>使用 <code>renderToString</code> 方法对组件进行渲染，使其渲染出节点字符串</li>
+<li>后端将组件字符串、仓库数据脱水、客户端打包的 js、css 路径拼接，返回最终 HTML 文件</li>
+<li>客户端渲染后端返回的 HTML，加载并运行其中的 JavaScript，完成同构</li>
+</ol>
+<p><a href="https://juejin.cn/post/6902541164931448846#heading-20">https://juejin.cn/post/6902541164931448846#heading-20</a></p><div><a href="/notes/SSR">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"同构渲染","article":{"title":"同构渲染","content":"## 同构渲染\n\n同构渲染是实现 SSR 的一种方式\n\n\u003e **同构**的概念最早是angular2在beat版中提出来的(2016年)， 那时叫angular isomorphism，是一个类似于草案的策略， 是为了解决angular 1.x时代的SPA首屏慢及SEO问题而提出的\n\n\u003e **同构渲染**加入一个中间层的概念，中间层从后端接过渲染的逻辑，首次渲染时使用 Node.js 生成 HTML，后续客户端交互包括当前页路由切换直接在客户端完成。一般来说同构渲染是介于前后端中的共有部分\n\n同构的核心是客户端和服务端共用一套渲染代码， 服务端需要使用可以识别 javascript 的引擎\n\n一套代码在服务器上运行一遍，得到完整的页面结构，到达浏览器又运行一遍，注册事件让页面可交互\n\n![](https://oss.xiefeng.tech/images/20220816105806.png)\n\n## 入口\n\n实现同构渲染需要在服务端运行组件代码生成 HTML 字符串，客户端运行组件代码对已有的 DOM 注册事件\n\n服务端使用 `renderToString` 可以将组件树渲染成 HTML 字符串\n\n客户端使用 `hydrate` 在服务器渲染的容器中对 `HTML` 的内容进行水合操作\n\n因为客户端需要运行 JavaScript 进行注水，所以服务器返回的 HTML 中除了静态的页面结构还需要已经打包好的 JavaScript 文件\n\n```react\n// client.js\nimport Root from '@/Root'\nimport { hydrateRoot } from 'react-dom/client'\n\nhydrateRoot(document.getElementById('root'), \u003cRoot /\u003e)\n\n// server.js\nimport Root from '@/Root'\nimport { renderToString } from 'react-dom/server'\n\napp.use(express.static('./public'))\n\napp.get('*', async (req, res) =\u003e {\n  const ssrString = renderToString(\u003cRoot location={req.path} /\u003e)\n  const scripts = await readdir('./public/js')\n  const html = await renderTemplate(template, { ssrString, scripts })\n  res.send(html)\n})\n```\n\n```ejs\n// template.ejs\n...\n\u003cbody\u003e\n  \u003cdiv id=\"root\"\u003e\u003c%- ssrString %\u003e\u003c/div\u003e\n  \u003c% scripts.forEach(script =\u003e { %\u003e\n  \u003cscript src=\"/js/\u003c%= script %\u003e\"\u003e\u003c/script\u003e\n  \u003c% }) %\u003e\n\u003c/body\u003e\n```\n\n## 样式处理\n\n服务端和客户端对于 CSS 的处理有些许不同，对于 CSS 的解析是相同的（例如使用：css-loader）\n\n- 客户端可能需要将样式插入页面（style-loader）或者生成 CSS 文件（mini-css-extract-plugin）\n\n- 服务端不能也不可以运行插入样式的代码，也不需要重复的生成 CSS 文件，对于普通 CSS 可以什么也不做\n\n对于使用 CSS modules 的情况，需要保证客户端和服务端得到类名相同\n\n在客户端可以使用 `style-loader` 或者 `mini-css-extract-plugin` 处理 `style-loader` 生成的 CSS modules 代码并导出类名\n\n在服务端可以使用 `isomorphic-style-loader` 实现相同的效果，原理和 `style-loader` 相似\n\n## 兼容路由\n\n浏览器的请求达到服务器，服务器渲染的应该是相应路由对应的页面组件\n\n客户端可以使用 `BrowserRouter` 进行路由的选择，服务器端是没有办法使用 web api 进行路由匹配的\n\n借助 `react-router` 提供的 `StaticRouter` 组件，通过传入 `location` 属性可以找到相应组件\n\n```react\nimport { BrowserRouter } from 'react-router-dom'\nimport { StaticRouter } from 'react-router-dom/server'\n\nimport App from './App'\nimport { isBrowser } from './utils/env'\n\nconst Router = isBrowser ? BrowserRouter : StaticRouter\n\nexport default function Root(props) {\n  const routerProps = isBrowser ? {} : { location: props.location }\n  return (\n    \u003cRouter {...routerProps}\u003e\n      \u003cApp /\u003e\n    \u003c/Router\u003e\n  )\n}\n```\n\n## 兼容Redux\n\nredux 本身是不依赖环境的，react-redux 也只是依赖 react\n\n客户端服务端都可以运行，可以直接使用\n\n需要注意的一点是，服务端的仓库应当是一个请求对应一个仓库，每个服务端仓库都需要脱水注入页面\n\n```react\nimport { makeStore } from './store'\nimport { Provider } from 'react-redux'\n\nconst Router = isBrowser ? BrowserRouter : StaticRouter\n\nconst clientStore = makeStore()\n\nexport default function Root(props) {\n  const routerProps = isBrowser ? {} : { location: props.location }\n  const store = isBrowser ? clientStore : props.store\n  return (\n    \u003cProvider store={store}\u003e\n      \u003cRouter {...routerProps}\u003e\n        \u003cApp /\u003e\n      \u003c/Router\u003e\n    \u003c/Provider\u003e\n  )\n}\n```\n\n### 数据请求\n\n有些路由是需要加载数据的，在 SSR 的时候应当服务器请求数据，获取数据渲染成完整页面\n\n如果是返回的页面是个空列表，还需要客户端再请求一次就失去了 SSR 的意义\n\n给需要获取数据的组件添加静态方法 `getInitialData` 获取数据\n\n服务端在渲染之前调用匹配到路由的静态方法获取数据写入仓库，再开始渲染组件\n\n```react\napp.get('*', async (req, res) =\u003e {\n  const store = makeStore()\n\n  const matches = matchRoutes(routes, req.path)\n  .filter(route =\u003e !!route.getInitialData)\n\n  await Promise.all(\n    matches.map(route =\u003e Promise.resolve(route.getInitialData(store)))\n  )\n\n  const ssrString = renderToString(\u003cRoot location={req.path} store={store} /\u003e)\n  const scripts = await readdir('./public/js')\n  const storeState = store.getState()\n  const ssrPath = req.path\n  \n  const renderData = { ssrString, scripts, styles, storeState, ssrPath }\n  const html = await renderTemplate(template, renderData)\n  res.send(html)\n})\n```\n\n### 数据脱水\n\n```ejs\n\u003c!DOCTYPE html\u003e\n\u003chtml lang=\"en\"\u003e\n  \u003chead\u003e\n    \u003cscript\u003e\n      window.INITIAL_STORE_STATE = \u003c%- JSON.stringify(storeState) %\u003e\n       window.SSR_REQUEST_PATH = \"\u003c%= ssrPath %\u003e\"\n    \u003c/script\u003e\n  \u003c/head\u003e\n  ...\n\u003c/html\u003e\n```\n\n## 脱水\n\n- 组件被序列化成了静态的 HTML 片段\n- 仓库数据被序列化为 JSON 传到客户端\n\n```ejs\n\u003c!DOCTYPE html\u003e\n\u003chtml lang=\"en\"\u003e\n  \u003chead\u003e\n    \u003cscript\u003e\n      window.INITIAL_STORE_STATE = \u003c%- JSON.stringify(storeState) %\u003e\n        window.SSR_REQUEST_PATH = \"\u003c%= ssrPath %\u003e\"\n    \u003c/script\u003e\n  \u003c/head\u003e\n  \u003cbody\u003e\n    \u003cdiv id=\"root\"\u003e\u003c%- ssrString %\u003e\u003c/div\u003e\n    \u003c% scripts.forEach(script =\u003e { %\u003e\n    \u003cscript src=\"/js/\u003c%= script %\u003e\"\u003e\u003c/script\u003e\n    \u003c% }) %\u003e\n  \u003c/body\u003e\n\u003c/html\u003e\n```\n\n## 注水\n\n客户端 JavaScript 加载完成后执行 react 同构方法 `hydrate` \n\n- `hydrate` 类似于 `render` 方法，用于二次渲染\n- `hydrate` 会复用原本已经存在的 DOM 节点，只进行事件的绑定\n- `hydrate` 主要用于二次渲染服务端渲染的节点，提高首次加载体验\n\n```react\nimport Root from '@/Root'\nimport { hydrateRoot } from 'react-dom/client'\n\nhydrateRoot(document.getElementById('root'), \u003cRoot /\u003e)\n```\n\n## 整体思路\n\n1. 后端根据路径找到需要渲染的页面组件\n2. 调用组件初始化时需要请求的接口，同步获取到数据（写入仓库）\n3. 使用 `renderToString` 方法对组件进行渲染，使其渲染出节点字符串\n4. 后端将组件字符串、仓库数据脱水、客户端打包的 js、css 路径拼接，返回最终 HTML 文件\n5. 客户端渲染后端返回的 HTML，加载并运行其中的 JavaScript，完成同构\n\n\n\nhttps://juejin.cn/post/6902541164931448846#heading-20","meta":{"size":7054,"birthTime":1663496641417.2747,"updateTime":1663496641417.6106}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["SSR","同构渲染"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

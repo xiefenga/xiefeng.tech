@@ -1,0 +1,194 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>eslint | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#规则配置" data-target-id="h2-规则配置-0">规则配置</a></li><li><a href="#解析器" data-target-id="h2-解析器-1">解析器</a></li><li><a href="#扩展" data-target-id="h2-扩展-2">扩展</a></li><li><a href="#插件" data-target-id="h2-插件-3">插件</a><ul><li><a href="#插件配置" data-target-id="h3-插件配置-0">插件配置</a></li><li><a href="#插件格式" data-target-id="h3-插件格式-1">插件格式</a></li></ul></li><li><a href="#Processor" data-target-id="h2-Processor-4">Processor</a></li><li><a href="#运行原理" data-target-id="h2-运行原理-5">运行原理</a></li><li><a href="#配置文件" data-target-id="h2-配置文件-6">配置文件</a></li><li><a href="#overrides" data-target-id="h2-overrides-7">overrides</a></li><li><a href="#ignorePatterns" data-target-id="h2-ignorePatterns-8">ignorePatterns</a></li><li><a href="#注释" data-target-id="h2-注释-9">注释</a><ul><li><a href="#禁用规则" data-target-id="h3-禁用规则-2">禁用规则</a></li><li><a href="#规则配置" data-target-id="h3-规则配置-3">规则配置</a></li><li><a href="#全局变量" data-target-id="h3-全局变量-4">全局变量</a></li></ul></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">eslint</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h2>规则配置</h2>
+<pre><code class="language-json">{
+  &quot;rules&quot;: {
+    &quot;semi&quot;: [&quot;error&quot;, &quot;always&quot;],
+    &quot;quotes&quot;: [&quot;error&quot;, &quot;double&quot;]
+  }
+}
+</code></pre>
+<p>配置项为一个数组，第一个为规则的错误级别：<code>error</code>、<code>warn</code>、<code>off</code>，第二个为规则的配置项</p>
+<h2>解析器</h2>
+<p>ESLint 中解析器的作用是将代码转化成 AST，借助 AST 来对代码进行分析</p>
+<p>配置项 <code>parser</code> 用于指定 ESLint 使用的解析器，ESLint 默认解析器为 Espree</p>
+<p>例如：<code>@typescript-eslint/parser</code> 用于解析 typescript，从而检查和规范Typescript代码</p>
+<p>ESTree 是业界统一遵从的标准，它定义了JavaScript中所有涉及到的语法的表达形式，对语法元素描述进行统一标准的定义，并且ES在不断的升级过程中 ESTree 也会伴随着进行升级。</p>
+<p>AST 选择器</p>
+<p>用来匹配 AST 中节点的字符串（类似于 CSS 选择器），对于描述代码中的特定语法模式非常有用</p>
+<h2>扩展</h2>
+<p>手动配置完整的配置文件工作量很大，使用 <code>extends</code> 可以使用一些预先设置好的配置</p>
+<p>预设包一般以 <code>eslint-config-xxx</code> 格式命名，配置时可以省略 <code>eslint-config-</code> 前缀</p>
+<p><code>extends</code> 多个模块，有冲突的配置项，后面的包将覆盖前面的。</p>
+<p>该配置文件中的配置项的优先级恒定高于 <code>extends</code> 中的</p>
+<p>extends 就是一个 mixin 的过程，优先级为：当前文件 &gt; 后 extends &gt; 先 extends</p>
+<h2>插件</h2>
+<p>ESLint 插件用于新增 lint 规则</p>
+<blockquote>
+<p>由于eslint本身主要是对js代码进行语法检查以及少量代码格式化的操作，对于一些eslint没有定义的规则或其他格式文件的内容就无法识别进行lint校验。此时，若需要对这些文件内容进行lint规则，就需要使用eslint提供的plugins插件配置对lint规则进行新增。</p>
+</blockquote>
+<h3>插件配置</h3>
+<p>插件一般以 <code>eslint-plugin-xxx</code> 方式来命名，也支持 <code>@xx/eslint-plugin-xx</code> 带 scope 的命名</p>
+<p>配置的时候可以省略 <code>eslint-plugin-</code> 前缀仅配置插件名，但是 scope 不可以省略</p>
+<pre><code class="language-json">{
+  plugins: [
+    &#x27;vue&#x27;, // eslint-plugin-vue
+    &#x27;@typescript-eslint&#x27;, // @typescript-eslint/eslint-plugin
+    &#x27;@0x1461ao/react&#x27;, // @0x1461ao/eslint-plugin-react
+  ]
+}
+</code></pre>
+<p>如果插件新增的规则很多，<code>rules</code> 中就需要配置很多</p>
+<p>如果插件提供了预设配置借助 <code>extends</code> 可以启用插件的预设。</p>
+<p>通过配置<code>extends: [&#x27;plugin:&lt;包名&gt;/&lt;配置名称&gt;&#x27;]</code> 可以实现插件和预设一同导入</p>
+<h3>插件格式</h3>
+<p>一个规则就是一个导出一个对象的模块，该对象有两个属性：</p>
+<ul>
+<li><code>meta</code> 代表了这条规则的元数据</li>
+<li><code>create</code> 表达了这条规则具体会怎么分析代码<!-- -->
+<ul>
+<li>是一个函数，返回一个属性为 AST 选择器的对象</li>
+<li>返回值对象的每个属性值都是一个函数，是对 AST 节点监听的回调</li>
+<li>在回调中我们可以获取对应选中的内容，我们可以针对选中的内容作一定的判断<!-- -->
+<ul>
+<li>如果不满足，可用 <code>context.report</code> 抛出问题</li>
+<li><code>ESLint</code> 会利用我们的配置对抛出的内容做不同的展示</li>
+</ul>
+</li>
+<li>ESLint 会收集这些选择器，在 AST 遍历过程中会执行所有监听该节点的回调</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-javascript">// lib/rules/no-console-time.js
+
+module.exports = {
+  meta: {
+    docs: {
+      description: &quot;no console.time&quot;,
+      category: &quot;Fill me in&quot;,
+      recommended: false,
+    },
+    fixable: null,  // or &quot;code&quot; or &quot;whitespace&quot;
+    schema: [],
+    // 报错信息描述
+    messages: {
+      avoidMethod: &quot;console method &#x27;{{name}}&#x27; is forbidden.&quot;,
+    },
+  },
+
+  create(context) {
+
+    return {
+      &#x27;CallExpression MemberExpression&#x27;: node =&gt; {
+        const { object, property } = node
+        if (object.name === &#x27;console&#x27; &amp;&amp; property.name === &#x27;time&#x27; ) {
+          context.report({
+            node,
+            messageId: &#x27;avoidMethod&#x27;,
+            data: { name: &#x27;time&#x27; },
+          })
+        }
+      }
+    }
+  },
+}
+</code></pre>
+<h2>Processor</h2>
+<p>processor 在 parser 解析源文件之前，以及在 rules 校验完后处理一些事情</p>
+<p>processor 需要提供两个钩子函数：<code>preprocess</code> 和 <code>postprocess</code></p>
+<ul>
+<li><code>preprocess</code> 是在 parser 解析源文件之前调用的方法</li>
+<li><code>postprocess</code> 是在 rules 校验完毕之后调用的方法</li>
+</ul>
+<h2>运行原理</h2>
+<ol>
+<li>ESLint 使用解析器将代码解析成 AST</li>
+<li>深度遍历 AST，监听匹配过程</li>
+<li>触发监听选择器的 <code>rule</code> 回调</li>
+</ol>
+<h2>配置文件</h2>
+<p>每个目录下都可以存在配置文件，ESLint 会一直向上查找配置文件，直到<code>/</code>、 <code>~/</code> 或者 <code>root: true</code></p>
+<p>与被 lint 文件位于同一目录中的配置文件优先级高</p>
+<p>如果在同一个目录下有 <code>.eslintrc</code> 和 <code>package.json</code> 中 <code>eslintConfig</code> 字段</p>
+<p><code>.eslintrc</code> 会优先， <code>package.json</code> 文件中的配置不会被使用</p>
+<p>配置类型上： 注释 &gt; 命令行参数 &gt; 配置文件</p>
+<ul>
+<li>
+<p>文件层级上：（相对目标文件）近 &gt; 远</p>
+</li>
+<li>
+<p>同一目录内：（只会采用一个配置文件）js &gt; cjs &gt; yaml &gt; yml &gt; json &gt; package.json</p>
+</li>
+<li>
+<p>同一配置内：<code>overrides</code> &gt; <code>rule</code> &gt; <code>extends</code></p>
+</li>
+<li>
+<p>同一选项内：后者 &gt; 前者</p>
+</li>
+</ul>
+<h2>overrides</h2>
+<p><code>overrides</code> 配置项通过 Glob 模式匹配特定文件集合，额外应用不同的配置。</p>
+<p>每一项支持大部分的 ESLint 配置，以及用于匹配文件的 <code>files</code> 数组和 <code>excludedFiles</code> 数组</p>
+<pre><code class="language-json">{
+  &quot;overrides&quot;: [
+    {
+      &quot;files&quot;: [&quot;src/*.js&quot;],
+      &quot;excludedFiles&quot;: &quot;a.js&quot;,
+      &quot;rules&quot;: {
+        &quot;no-alert&quot;: &quot;warn&quot;
+      }
+    }
+  ]
+}
+</code></pre>
+<h2>ignorePatterns</h2>
+<p><code>ignorePatterns</code> 配置项包含一组 glob 模式，其作用类似<code>.gitignore</code></p>
+<pre><code class="language-json">{
+  &quot;ignorePatterns&quot;: [&quot;**/dist/**&quot;, &quot;**/output/**&quot;]
+}
+</code></pre>
+<h2>注释</h2>
+<p>ESLint 支持使用注释禁用规则、进行配置、注入全局变量以及环境配置</p>
+<p><code>//</code> 和 <code>/* */</code> 都可以，可以在注释的同时说明原因，原因放在配置内容之后，用<strong>两个或两个以上 <code>-</code></strong> 隔开</p>
+<h3>禁用规则</h3>
+<p>通过 <code>eslint-disable(-next)-line rule</code> 可以单行禁用规则</p>
+<pre><code class="language-javascript">alert(&#x27;foo&#x27;); // eslint-disable-line
+alert(&#x27;foo&#x27;); /* eslint-disable-line */
+alert(&#x27;foo&#x27;); // eslint-disable-line plugin/rule-name
+
+/* eslint-disable-next-line */
+alert(&#x27;foo&#x27;);
+// eslint-disable-next-line -- I don&#x27;t want eslint 
+alert(&#x27;foo&#x27;);
+// eslint-disable-next-line no-alert, quotes, semi
+alert(&#x27;foo&#x27;);
+</code></pre>
+<p>通过 <code>eslint-disable</code> 和 <code>eslint-enable</code> 实现某一块关闭规则校验</p>
+<pre><code class="language-javascript">/* eslint-disable */
+console.log(&quot;bar&quot;)
+alert(&#x27;foo&#x27;);
+/* eslint-enable */
+
+/* eslint-disable no-alert, no-console */
+alert(&#x27;foo&#x27;);
+console.log(&#x27;bar&#x27;);
+/* eslint-enable no-alert, no-console */
+</code></pre>
+<p>在文件第一行使用  <code>eslint-disable</code>  实现整个文件关闭校验</p>
+<pre><code class="language-javascript">/* eslint-disable */
+alert(&#x27;foo&#x27;);
+//...
+
+/* eslint-disable no-alert */
+alert(&#x27;foo&#x27;);
+//...
+</code></pre>
+<h3>规则配置</h3>
+<pre><code class="language-javascript">/* eslint quotes: [&quot;error&quot;, &quot;double&quot;], curly: 2 */
+const foo=&quot;&#x27;bar&#x27;&quot;
+</code></pre>
+<h3>全局变量</h3>
+<p>通过 <code>global</code> 注入全局变量，默认只读，通过 <code>: writable</code> 表明可写</p>
+<pre><code class="language-javascript">// var1 只读，var2 读写
+/* global var1, var2: writable */
+</code></pre>
+<p><a href="https://juejin.cn/post/7012798266089668645">ESLint使用教程</a></p>
+<p><a href="https://juejin.cn/post/7028754877312401444">深入浅出之ESLint</a></p><div><a href="/notes">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"eslint","article":{"title":"eslint","content":"## 规则配置\n\n```json\n{\n  \"rules\": {\n    \"semi\": [\"error\", \"always\"],\n    \"quotes\": [\"error\", \"double\"]\n  }\n}\n```\n\n配置项为一个数组，第一个为规则的错误级别：`error`、`warn`、`off`，第二个为规则的配置项\n\n## 解析器\n\nESLint 中解析器的作用是将代码转化成 AST，借助 AST 来对代码进行分析\n\n配置项 `parser` 用于指定 ESLint 使用的解析器，ESLint 默认解析器为 Espree\n\n例如：`@typescript-eslint/parser` 用于解析 typescript，从而检查和规范Typescript代码\n\nESTree 是业界统一遵从的标准，它定义了JavaScript中所有涉及到的语法的表达形式，对语法元素描述进行统一标准的定义，并且ES在不断的升级过程中 ESTree 也会伴随着进行升级。\n\nAST 选择器\n\n用来匹配 AST 中节点的字符串（类似于 CSS 选择器），对于描述代码中的特定语法模式非常有用\n\n## 扩展\n\n手动配置完整的配置文件工作量很大，使用 `extends` 可以使用一些预先设置好的配置\n\n预设包一般以 `eslint-config-xxx` 格式命名，配置时可以省略 `eslint-config-` 前缀\n\n`extends` 多个模块，有冲突的配置项，后面的包将覆盖前面的。\n\n该配置文件中的配置项的优先级恒定高于 `extends` 中的\n\nextends 就是一个 mixin 的过程，优先级为：当前文件 \u003e 后 extends \u003e 先 extends\n\n## 插件\n\nESLint 插件用于新增 lint 规则\n\n\u003e 由于eslint本身主要是对js代码进行语法检查以及少量代码格式化的操作，对于一些eslint没有定义的规则或其他格式文件的内容就无法识别进行lint校验。此时，若需要对这些文件内容进行lint规则，就需要使用eslint提供的plugins插件配置对lint规则进行新增。\n\n### 插件配置\n\n插件一般以 `eslint-plugin-xxx` 方式来命名，也支持 `@xx/eslint-plugin-xx` 带 scope 的命名\n\n配置的时候可以省略 `eslint-plugin-` 前缀仅配置插件名，但是 scope 不可以省略\n\n```json\n{\n  plugins: [\n    'vue', // eslint-plugin-vue\n    '@typescript-eslint', // @typescript-eslint/eslint-plugin\n    '@0x1461ao/react', // @0x1461ao/eslint-plugin-react\n  ]\n}\n```\n\n如果插件新增的规则很多，`rules` 中就需要配置很多\n\n如果插件提供了预设配置借助 `extends` 可以启用插件的预设。\n\n通过配置`extends: ['plugin:\u003c包名\u003e/\u003c配置名称\u003e']` 可以实现插件和预设一同导入 \n\n### 插件格式\n\n一个规则就是一个导出一个对象的模块，该对象有两个属性：\n\n- `meta` 代表了这条规则的元数据\n- `create` 表达了这条规则具体会怎么分析代码\n  - 是一个函数，返回一个属性为 AST 选择器的对象\n  - 返回值对象的每个属性值都是一个函数，是对 AST 节点监听的回调\n  - 在回调中我们可以获取对应选中的内容，我们可以针对选中的内容作一定的判断\n    - 如果不满足，可用 `context.report` 抛出问题\n    - `ESLint` 会利用我们的配置对抛出的内容做不同的展示\n  - ESLint 会收集这些选择器，在 AST 遍历过程中会执行所有监听该节点的回调\n\n```javascript\n// lib/rules/no-console-time.js\n\nmodule.exports = {\n  meta: {\n    docs: {\n      description: \"no console.time\",\n      category: \"Fill me in\",\n      recommended: false,\n    },\n    fixable: null,  // or \"code\" or \"whitespace\"\n    schema: [],\n    // 报错信息描述\n    messages: {\n      avoidMethod: \"console method '{{name}}' is forbidden.\",\n    },\n  },\n\n  create(context) {\n\n    return {\n      'CallExpression MemberExpression': node =\u003e {\n        const { object, property } = node\n        if (object.name === 'console' \u0026\u0026 property.name === 'time' ) {\n          context.report({\n            node,\n            messageId: 'avoidMethod',\n            data: { name: 'time' },\n          })\n        }\n      }\n    }\n  },\n}\n```\n\n## Processor\n\nprocessor 在 parser 解析源文件之前，以及在 rules 校验完后处理一些事情\n\nprocessor 需要提供两个钩子函数：`preprocess` 和 `postprocess` \n\n- `preprocess` 是在 parser 解析源文件之前调用的方法\n- `postprocess` 是在 rules 校验完毕之后调用的方法\n\n## 运行原理\n\n1. ESLint 使用解析器将代码解析成 AST\n2. 深度遍历 AST，监听匹配过程\n3.  触发监听选择器的 `rule` 回调\n\n## 配置文件\n\n每个目录下都可以存在配置文件，ESLint 会一直向上查找配置文件，直到`/`、 `~/` 或者 `root: true` \n\n与被 lint 文件位于同一目录中的配置文件优先级高\n\n如果在同一个目录下有 `.eslintrc` 和 `package.json` 中 `eslintConfig` 字段\n\n `.eslintrc` 会优先， `package.json` 文件中的配置不会被使用\n\n配置类型上： 注释 \u003e 命令行参数 \u003e 配置文件\n\n- 文件层级上：（相对目标文件）近 \u003e 远\n\n- 同一目录内：（只会采用一个配置文件）js \u003e cjs \u003e yaml \u003e yml \u003e json \u003e package.json\n\n- 同一配置内：`overrides` \u003e `rule` \u003e `extends`\n\n- 同一选项内：后者 \u003e 前者\n\n## overrides\n\n`overrides` 配置项通过 Glob 模式匹配特定文件集合，额外应用不同的配置。\n\n每一项支持大部分的 ESLint 配置，以及用于匹配文件的 `files` 数组和 `excludedFiles` 数组\n\n```json\n{\n  \"overrides\": [\n    {\n      \"files\": [\"src/*.js\"],\n      \"excludedFiles\": \"a.js\",\n      \"rules\": {\n        \"no-alert\": \"warn\"\n      }\n    }\n  ]\n}\n```\n\n## ignorePatterns\n\n`ignorePatterns` 配置项包含一组 glob 模式，其作用类似`.gitignore` \n\n```json\n{\n  \"ignorePatterns\": [\"**/dist/**\", \"**/output/**\"]\n}\n```\n\n## 注释\n\nESLint 支持使用注释禁用规则、进行配置、注入全局变量以及环境配置\n\n`//` 和 `/* */` 都可以，可以在注释的同时说明原因，原因放在配置内容之后，用**两个或两个以上 `-`** 隔开\n\n### 禁用规则\n\n通过 `eslint-disable(-next)-line rule` 可以单行禁用规则\n\n```javascript\nalert('foo'); // eslint-disable-line\nalert('foo'); /* eslint-disable-line */\nalert('foo'); // eslint-disable-line plugin/rule-name\n\n/* eslint-disable-next-line */\nalert('foo');\n// eslint-disable-next-line -- I don't want eslint \nalert('foo');\n// eslint-disable-next-line no-alert, quotes, semi\nalert('foo');\n```\n\n通过 `eslint-disable` 和 `eslint-enable` 实现某一块关闭规则校验\n\n```javascript\n/* eslint-disable */\nconsole.log(\"bar\")\nalert('foo');\n/* eslint-enable */\n\n/* eslint-disable no-alert, no-console */\nalert('foo');\nconsole.log('bar');\n/* eslint-enable no-alert, no-console */\n```\n\n在文件第一行使用  `eslint-disable`  实现整个文件关闭校验\n\n```javascript\n/* eslint-disable */\nalert('foo');\n//...\n\n/* eslint-disable no-alert */\nalert('foo');\n//...\n```\n\n### 规则配置\n\n```javascript\n/* eslint quotes: [\"error\", \"double\"], curly: 2 */\nconst foo=\"'bar'\"\n```\n\n### 全局变量\n\n通过 `global` 注入全局变量，默认只读，通过 `: writable` 表明可写\n\n```javascript\n// var1 只读，var2 读写\n/* global var1, var2: writable */\n```\n\n\n\n[ESLint使用教程](https://juejin.cn/post/7012798266089668645)\n\n[深入浅出之ESLint](https://juejin.cn/post/7028754877312401444)\n","meta":{"size":7161,"birthTime":1663496641419.8381,"updateTime":1663496641420.0784}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["eslint"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

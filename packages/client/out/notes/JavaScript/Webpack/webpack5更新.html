@@ -1,0 +1,51 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>webpack5更新 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#清除输出目录" data-target-id="h2-清除输出目录-0">清除输出目录</a></li><li><a href="#top-level-await" data-target-id="h2-top-level-await-1">top-level-await</a></li><li><a href="#打包体积优化" data-target-id="h2-打包体积优化-2">打包体积优化</a></li><li><a href="#打包缓存开箱即用" data-target-id="h2-打包缓存开箱即用-3">打包缓存开箱即用</a></li><li><a href="#资源模块" data-target-id="h2-资源模块-4">资源模块</a></li><li><a href="#模块联邦" data-target-id="h2-模块联邦-5">模块联邦</a></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">webpack5更新</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h2>清除输出目录</h2>
+<p><code>webpack5</code>清除输出目录开箱可用，无须安装<code>clean-webpack-plugin</code>，具体做法如下：</p>
+<pre><code class="language-js">module.exports = {
+  output: {
+    clean: true
+  }
+}
+</code></pre>
+<h2>top-level-await</h2>
+<p><code>webpack5</code>现在允许在模块的顶级代码中直接使用<code>await</code></p>
+<pre><code class="language-js">// src/index.js
+const resp = await fetch(&quot;http://www.baidu.com&quot;);
+const jsonBody = await resp.json();
+export default jsonBody;
+</code></pre>
+<p>目前，<code>top-level-await</code>还未成为正式标准，因此，对于<code>webpack5</code>而言，该功能是作为<code>experiments</code>发布的，需要在<code>webpack.config.js</code>中配置开启</p>
+<pre><code class="language-js">// webpack.config.js
+module.exports = {
+  experiments: {
+    topLevelAwait: true,
+  },
+};
+</code></pre>
+<h2>打包体积优化</h2>
+<p><code>webpack5</code>对模块的合并、作用域提升、<code>tree shaking</code>等处理更加智能</p>
+<h2>打包缓存开箱即用</h2>
+<p>在<code>webpack4</code>中，需要使用<code>cache-loader</code>缓存打包结果以优化之后的打包性能</p>
+<p>而在<code>webpack5</code>中，默认就已经开启了打包缓存，无须再安装<code>cache-loader</code></p>
+<p>默认情况下，<code>webpack5</code>是将模块的打包结果缓存到内存中，可以通过<code>cache</code>配置进行更改</p>
+<pre><code class="language-js">const path = require(&quot;path&quot;);
+
+module.exports = {
+  cache: {
+    // 缓存类型，支持：memory、filesystem
+    type: &quot;filesystem&quot;, 
+    // 缓存目录，仅类型为 filesystem 有效
+    cacheDirectory: path.resolve(__dirname, &quot;node_modules/.cache/webpack&quot;), 
+  },
+};
+</code></pre>
+<blockquote>
+<p>关于<code>cache</code>的更多配置参考：<a href="https://webpack.docschina.org/configuration/other-options/#cache">https://webpack.docschina.org/configuration/other-options/#cache</a></p>
+</blockquote>
+<h2>资源模块</h2>
+<p>在<code>webpack4</code>中，针对资源型文件我们通常使用<code>file-loader</code>、<code>url-loader</code>、<code>raw-loader</code>进行处理</p>
+<p>由于大部分前端项目都会用到资源型文件，因此<code>webpack5</code>原生支持了资源型模块</p>
+<p>详见：<a href="https://webpack.docschina.org/guides/asset-modules/">https://webpack.docschina.org/guides/asset-modules/</a></p>
+<h2>模块联邦</h2>
+<p>。。。</p>
+<p><a href="https://segmentfault.com/a/1190000040846550">升级Webpack5实践</a></p>
+<p><a href="http://www.chenpe.xyz/frontEnd/webpack/webpack5-gengxinneirong.html#%E4%B8%BB%E8%A6%81%E7%9A%84%E5%86%85%E9%83%A8%E6%9E%B6%E6%9E%84%E5%8F%98%E6%9B%B4">http://www.chenpe.xyz/frontEnd/webpack/webpack5-gengxinneirong.html#%E4%B8%BB%E8%A6%81%E7%9A%84%E5%86%85%E9%83%A8%E6%9E%B6%E6%9E%84%E5%8F%98%E6%9B%B4</a></p><div><a href="/notes/JavaScript/Webpack">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"webpack5更新","article":{"title":"webpack5更新","content":"## 清除输出目录\n\n`webpack5`清除输出目录开箱可用，无须安装`clean-webpack-plugin`，具体做法如下：\n\n```js\nmodule.exports = {\n  output: {\n    clean: true\n  }\n}\n```\n\n## top-level-await\n\n`webpack5`现在允许在模块的顶级代码中直接使用`await`\n\n```js\n// src/index.js\nconst resp = await fetch(\"http://www.baidu.com\");\nconst jsonBody = await resp.json();\nexport default jsonBody;\n```\n\n目前，`top-level-await`还未成为正式标准，因此，对于`webpack5`而言，该功能是作为`experiments`发布的，需要在`webpack.config.js`中配置开启\n\n```js\n// webpack.config.js\nmodule.exports = {\n  experiments: {\n    topLevelAwait: true,\n  },\n};\n```\n\n## 打包体积优化\n\n`webpack5`对模块的合并、作用域提升、`tree shaking`等处理更加智能\n\n## 打包缓存开箱即用\n\n在`webpack4`中，需要使用`cache-loader`缓存打包结果以优化之后的打包性能\n\n而在`webpack5`中，默认就已经开启了打包缓存，无须再安装`cache-loader`\n\n默认情况下，`webpack5`是将模块的打包结果缓存到内存中，可以通过`cache`配置进行更改\n\n```js\nconst path = require(\"path\");\n\nmodule.exports = {\n  cache: {\n    // 缓存类型，支持：memory、filesystem\n    type: \"filesystem\", \n    // 缓存目录，仅类型为 filesystem 有效\n    cacheDirectory: path.resolve(__dirname, \"node_modules/.cache/webpack\"), \n  },\n};\n```\n\n\u003e 关于`cache`的更多配置参考：https://webpack.docschina.org/configuration/other-options/#cache\n\n## 资源模块\n\n在`webpack4`中，针对资源型文件我们通常使用`file-loader`、`url-loader`、`raw-loader`进行处理\n\n由于大部分前端项目都会用到资源型文件，因此`webpack5`原生支持了资源型模块\n\n详见：https://webpack.docschina.org/guides/asset-modules/\n\n## 模块联邦\n\n。。。\n\n\n\n\n\n\n\n[升级Webpack5实践](https://segmentfault.com/a/1190000040846550)\n\nhttp://www.chenpe.xyz/frontEnd/webpack/webpack5-gengxinneirong.html#%E4%B8%BB%E8%A6%81%E7%9A%84%E5%86%85%E9%83%A8%E6%9E%B6%E6%9E%84%E5%8F%98%E6%9B%B4\n\n","meta":{"size":2078,"birthTime":1663496641401.9736,"updateTime":1663496641402.3909}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["JavaScript","Webpack","webpack5更新"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

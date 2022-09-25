@@ -1,0 +1,79 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="icon" href="/favicon.ico"/><title>选择器 | 0X1461A0</title><meta name="next-head-count" content="4"/><link rel="preload" href="/_next/static/css/5db4aa1edde4971b.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5db4aa1edde4971b.css" data-n-g=""/><link rel="preload" href="/_next/static/css/38c642bc88044b6e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/38c642bc88044b6e.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/_next/static/chunks/webpack-2c644d3580cecc35.js" defer=""></script><script src="/_next/static/chunks/framework-325eacbb81921a43.js" defer=""></script><script src="/_next/static/chunks/main-c87967b003e3efc2.js" defer=""></script><script src="/_next/static/chunks/pages/_app-111c29f79e705983.js" defer=""></script><script src="/_next/static/chunks/542-e750f8bef0aa06d2.js" defer=""></script><script src="/_next/static/chunks/pages/notes/%5B%5B...param%5D%5D-4c9f87d1f418ba6e.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_buildManifest.js" defer=""></script><script src="/_next/static/OyucwIrXZRgWNxoAUA9lF/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div class="flex flex-col min-h-screen"><header class="pb-10 pt-12 text-center shrink-0"><a class="uppercase tracking-widest text-gray-600" href="/">0x1461a0</a></header><main class="flex-auto mb-12"><div class="TOC_table-of-content__KyR_J"><ul><li><a href="#关系型选择器" data-target-id="h2-关系型选择器-0">关系型选择器</a></li><li><a href="#属性选择器" data-target-id="h2-属性选择器-1">属性选择器</a></li><li><a href="#伪元素" data-target-id="h2-伪元素-2">伪元素</a></li><li><a href="#伪类" data-target-id="h2-伪类-3">伪类</a><ul><li><a href="#超链接" data-target-id="h3-超链接-0">超链接</a></li><li><a href="#结构伪类" data-target-id="h3-结构伪类-1">结构伪类</a></li><li><a href="#UI状态伪类" data-target-id="h3-UI状态伪类-2">UI状态伪类</a></li></ul></li></ul></div><div class="article_article-container__yUBmR"><div class="mb-8"><h1 data-title="true" class="mb-0">选择器</h1><p class="opacity-50 !-mt-2"><span>Post: <!-- -->2022.09.18</span><span class="font-bold">·</span><span>Update: <!-- -->2022.09.18</span></p></div><h2>关系型选择器</h2>
+<ul>
+<li>
+<p><code> E + F</code>：选择符合条件的<strong>下一个</strong>兄弟元素节点</p>
+</li>
+<li>
+<p><code> E ~ F</code>：选择E元素<strong>后面的所有兄弟元素</strong>F</p>
+</li>
+</ul>
+<h2>属性选择器</h2>
+<ul>
+<li>
+<p><code> [atter~=&quot;val&quot;]</code>：<code>attr</code> 的属性值是包含 <code>val</code> 这个词的一组词，属性值中必须含有 <code>val</code></p>
+</li>
+<li>
+<p><code> [atter|=&quot;val&quot;]</code>：<code>attr</code> 的属性值必须是以 <code>val-</code> 开头或者就是 <code>val</code> 本身</p>
+</li>
+<li>
+<p><code> [atter^=&quot;val&quot;]</code>：<code>attr</code> 的属性值必须以字串 <code>val</code> 开头</p>
+</li>
+<li>
+<p><code> [atter$=&quot;val&quot;]</code>：<code>attr</code> 的属性值必须以字串 <code>val</code> 结尾</p>
+</li>
+<li>
+<p><code> [atter*=&quot;val&quot;]</code>：<code>attr</code> 的属性值必须包含字串 <code>val</code></p>
+</li>
+</ul>
+<p>属性选择器在<code>[]</code> 结束之前写一个 <code>i</code> 可以不区分大小写匹配</p>
+<pre><code class="language-css">a[href$=&quot;.PDF&quot; i]
+</code></pre>
+<h2>伪元素</h2>
+<ul>
+<li><code>::selection</code>    选择被选中的元素（文本为被选中状态）</li>
+<li><code>::first-letter</code>   非行内元素的首字母（标点也可以）</li>
+<li><code>::first-line</code> 非行内元素的首行文本</li>
+</ul>
+<h2>伪类</h2>
+<p>伪类表示元素的某种状态</p>
+<h3>超链接</h3>
+<ul>
+<li><code>link</code>：超链接未访问时的状态</li>
+<li><code>visited</code>：超链接访问过后的状态</li>
+<li><code>hove</code>：鼠标悬停状态</li>
+<li><code>active</code>：激活状态，鼠标按下状态</li>
+</ul>
+<p>使用的先后顺序：love hate</p>
+<h3>结构伪类</h3>
+<ul>
+<li><code>:empty</code>   选择没有内容的元素（可以有注释）</li>
+<li><code>:first-child</code>、<code>:last-child</code>、<code>:only-child</code>、<code>:nth-child(n)</code>、<code>:nth-last-child(n)</code></li>
+<li><code>:first-of-type</code>、<code>:last-of-type</code>、<code>:only-of-type</code>、<code>:nth-of-type(n)</code>、<code>:nth-of-last-type(n)</code></li>
+</ul>
+<h3>UI状态伪类</h3>
+<ul>
+<li>
+<p><code>:checked</code>  启用的用户界面元素，即接受输入的元素</p>
+</li>
+<li>
+<p><code>:disabled</code>  禁用的用户界面元素，即不接受输入的元素</p>
+</li>
+<li>
+<p><code>:checked</code>   由用户或文档默认选中的单选按钮或复选框</p>
+</li>
+<li>
+<p><code>:read-only</code>  不能编辑的输入框</p>
+</li>
+<li>
+<p><code>:read-write</code>  可以编辑的输入框</p>
+</li>
+<li>
+<p><code>:required</code>  必须输入值的输入框</p>
+</li>
+<li>
+<p><code>:target</code>   选择当前被锚点选中的元素</p>
+</li>
+<li>
+<p>.....</p>
+</li>
+</ul><div><a href="/notes/CSS">cd ..</a></div></div></main><footer class="pb-2 pt-12 text-center shrink-0"><div class="capitalize">copyright <span class="text-2xl align-middle">©</span> <!-- -->2022<!-- --> xie feng</div><div class="text-sm">Powered by NextJS</div></footer></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"metaTitle":"选择器","article":{"title":"选择器","content":"## 关系型选择器\r\n\r\n- ` E + F`：选择符合条件的**下一个**兄弟元素节点\r\n\r\n- ` E ~ F`：选择E元素**后面的所有兄弟元素**F\r\n\r\n## 属性选择器\r\n\r\n- ` [atter~=\"val\"]`：`attr` 的属性值是包含 `val` 这个词的一组词，属性值中必须含有 `val` \r\n\r\n- ` [atter|=\"val\"]`：`attr` 的属性值必须是以 `val-` 开头或者就是 `val` 本身\r\n\r\n- ` [atter^=\"val\"]`：`attr` 的属性值必须以字串 `val` 开头\r\n\r\n- ` [atter$=\"val\"]`：`attr` 的属性值必须以字串 `val` 结尾\r\n\r\n- ` [atter*=\"val\"]`：`attr` 的属性值必须包含字串 `val` \r\n\r\n属性选择器在`[]` 结束之前写一个 `i` 可以不区分大小写匹配\r\n\r\n```css\r\na[href$=\".PDF\" i]\r\n```\r\n\r\n## 伪元素\r\n\r\n- `::selection`    选择被选中的元素（文本为被选中状态）\r\n- `::first-letter`   非行内元素的首字母（标点也可以）\r\n- `::first-line` 非行内元素的首行文本\r\n\r\n## 伪类\r\n\r\n伪类表示元素的某种状态\r\n\r\n### 超链接\r\n\r\n- `link`：超链接未访问时的状态\r\n- `visited`：超链接访问过后的状态\r\n- `hove`：鼠标悬停状态\r\n- `active`：激活状态，鼠标按下状态\r\n\r\n使用的先后顺序：love hate\r\n\r\n### 结构伪类\r\n\r\n- `:empty`   选择没有内容的元素（可以有注释）\r\n- `:first-child`、`:last-child`、`:only-child`、`:nth-child(n)`、`:nth-last-child(n)`\r\n- `:first-of-type`、`:last-of-type`、`:only-of-type`、`:nth-of-type(n)`、`:nth-of-last-type(n)`\r\n\r\n### UI状态伪类\r\n\r\n- `:checked`  启用的用户界面元素，即接受输入的元素\r\n- `:disabled`  禁用的用户界面元素，即不接受输入的元素\r\n- `:checked`   由用户或文档默认选中的单选按钮或复选框\r\n- `:read-only`  不能编辑的输入框\r\n- `:read-write`  可以编辑的输入框\r\n- `:required`  必须输入值的输入框\r\n- `:target`   选择当前被锚点选中的元素\r\n\r\n- .....\r\n","meta":{"size":1919,"birthTime":1663496641379.6873,"updateTime":1663496641379.8584}}},"__N_SSG":true},"page":"/notes/[[...param]]","query":{"param":["CSS","选择器"]},"buildId":"OyucwIrXZRgWNxoAUA9lF","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

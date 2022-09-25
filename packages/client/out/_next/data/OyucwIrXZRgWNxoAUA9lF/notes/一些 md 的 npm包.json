@@ -1,0 +1,1 @@
+{"pageProps":{"metaTitle":"一些 md 的 npm包","article":{"title":"一些 md 的 npm包","content":"- markdown-it-anchor：为 markdown-it 设计的标题锚点生成插件\r\n- markdown-to-jsx：将 markdown 转为 native jsx，可重写任何的 tag representation\r\n- react-markdown：将 markdown 解析为 react 组件\r\n- gray-matter：解析 YMAL\r\n\r\n","meta":{"size":253,"birthTime":1663496641427.363,"updateTime":1663496641427.4688}}},"__N_SSG":true}
