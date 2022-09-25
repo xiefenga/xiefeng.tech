@@ -10,7 +10,6 @@
     "export": "next build && next export"
   },
   "dependencies": {
-    "@0x1461a0.me/client": "link:",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.5",
     "lodash.debounce": "^4.0.8",
