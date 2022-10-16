@@ -2,8 +2,8 @@ import classNames from 'classnames'
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 
 import { Article } from '@/types'
-import ProseList from './Prose/ProseList'
-import CategoryList from './Category/CategoryList'
+import ProseList from '../Prose/ProseList'
+import CategoryList from '../Category/CategoryList'
 import type { DirJson } from '@/utils/files'
 
 interface NotesDirProps {

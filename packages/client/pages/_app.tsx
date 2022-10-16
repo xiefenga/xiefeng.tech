@@ -6,7 +6,7 @@ import Layout from '@/components/Layout'
 import useNProgress from '@/hooks/useNProgress'
 import '@/styles/globals.css'
 
-function MyApp({ Component, pageProps }: AppProps) {
+const App: React.FC<AppProps> = ({ Component, pageProps }) => {
 
   useNProgress()
 
@@ -22,4 +22,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   )
 }
 
-export default MyApp
+export default App

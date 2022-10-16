@@ -45,7 +45,7 @@ async function traverseDir(sourceDir, files, dirs, dir = sourceDir) {
   for (const filename of filenames) {
     const path = join(dir, filename)
     const meta = await stat(path)
-    if (meta.isFile()) {
+    if (meta.isFile() && path.endsWith('.md')) {
       files.push(genFileJson(path, filename, sourceDir, meta))
     } else {
       dirs.push(genDirJson(path, filename, sourceDir, meta))
