@@ -10,7 +10,7 @@ const Back2Previous: React.FC = () => {
   return (
     <div>
       <Link href={previous}>
-        cd ..
+        <a className='opacity-50 hover:opacity-70 no-underline'>cd ..</a>
       </Link>
     </div>
   )

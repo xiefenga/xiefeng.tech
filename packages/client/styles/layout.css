@@ -1,0 +1,3 @@
+nav a {
+  @apply font-medium opacity-60 transition-opacity hover:opacity-100;
+}

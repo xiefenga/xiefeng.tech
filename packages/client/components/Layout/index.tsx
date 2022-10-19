@@ -1,6 +1,8 @@
 import React, { PropsWithChildren } from 'react'
+
 import Footer from './Footer'
 import Header from './Header'
+import CanvasPlum from '../CanvasPlum'
 
 interface LayoutProp { }
 
@@ -12,6 +14,7 @@ const Layout: React.FC<PropsWithChildren<LayoutProp>> = (props) => {
         {props.children}
       </main>
       <Footer />
+      <CanvasPlum />
     </div>
   )
 }

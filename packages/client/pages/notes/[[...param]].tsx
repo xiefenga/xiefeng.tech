@@ -1,6 +1,9 @@
 import React from 'react'
 import dayjs from 'dayjs'
+import { join } from 'node:path'
 import getConfig from 'next/config'
+import { fetch } from 'undici'
+import { getArticle } from '@/api/articles'
 import { readFile } from 'node:fs/promises'
 import type { NextPage, GetStaticPropsContext, GetStaticPathsResult } from 'next'
 
@@ -95,6 +98,9 @@ type PageQuery = {
 }
 
 export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
+
+  console.log(ctx)
+
   const { params } = ctx
 
   const { param } = params!
@@ -102,7 +108,6 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
   const { serverRuntimeConfig } = getConfig()
 
   const { files, dirs } = serverRuntimeConfig as { files: FileJson[], dirs: DirJson[] }
-
 
   // /notes
   if (!param || param.length === 0) {
@@ -119,6 +124,26 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
   const path = param.join('/')
 
   console.log('getStaticProps', path)
+
+  const article = await getArticle(join('/', path))
+
+  if (article !== null) {
+    const { title, content, createTime, updateTime } = article
+    return {
+      props: {
+        metaTitle: title,
+        article: {
+          title,
+          content,
+          meta: {
+            createTime,
+            updateTime
+          }
+        }
+      }
+    }
+  }
+
 
   const dirJson = dirs.find(dir => dir.path === path)
 
@@ -159,6 +184,14 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult<{} | { param: string[] }>> {
 
+  const baseURL = process.env.API_URL!;
+
+  const resp = await fetch(`${baseURL}/paths/dirs`)
+
+  const json = await resp.json()
+
+  console.log(json)
+
   if (process.env.NODE_ENV === 'development') {
     return {
       paths: [],
@@ -166,15 +199,7 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult<{} | { para
     }
   }
 
-  const { serverRuntimeConfig } = getConfig()
-
-  const { files, dirs } = serverRuntimeConfig as { files: FileJson[], dirs: DirJson[] }
-
-  const paths = [
-    { params: { param: [] } },
-    ...files.map(file => ({ params: { param: file.path.split('.')[0].split('/') } })),
-    ...dirs.map(dir => ({ params: { param: dir.path.split('/') } }))
-  ]
+  const paths = [] as any
 
   return {
     paths,
