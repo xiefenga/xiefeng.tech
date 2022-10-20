@@ -5,8 +5,5 @@ node_modules
 
 tsconfig.tsbuildinfo
 
-.env.local
-
-dirs.json
-
-files.json
+# custome shared dir
+__shared__
