@@ -1,55 +1,22 @@
 import React from 'react'
-import dayjs from 'dayjs'
 import { join } from 'node:path'
-import getConfig from 'next/config'
-import { fetch } from 'undici'
-import { getArticle } from '@/api/articles'
-import { readFile } from 'node:fs/promises'
 import type { NextPage, GetStaticPropsContext, GetStaticPathsResult } from 'next'
 
-import { Article } from '@/types'
-import TOC from '@/components/TOC'
-import Markdown from '@/components/Markdown'
+import { initShared } from '@/utils/shared'
 import NotesDir from '@/components/NotesDir'
-import Back2Top from '@/components/Back2Top'
-import { cssModules } from '@/utils/styles'
 import DocTitle from '@/components/Meta/DocTitle'
-import styles from '@/styles/article.module.css'
+import ArticleDetail from '@/components/ArticleDetail'
 import type { DirJson, FileJson } from '@/utils/files'
-import Back2Previous from '@/components/Back2Previous'
+import { Article, ArticleInfoDto } from '@/types'
+import { queryNoteByPath, queryNoteList } from '@/api/notes'
 
-const {
-  articleContent,
-  articleContainer,
-} = cssModules(styles)
+const PATH_END = '__PATH_END__'
 
-interface ArticleDetailProps {
-  title: string
-  content: string
-  meta: any
-}
+const NOTE_LIST = initShared('NOTE_LIST')
 
-const ArticleDetail: React.FC<ArticleDetailProps> = props => {
-  const { title, content, meta } = props
-  return (
-    <React.Fragment>
-      <TOC source={content} />
-      <Back2Top />
-      <div className={articleContainer}>
-        <div className='mb-8'>
-          <h1 data-title className='mb-0'>{title}</h1>
-          <p className='opacity-50 !-mt-2'>
-            <span>Post: {dayjs(meta.birthTime).format('YYYY.MM.DD')}</span>
-            <span className='font-bold'>·</span>
-            <span>Update: {dayjs(meta.updateTime).format('YYYY.MM.DD')}</span>
-          </p>
-        </div>
-        <Markdown className={articleContent} article={content} />
-        <Back2Previous />
-      </div>
-    </React.Fragment>
-  )
-}
+const PATH_TREE = initShared('PATH_TREE')
+
+let map = {}
 
 interface PageProps {
   article?: {
@@ -61,7 +28,6 @@ interface PageProps {
   articles?: Article[]
   dirs?: DirJson[]
 }
-
 
 const NotesPage: NextPage<PageProps> = (props) => {
   const { article, dirs, articles, metaTitle } = props
@@ -97,100 +63,115 @@ type PageQuery = {
   param: string[]
 }
 
-export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
+const getProperty = (obj: { [key: string]: any }, props: string) => {
+  return props
+    .replace(/\[(\d)\]/g, '.$1')
+    .split('.')
+    .reduce((obj, prop) => obj?.[prop], obj) as any
+}
 
-  console.log(ctx)
+export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
 
   const { params } = ctx
 
   const { param } = params!
 
-  const { serverRuntimeConfig } = getConfig()
+  const pathTree = PATH_TREE.get()
 
-  const { files, dirs } = serverRuntimeConfig as { files: FileJson[], dirs: DirJson[] }
+  const noteList = NOTE_LIST.get() as ArticleInfoDto[]
 
-  // /notes
-  if (!param || param.length === 0) {
-    return {
-      props: {
-        metaTitle: 'notes',
-        dirs: dirs.filter(dir => dir.dir === '/'),
-        articles: files.filter(file => file.filename.endsWith('.md') && file.dir === '/').map(file => ({ title: file.filename.split('.')[0], ...file }))
-      }
-    }
-  }
+  const current = !param || param.length === 0
+    ? pathTree
+    : getProperty(pathTree, param.join('.'))
 
-  // article
-  const path = param.join('/')
 
-  console.log('getStaticProps', path)
+  // generate /xx/xx 
+  const logicPath = join('/', param?.join('/') ?? '')
+  const dirs = [] as any
+  const articles = [] as any
+  console.log(logicPath)
 
-  const article = await getArticle(join('/', path))
+  // article 
+  if (current === PATH_END) {
+    const article = await queryNoteByPath(logicPath)
 
-  if (article !== null) {
-    const { title, content, createTime, updateTime } = article
-    return {
-      props: {
-        metaTitle: title,
-        article: {
-          title,
-          content,
-          meta: {
-            createTime,
-            updateTime
+    if (article !== null) {
+      const { title, content, createTime, updateTime } = article
+      return {
+        props: {
+          metaTitle: title,
+          article: {
+            title,
+            content,
+            meta: {
+              createTime,
+              updateTime
+            }
           }
         }
       }
-    }
-  }
-
-
-  const dirJson = dirs.find(dir => dir.path === path)
-
-  const fileJson = files.find(file => file.path.split('.')[0] === path)
-
-  // console.log(dirJson, fileJson)
-
-  if (fileJson) {
-    const content = await readFile(fileJson.fullpath, 'utf-8')
-    const title = param.at(-1)
-    return {
-      props: {
-        metaTitle: title,
-        article: {
-          title: param.at(-1),
-          content,
-          meta: fileJson.meta
-        }
-      }
-    }
-  } else if (dirJson) {
-    const floders = dirs.filter(dir => dir.dir.slice(1) === path)
-    const articles = files.filter(file => file.dir.slice(1) === dirJson.path && file.filename.endsWith('md')).map(file => ({ title: file.filename.split('.')[0], ...file }))
-
-    return {
-      props: {
-        metaTitle: dirJson.dirname,
-        articles,
-        dirs: floders
+    } else {
+      return {
+        notFound: true
       }
     }
   }
+
+  // dir
+  Object.entries(current).forEach(([path, value]) => {
+    const rootPath = join(logicPath, path)
+    if (value === PATH_END) {
+      const article = noteList.find(note => note.path === rootPath)
+      if (article) {
+        articles.push({
+          ...article,
+          meta: {
+            createTime: article.createTime,
+            updateTime: article.updateTime
+          }
+        })
+      }
+    } else {
+      dirs.push({
+        dir: logicPath,
+        path: rootPath,
+        dirname: path
+      })
+    }
+  })
 
   return {
-    notFound: true
+    props: {
+      metaTitle: param?.at(-1) ?? 'notes',
+      articles: articles,
+      dirs: dirs
+    }
   }
 }
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult<{} | { param: string[] }>> {
 
-  const baseURL = process.env.API_URL!;
+  const list = await queryNoteList()
 
-  const resp = await fetch(`${baseURL}/paths/dirs`)
+  NOTE_LIST.set(list)
 
-  const json = await resp.json()
+  const pathList = list.map(item => item.path.slice(1).split('/'))
 
-  console.log(json)
+  function handle(map: any, path: string[]) {
+    if (path.length === 1) {
+      map[path[0]] = PATH_END
+    } else {
+      map[path[0]] ??= {} as any
+      if (map[path[0]] === PATH_END) {
+        throw new Error('')
+      }
+      handle(map[path[0]], path.slice(1))
+    }
+  }
+
+  const pathTree = pathList.reduce((tree, path) => (handle(tree, path), tree), {})
+
+  PATH_TREE.set(pathTree)
 
   if (process.env.NODE_ENV === 'development') {
     return {

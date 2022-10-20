@@ -1,18 +1,18 @@
+import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { resolve, join } from 'node:path'
-import gen from './utils/gen.mjs'
+import { existsSync, mkdirSync, rmSync } from 'node:fs'
 
 const __filename = fileURLToPath(import.meta.url)
 
 const __dirname = join(__filename, '../')
 
-const sourceDir = process.env.NODE_ENV === 'development'
-  ? process.env.sourceDir
-  : resolve(__dirname, './NOTES')
+const sharedFileDir = join(__dirname, '__shared__')
 
-const { dirs, files } = process.env.P_NODE_ENV === 'ssr_server'
-  ? {}
-  : await gen(sourceDir)
+if (existsSync(sharedFileDir)) {
+  rmSync(sharedFileDir, { recursive: true })
+}
+
+mkdirSync(sharedFileDir)
 
 /**
  * @type {import('next').NextConfig}
@@ -21,9 +21,8 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   serverRuntimeConfig: {
-    dirs,
-    files,
-    sourceDir
+    root: __dirname,
+    sharedFileDir
   },
 }
 

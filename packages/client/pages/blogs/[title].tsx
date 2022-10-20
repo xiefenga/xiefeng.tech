@@ -1,24 +1,24 @@
 import React from 'react'
 import { GetStaticPathsResult, GetStaticPropsContext, NextPage } from 'next/types'
 
-import { getBlogPaths } from '@/api/paths'
-import { queryBlogByTitle } from '@/api/blogs'
+import { ArticleDto } from '@/types'
 import DocTitle from '@/components/Meta/DocTitle'
 import ArticleDetail from '@/components/ArticleDetail'
-
+import { queryBlogByTitle, queryBlogPaths } from '@/api/blogs'
 
 interface PageProps {
   metaTitle: string
-  article: {
-    title: string
-    content: string
-    meta: any
-  }
+  article: ArticleDto
 }
 
 const BlogDetailPage: NextPage<PageProps> = (props) => {
   const { metaTitle, article } = props
-  const { title, content, meta } = article
+  const { title, content, createTime, updateTime } = article
+
+  const meta = {
+    createTime,
+    updateTime
+  }
 
   return (
     <React.Fragment>
@@ -73,7 +73,7 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
     }
   }
 
-  const blogPaths = await getBlogPaths()
+  const blogPaths = await queryBlogPaths()
 
   const paths = blogPaths.map(path => ({
     params: {

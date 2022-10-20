@@ -8,6 +8,15 @@ export type Article = {
   meta: any
 }
 
+export interface ArticleInfoDto {
+  id: number
+  title: string
+  path: string
+  blog: boolean
+  createTime: Date
+  updateTime: Date
+}
+
 export interface ArticleDto {
   id: number
   title: string
@@ -18,14 +27,6 @@ export interface ArticleDto {
   updateTime: Date
 }
 
-export interface ArticleInfoDto {
-  id: number
-  title: string
-  path: string
-  blog: boolean
-  createTime: Date
-  updateTime: Date
-}
 
 export type Fn = () => void
 

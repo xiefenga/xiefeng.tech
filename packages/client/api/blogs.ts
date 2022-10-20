@@ -11,3 +11,8 @@ export const queryBlogByTitle = async (title: string) => {
   const api = `${BaseURL}?title=${title}`
   return request<ArticleDto | null>(api)
 }
+
+export const queryBlogPaths = async () => {
+  const api = `${BaseURL}/paths`
+  return await request<string[]>(api)
+}

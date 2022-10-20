@@ -1,9 +1,10 @@
+import dayjs from 'dayjs'
 import React from 'react'
 import Link from 'next/link'
 import { NextPage } from 'next/types'
+
 import { ArticleInfoDto } from '@/types'
 import { queryBlogList } from '@/api/blogs'
-import dayjs from 'dayjs'
 
 interface PageProps {
   list: ArticleInfoDto[]
@@ -14,7 +15,9 @@ const BlogPage: NextPage<PageProps> = (props) => {
 
   list.map(item => dayjs(item.createTime))
 
+  // todo: 排序 不依赖 getStaticProps 获取的顺序
   // const posts = list.sort((a, b) => dayjs(b.createTime).valueOf() - dayjs(a.createTime).valueOf())
+
   const posts = list
   const getYear = (a: Date | string | number) => new Date(a).getFullYear()
   const isSameYear = (a: Date | string | number, b: Date | string | number) => a && b && getYear(a) === getYear(b)
@@ -52,7 +55,6 @@ const BlogPage: NextPage<PageProps> = (props) => {
 
 export async function getStaticProps() {
   const list = await queryBlogList()
-  console.log(list)
   return {
     props: {
       list
