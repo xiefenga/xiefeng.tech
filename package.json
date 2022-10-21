@@ -2,6 +2,7 @@
   "name": "0x1461a0.me",
   "private": true,
   "devDependencies": {
+    "@0x1461a0/eslint-config": "^0.0.1",
     "@types/node": "18.7.15",
     "eslint": "8.23.0",
     "typescript": "4.8.2"
