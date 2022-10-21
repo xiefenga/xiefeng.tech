@@ -3,7 +3,7 @@ import { Fn, Pausable, RafFnOptions } from '@/types'
 
 export const useRafFn = (fn: Fn, options: RafFnOptions = {}): Pausable => {
   const {
-    immediate = true
+    immediate = true,
   } = options
 
   const isActive = { current: false }
@@ -13,7 +13,7 @@ export const useRafFn = (fn: Fn, options: RafFnOptions = {}): Pausable => {
       return
     }
     fn()
-    window && window.requestAnimationFrame(loop)
+    window?.requestAnimationFrame(loop)
   }
 
   const resume = () => {

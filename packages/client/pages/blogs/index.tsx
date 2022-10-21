@@ -57,8 +57,8 @@ export async function getStaticProps() {
   const list = await queryBlogList()
   return {
     props: {
-      list
-    }
+      list,
+    },
   }
 }
 

@@ -15,7 +15,7 @@ function genFileJson(
   const {
     birthtimeMs: birthtime,
     ctimeMs: updateTime,
-    size
+    size,
   } = stats
 
   const meta = {
@@ -28,7 +28,7 @@ function genFileJson(
     path,
     filename,
     fullpath,
-    meta
+    meta,
   }
 }
 

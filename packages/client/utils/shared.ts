@@ -1,11 +1,10 @@
 import { join } from 'node:path'
 import getConfig from 'next/config'
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 
 const { serverRuntimeConfig } = getConfig()
 
 const { sharedFileDir } = serverRuntimeConfig
-
 
 export const initShared = <T extends object>(key: string, initialValue?: T) => {
   const filePath = join(sharedFileDir, key)
@@ -18,6 +17,6 @@ export const initShared = <T extends object>(key: string, initialValue?: T) => {
   }
   return {
     get,
-    set
+    set,
   }
 }

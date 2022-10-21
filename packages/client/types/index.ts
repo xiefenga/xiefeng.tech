@@ -5,7 +5,10 @@ export type Article = {
   createdAt: string
   updatedAt: string
   cover: string
-  meta: any
+  meta: {
+    createdAt: string
+    updatedAt: string
+  }
 }
 
 export interface ArticleInfoDto {
@@ -35,7 +38,7 @@ export interface RafFnOptions {
 }
 
 export interface Pausable {
-  isActive: React.RefObject<boolean>
+  isActive: { current: boolean }
   pause: Fn
   resume: Fn
 }

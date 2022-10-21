@@ -22,7 +22,7 @@ const nextConfig = {
   swcMinify: true,
   serverRuntimeConfig: {
     root: __dirname,
-    sharedFileDir
+    sharedFileDir,
   },
 }
 

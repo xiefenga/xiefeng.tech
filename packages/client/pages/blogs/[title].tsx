@@ -17,7 +17,7 @@ const BlogDetailPage: NextPage<PageProps> = (props) => {
 
   const meta = {
     createTime,
-    updateTime
+    updateTime,
   }
 
   return (
@@ -41,7 +41,7 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
 
   const { title } = params!
 
-  const article = await queryBlogByTitle(title);
+  const article = await queryBlogByTitle(title)
 
   if (article !== null) {
     const { title, content, createTime, updateTime } = article
@@ -53,10 +53,10 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
           content,
           meta: {
             createTime,
-            updateTime
-          }
-        }
-      }
+            updateTime,
+          },
+        },
+      },
     }
   }
 
@@ -69,7 +69,7 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
   if (process.env.NODE_ENV === 'development') {
     return {
       paths: [],
-      fallback: 'blocking'
+      fallback: 'blocking',
     }
   }
 
@@ -77,13 +77,13 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
 
   const paths = blogPaths.map(path => ({
     params: {
-      title: path.slice(1)
-    }
+      title: path.slice(1),
+    },
   }))
 
   return {
     paths,
-    fallback: false
+    fallback: false,
   }
 }
 

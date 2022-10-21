@@ -12,19 +12,19 @@ for (const filename of filenames) {
     const { id } = (await (await fetch(`http://localhost:8080/blogs?title=${filename.split('.')[0]}`)).json()).data
     const path = join(dir, filename)
     const { data: { date } } = matter(await readFile(path, 'utf-8'))
-    console.log(date);
-   await fetch(`http://localhost:8080/blogs`, {
+    console.log(date)
+    await fetch('http://localhost:8080/blogs', {
       method: 'put',
       headers: {
         'content-type':'application/json',
       },
       body: JSON.stringify({
         id,
-        createTime: date
-      })
+        createTime: date,
+      }),
     })
-  } catch (error) {
-
+  } catch (_error) {
+    // 
   }
 }
 

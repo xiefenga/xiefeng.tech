@@ -6,7 +6,7 @@ import { initShared } from '@/utils/shared'
 import NotesDir from '@/components/NotesDir'
 import DocTitle from '@/components/Meta/DocTitle'
 import ArticleDetail from '@/components/ArticleDetail'
-import type { DirJson, FileJson } from '@/utils/files'
+import type { DirJson } from '@/utils/files'
 import { Article, ArticleInfoDto } from '@/types'
 import { queryNoteByPath, queryNoteList } from '@/api/notes'
 
@@ -15,8 +15,6 @@ const PATH_END = '__PATH_END__'
 const NOTE_LIST = initShared('NOTE_LIST')
 
 const PATH_TREE = initShared('PATH_TREE')
-
-let map = {}
 
 interface PageProps {
   article?: {
@@ -105,14 +103,14 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
             content,
             meta: {
               createTime,
-              updateTime
-            }
-          }
-        }
+              updateTime,
+            },
+          },
+        },
       }
     } else {
       return {
-        notFound: true
+        notFound: true,
       }
     }
   }
@@ -127,15 +125,15 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
           ...article,
           meta: {
             createTime: article.createTime,
-            updateTime: article.updateTime
-          }
+            updateTime: article.updateTime,
+          },
         })
       }
     } else {
       dirs.push({
         dir: logicPath,
         path: rootPath,
-        dirname: path
+        dirname: path,
       })
     }
   })
@@ -144,8 +142,8 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
     props: {
       metaTitle: param?.at(-1) ?? 'notes',
       articles: articles,
-      dirs: dirs
-    }
+      dirs: dirs,
+    },
   }
 }
 
@@ -176,7 +174,7 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult<{} | { para
   if (process.env.NODE_ENV === 'development') {
     return {
       paths: [],
-      fallback: 'blocking'
+      fallback: 'blocking',
     }
   }
 
@@ -184,7 +182,7 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult<{} | { para
 
   return {
     paths,
-    fallback: false
+    fallback: false,
   }
 }
 

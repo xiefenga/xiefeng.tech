@@ -20,7 +20,6 @@ export const useNProgress = () => {
       router.events.off('routeChangeComplete', done)
       router.events.off('routeChangeError', done)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 }
 

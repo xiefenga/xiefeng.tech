@@ -1,9 +1,11 @@
+import classnames from 'classnames'
 import { useWindowSize } from 'react-use'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 
 import { Fn } from '@/types'
 import useRafFn from '@/hooks/useRafFn'
 import { initCanvas, polar2cart } from '@/utils/canvas'
+import styles from './index.module.css'
 
 const CanvasPlum: React.FC = () => {
 
@@ -96,14 +98,17 @@ const CanvasPlum: React.FC = () => {
 
   useEffect(draw, [size])
 
-  const mask = 'radial-gradient(circle, transparent, black);'
+  const className = useMemo(() => {
+    return classnames(
+      styles.wrapper,
+      'fixed inset-0',
+      'pointer-events-none z-[-1]'
+    )
+  }, [])
+
 
   return (
-    <div
-      // @ts-ignore
-      style={{ maskImage: `${mask}`, '--webkit-mask-image': `${mask}` }}
-      className='fixed top-0 bottom-0 left-0 right-0 pointer-events-none z-[-1]'
-    >
+    <div className={className}>
       <canvas ref={canvasRef} width="400" height="400" />
     </div>
   )

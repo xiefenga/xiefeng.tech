@@ -49,7 +49,7 @@ export function getNavStructure(source: string) {
     return []
   }
 
-  const navData = matchResult.map((r, i) => ({
+  const navData = matchResult.map((r, _i) => ({
     id: '',
     level: r.match(/^#+/g)![0].length,
     text: r.replace(patternOfTitle, '$1').trim(),

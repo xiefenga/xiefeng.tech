@@ -37,7 +37,7 @@ export default async function handler(
       .send({
         path,
         revalidated: false,
-        error: JSON.stringify(error)
+        error: JSON.stringify(error),
       })
   }
 }
