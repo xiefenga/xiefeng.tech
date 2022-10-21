@@ -1,12 +1,14 @@
 import debounce from 'lodash.debounce'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { UpArrow } from 'styled-icons/boxicons-regular'
+
 
 type ScrollStatus = {
   scrolling: boolean
 }
 
 const INIT_SCROLL_STATUS = {
-  scrolling: false
+  scrolling: false,
 }
 
 type ScrollOption = {
@@ -28,7 +30,7 @@ function smoothScroll(
         ? [element.scrollX, element.scrollY]
         : [
           (element as HTMLElement).scrollLeft,
-          (element as HTMLElement).scrollTop
+          (element as HTMLElement).scrollTop,
         ]
 
       if (isEql(left, option.left) && isEql(top, option.top)) {
@@ -41,7 +43,7 @@ function smoothScroll(
 
     element.scrollTo({
       ...option,
-      behavior: 'smooth'
+      behavior: 'smooth',
     })
   })
 }
@@ -73,9 +75,9 @@ const Back2Top: React.FC = () => {
 
   return showStatus
     ? (
-      <div className='fixed right-5 bottom-10'>
-        <button className='px-2' onClick={scroll2Top}>
-          <i className='iconfont icon-top' />
+      <div className='fixed right-5 bottom-10 to-top'>
+        <button className='px-2 w-9' onClick={scroll2Top}>
+          <UpArrow />
         </button>
       </div>
     ) : null

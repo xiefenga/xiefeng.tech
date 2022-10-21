@@ -1,5 +1,5 @@
-import classNames from 'classnames'
 import React, { useEffect, useLayoutEffect, useState } from 'react'
+import { Checkbox, CheckboxChecked } from 'styled-icons/boxicons-regular'
 
 import { Article } from '@/types'
 import ProseList from '../Prose/ProseList'
@@ -33,17 +33,10 @@ const NotesDir: React.FC<NotesDirProps> = ({ dirs = [], articles = [] }) => {
           onClick={changeCheckStatus}
           className='uppercase flex items-center mb-2.5 opacity-30'
         >
-          <span className='px-1'>
-            <i
-              className={classNames([
-                'iconfont',
-                checked
-                  ? 'icon-checkboxchecked'
-                  : 'icon-checkbox'
-              ])}
-            />
+          <span className='w-7'>
+            {checked ? <CheckboxChecked /> : <Checkbox />}
           </span>
-          <span className='ml-1'>category</span>
+          <span className='mt-1'>category</span>
         </button >
         {
           checked ? (

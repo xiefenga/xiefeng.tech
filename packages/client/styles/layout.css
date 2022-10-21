@@ -1,4 +1,9 @@
+nav a {
+  @apply font-medium;
+}
+
 nav a,
-nav div {
-  @apply font-medium opacity-60 transition-opacity hover:opacity-100;
+nav .icon,
+.to-top {
+  @apply opacity-60 transition-opacity hover:opacity-100;
 }

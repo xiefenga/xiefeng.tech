@@ -46,16 +46,16 @@ const Nav: React.FC = () => {
       </Link>
 
       <Link href='https://github.com/xiefenga'>
-        <a className='w-5 flex items-center'>
+        <a className='w-5 flex items-center icon'>
           <Github />
         </a>
       </Link>
-      <div className='w-4 flex items-center cursor-pointer'>
+      <div className='w-4 flex items-center cursor-pointer icon'>
         <RssFill />
       </div>
       <div 
         onClick={onThemeChange}
-        className='w-5 cursor-pointer flex items-center' 
+        className='w-5 cursor-pointer flex items-center icon' 
       >
         {renderTheme()}
       </div>
