@@ -32,7 +32,7 @@ const Nav: React.FC = () => {
   }
 
   return (
-    <nav className='absolute right-20 top-0 p-4 grid grid-flow-col gap-x-5'>
+    <nav className='absolute right-10 top-0 p-4 grid grid-flow-col gap-x-5'>
       <Link href='/blogs'>
         <a>Blogs</a>
       </Link>
@@ -43,6 +43,14 @@ const Nav: React.FC = () => {
 
       <Link href='/ideas'>
         <a>Ideas</a>
+      </Link>
+
+      <Link href='/thinks'>
+        <a>Thinks</a>
+      </Link>
+
+      <Link href='/tools'>
+        <a>Tools</a>
       </Link>
 
       <Link href='https://github.com/xiefenga'>
