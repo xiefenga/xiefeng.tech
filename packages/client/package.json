@@ -26,6 +26,8 @@
     "undici": "^5.10.0"
   },
   "devDependencies": {
+    "@0x1461a0.me/shared": "workspace:^1.0.0",
+    "@0x1461a0.me/sync": "workspace:^0.0.1",
     "@types/lodash.debounce": "^4.0.7",
     "@types/lodash.throttle": "^4.1.7",
     "@types/node": "18.7.15",

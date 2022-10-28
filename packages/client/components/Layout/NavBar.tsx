@@ -32,18 +32,23 @@ const Nav: React.FC = () => {
   }
 
   return (
-    <nav className='absolute right-10 top-0 p-4 grid grid-flow-col gap-x-5'>
+    <nav className='absolute right-8 top-0 p-4 grid grid-flow-col gap-x-5'>
       <Link href='/blogs'>
         <a>Blogs</a>
       </Link>
+
+      {/* 备忘录 */}
+      {/* <Link href='memo'>
+        <a>Memo</a>
+      </Link> */}
 
       <Link href='/notes'>
         <a>Notes</a>
       </Link>
 
-      <Link href='/ideas'>
+      {/* <Link href='/ideas'>
         <a>Ideas</a>
-      </Link>
+      </Link> */}
 
       <Link href='/thinks'>
         <a>Thinks</a>

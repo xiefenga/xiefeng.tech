@@ -11,3 +11,21 @@ export const queryNoteByPath = async (path: string) => {
 export const queryNoteList = async () => {
   return await request<ArticleInfoDto[]>(BaseURL)
 }
+
+export const addNote = async (note: ArticleDto) => {
+  return await request<ArticleDto>(BaseURL, {
+    method: 'POST',
+    // headers: {},
+    body: JSON.stringify(note),
+  })
+}
+
+export const updateNote =async (note: ArticleDto) => {
+  const { id } = await queryNoteByPath(note.path)
+  note.id = id
+  return await request<ArticleDto>(BaseURL, {
+    method: 'PUT',
+    // headers: {},
+    body: JSON.stringify(note),
+  })
+}
