@@ -18,11 +18,11 @@ export default async function handler(
 
   if (req.method !== 'PUT') {
     return res.status(400)
-        .send({
-          path,
-          revalidated: false,
-          error: `${req.method} method is not match`,
-        })
+      .send({
+        path,
+        revalidated: false,
+        error: `${req.method} method is not match`,
+      })
   }
 
   // Check for secret to confirm this is a valid request

@@ -1,6 +1,6 @@
 import debounce from 'lodash.debounce'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { UpArrow } from 'styled-icons/boxicons-regular'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 
 type ScrollStatus = {

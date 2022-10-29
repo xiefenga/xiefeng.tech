@@ -16,7 +16,10 @@ const {
 interface ArticleDetailProps {
   title: string
   content: string
-  meta: any
+  meta: {
+    createTime: Date
+    updateTime: Date
+  }
 }
 
 const ArticleDetail: React.FC<ArticleDetailProps> = props => {
@@ -29,7 +32,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = props => {
         <div className='mb-8'>
           <h1 data-title className='mb-0'>{title}</h1>
           <p className='opacity-50 !-mt-2'>
-            <span>Post: {dayjs(meta.birthTime).format('YYYY.MM.DD')}</span>
+            <span>Post: {dayjs(meta.createTime).format('YYYY.MM.DD')}</span>
             <span className='font-bold'>·</span>
             <span>Update: {dayjs(meta.updateTime).format('YYYY.MM.DD')}</span>
           </p>

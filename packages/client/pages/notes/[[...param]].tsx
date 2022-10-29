@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
 import { join } from 'node:path'
 import type { NextPage, GetStaticPropsContext, GetStaticPathsResult } from 'next'
@@ -149,7 +150,7 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
   }
 }
 
-export async function getStaticPaths(): Promise<GetStaticPathsResult<{} | { param: string[] }>> {
+export async function getStaticPaths(): Promise<GetStaticPathsResult<{ param: string[] }>> {
 
   if (process.env.NODE_ENV === 'development') {
     if ([null, 'false'].includes(DEV_LOADED.get()) ) {

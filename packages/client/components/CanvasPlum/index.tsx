@@ -3,7 +3,7 @@ import { useWindowSize } from 'react-use'
 import React, { useEffect, useMemo, useRef } from 'react'
 
 import { Fn } from '@/types'
-import useRafFn from '@/hooks/useRafFn'
+import rafFn from '@/utils/rafFn'
 import { initCanvas, polar2cart } from '@/utils/canvas'
 import styles from './index.module.css'
 
@@ -52,7 +52,7 @@ const CanvasPlum: React.FC = () => {
 
     let lastTime = performance.now()
     const interval = 1000 / 40
-    let controls: ReturnType<typeof useRafFn>
+
     const frame = () => {
       if (performance.now() - lastTime < interval) {
         return
@@ -68,7 +68,7 @@ const CanvasPlum: React.FC = () => {
       prevSteps.forEach(i => i())
     }
 
-    controls = useRafFn(frame, { immediate: false })
+    const controls: ReturnType<typeof rafFn> = rafFn(frame, { immediate: false })
 
     const start = () => {
       controls.pause()
@@ -96,7 +96,9 @@ const CanvasPlum: React.FC = () => {
     }
   }
 
-  useEffect(draw, [size])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(draw, [size]) // r15, r180, r90, random, 
+
 
   const className = useMemo(() => {
     return classnames(

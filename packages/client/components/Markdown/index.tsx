@@ -1,3 +1,5 @@
+/* eslint-disable react/no-children-prop */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 import remarkGfm from 'remark-gfm'
 import ReactMarkdown from 'react-markdown'
@@ -35,7 +37,7 @@ const Markdown: React.FC<MarkdownProp> = (props) => {
               {children}
             </code>
           )
-        }
+        },
       }}
     >
       {article}

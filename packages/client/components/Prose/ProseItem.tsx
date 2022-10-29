@@ -5,11 +5,14 @@ import { useRouter } from 'next/router'
 
 interface ProseItemProp {
   title: string
-  meta: any
+  meta: {
+    createTime: Date
+    updateTime: Date
+  }
 }
 
 const ProseItem: React.FC<ProseItemProp> = (props) => {
-  const { title, meta: { birthTime, updateTime } } = props
+  const { title, meta: { createTime, updateTime } } = props
   // const current = Date.now()
   // const offset = current - updateTime
   // const days = offset / (24 * 60 * 60 * 1000)
@@ -33,7 +36,7 @@ const ProseItem: React.FC<ProseItemProp> = (props) => {
         </Link>
       </div>
       <div className='text-sm opacity-50 border-t border-[#ddd] pt-1'>
-        <span>Post: {dayjs(birthTime).format('YYYY.MM.DD')}</span>
+        <span>Post: {dayjs(createTime).format('YYYY.MM.DD')}</span>
         <span className='font-bold'>·</span>
         <span>Update: {dayjs(updateTime).format('YYYY.MM.DD')}</span>
       </div>
