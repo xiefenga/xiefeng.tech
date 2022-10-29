@@ -7,7 +7,7 @@ const { serverRuntimeConfig } = getConfig()
 const { sharedFileDir } = serverRuntimeConfig
 
 type PrimitiveValue = number | string | boolean
-type PrimitiveConstructor = NumberConstructor | StringConstructor | BooleanConstructor
+// type PrimitiveConstructor = NumberConstructor | StringConstructor | BooleanConstructor
 
 export const initSharedPrimitive = <T extends PrimitiveValue>(key: string, initialValue?: T) => {
   const filePath = join(sharedFileDir, key)
@@ -15,7 +15,7 @@ export const initSharedPrimitive = <T extends PrimitiveValue>(key: string, initi
     try{
       const data = readFileSync(filePath, 'utf-8')
       return data === 'null' ? null : data
-    } catch (error) {
+    } catch (_) {
       return null
     }
   }
@@ -26,10 +26,10 @@ export const initSharedPrimitive = <T extends PrimitiveValue>(key: string, initi
   // development && exists file 不写文件，实现开发环境每一个连接都共享数据
   // console.log(key, existsSync(filePath))
   if(
-      !(
-          process.env.NODE_ENV === 'development' &&
-          existsSync(filePath)
-      )
+    !(
+      // process.env.NODE_ENV === 'development' &&
+      existsSync(filePath)
+    )
   ) {
     writeFileSync(filePath, JSON.stringify(initialValue ?? null), 'utf-8')
   }
@@ -47,7 +47,7 @@ export const initShared = <T extends object>(key: string, initialValue?: T) => {
   const get = () => {
     try{
       return JSON.parse(readFileSync(filePath, 'utf-8'))
-    } catch (error) {
+    } catch (_) {
       return null
     }
   }
@@ -59,10 +59,10 @@ export const initShared = <T extends object>(key: string, initialValue?: T) => {
 
   console.log(key, existsSync(filePath))
   if(
-      !(
-          process.env.NODE_ENV === 'development' &&
-          existsSync(filePath)
-      )
+    !(
+      // process.env.NODE_ENV === 'development' &&
+      existsSync(filePath)
+    )
   ) {
     writeFileSync(filePath, JSON.stringify(initialValue ?? null), 'utf-8')
   }

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Stats } from 'node:fs'
 import { join, relative, resolve } from 'node:path'
-import { readdir, stat, writeFile, readFile, mkdir, access } from 'node:fs/promises'
+import { readdir, stat, writeFile, mkdir, access } from 'node:fs/promises'
 
 function genFileJson(
   fullpath: string,

@@ -6,8 +6,8 @@ export type Article = {
   updatedAt: string
   cover: string
   meta: {
-    createdAt: string
-    updatedAt: string
+    createTime: Date
+    updateTime: Date
   }
 }
 
