@@ -9,6 +9,7 @@ interface CategoryListProp {
 
 const CategoryList: React.FC<CategoryListProp> = (props) => {
   const { dirs } = props
+  console.log(dirs)
   return (
     <div className='flex flex-wrap'>
       {dirs.map(dir => (

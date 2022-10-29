@@ -2,25 +2,25 @@ import React from 'react'
 import { join } from 'node:path'
 import type { NextPage, GetStaticPropsContext, GetStaticPathsResult } from 'next'
 
-import { initShared } from '@/utils/shared'
 import NotesDir from '@/components/NotesDir'
 import DocTitle from '@/components/Meta/DocTitle'
 import ArticleDetail from '@/components/ArticleDetail'
 import type { DirJson } from '@/utils/files'
 import { Article, ArticleInfoDto } from '@/types'
-import { queryNoteByPath, queryNoteList } from '@/api/notes'
+import { queryNoteByPath } from '@/api/notes'
+import { initSharedPrimitive} from '@/utils/shared'
+import { NOTE_LIST, PATH_TREE, PATH_END, initNotePathTree, pathTree2PathArrays, PathTree } from '@/utils/paths'
 
-const PATH_END = '__PATH_END__'
-
-const NOTE_LIST = initShared('NOTE_LIST')
-
-const PATH_TREE = initShared('PATH_TREE')
+const DEV_LOADED = initSharedPrimitive('DEV_LOADED', false as boolean)
 
 interface PageProps {
   article?: {
     title: string
     content: string
-    meta: any
+    meta: {
+      createTime: Date
+      updateTime: Date
+    }
   }
   metaTitle: string
   articles?: Article[]
@@ -74,12 +74,14 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
 
   const { param } = params!
 
-  const pathTree = PATH_TREE.get()
+  console.log('param', param)
 
-  const noteList = NOTE_LIST.get() as ArticleInfoDto[]
+  const pathTree = (PATH_TREE.get() ?? {}) as PathTree
+
+  const noteList = (NOTE_LIST.get() ?? []) as ArticleInfoDto[]
 
   const current = !param || param.length === 0
-    ? pathTree
+    ? pathTree // for path /notes
     : getProperty(pathTree, param.join('.'))
 
 
@@ -149,36 +151,22 @@ export async function getStaticProps(ctx: GetStaticPropsContext<PageQuery>) {
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult<{} | { param: string[] }>> {
 
-  const list = await queryNoteList()
-
-  NOTE_LIST.set(list)
-
-  const pathList = list.map(item => item.path.slice(1).split('/'))
-
-  function handle(map: any, path: string[]) {
-    if (path.length === 1) {
-      map[path[0]] = PATH_END
-    } else {
-      map[path[0]] ??= {} as any
-      if (map[path[0]] === PATH_END) {
-        throw new Error('')
-      }
-      handle(map[path[0]], path.slice(1))
-    }
-  }
-
-  const pathTree = pathList.reduce((tree, path) => (handle(tree, path), tree), {})
-
-  PATH_TREE.set(pathTree)
-
   if (process.env.NODE_ENV === 'development') {
+    if ([null, 'false'].includes(DEV_LOADED.get()) ) {
+      await initNotePathTree()
+      DEV_LOADED.set(true)
+    }
     return {
       paths: [],
       fallback: 'blocking',
     }
   }
 
-  const paths = [] as any
+  const pathTree = await initNotePathTree()
+
+  const pathArrays = pathTree2PathArrays(pathTree)
+
+  const paths = pathArrays.map(pathArray => ({ params: { param: pathArray } }))
 
   return {
     paths,

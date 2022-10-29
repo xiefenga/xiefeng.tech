@@ -11,7 +11,7 @@ const DirView: React.FC<DirViewProp> = (prop) => {
   const { dirname, path } = prop
   const router = useRouter()
   const onClick = () => {
-    router.push(`/notes/${path}`)
+    router.push(`/notes/${path.slice(1)}`)
   }
   return (
     <div className={styles.panel} onClick={onClick}>

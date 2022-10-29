@@ -16,6 +16,15 @@ export default async function handler(
 
   const path = `/notes/${req.query.path}`
 
+  if (req.method !== 'PUT') {
+    return res.status(400)
+        .send({
+          path,
+          revalidated: false,
+          error: `${req.method} method is not match`,
+        })
+  }
+
   // Check for secret to confirm this is a valid request
   // if (req.query.secret !== process.env.MY_SECRET_TOKEN) {
   //   return res.status(401).json({
