@@ -19,3 +19,8 @@ export const SITE_NAME_ASCII = `
 
 export const SITE_ASCII_SOURCE = 'http://patorjk.com/software/taag'
 
+
+export const MetaTypeRouteMap = {
+  'about': '/',
+}
+

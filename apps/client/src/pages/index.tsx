@@ -1,15 +1,15 @@
-import getConfig from 'next/config'
-import { resolve } from 'node:path'
-import { readFile } from 'node:fs/promises'
+import { to } from 'await-to-js'
 import { GetStaticProps, NextPage } from 'next/types'
-import MarkdownRender from '@/components/markdown/Render'
+
+import { request } from '@/api/request'
 import styles from '@/styles/index.module.scss'
+import MarkdownRender from '@/components/markdown/Render'
 
 interface PageProps {
   source: string
 }
 
-const Home: NextPage<PageProps> = (props) => {
+const HomePage: NextPage<PageProps> = (props) => {
 
   const { source } = props
 
@@ -20,13 +20,16 @@ const Home: NextPage<PageProps> = (props) => {
   )
 }
 
+interface RequestData {
+  type: string
+  content: string
+}
+
 export const getStaticProps: GetStaticProps = async () => {
 
-  const { rootDir } = getConfig().serverRuntimeConfig
+  const [error, data] = await to(request<RequestData>('/meta/detail/about'))
 
-  const indexFilePath = resolve(rootDir, 'md/index.md')
-
-  const source = await readFile(indexFilePath, 'utf-8')
+  const source = (error || !data) ? '暂无内容' : data.content
 
   return {
     props: {
@@ -35,4 +38,4 @@ export const getStaticProps: GetStaticProps = async () => {
   }
 }
 
-export default Home
+export default HomePage

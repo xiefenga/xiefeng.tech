@@ -1,11 +1,12 @@
 import React from 'react'
-import dayjs from 'dayjs'
+import to from 'await-to-js'
 import matter from 'gray-matter'
-import { NextPage, GetStaticProps, GetStaticPaths, GetStaticPropsResult } from 'next/types'
+import { NextPage, GetStaticProps, GetStaticPaths } from 'next/types'
 
 import { Article } from '@/types'
+import { isDev } from '@/utils/env'
+import { request } from '@/api/request'
 import ArticleRender from '@/components/Article'
-import { queryBlogDetail, queryBlogList } from '@/dao/blogs'
 
 interface PageProps {
   article: Article
@@ -32,6 +33,13 @@ type PageQuery = {
   title: string
 }
 
+interface ArticleDto {
+  title: string
+  content: string
+  post: number
+  update: number
+}
+
 export const getStaticProps: GetStaticProps<PageProps, PageQuery> = async (ctx) => {
 
   // 404
@@ -41,51 +49,52 @@ export const getStaticProps: GetStaticProps<PageProps, PageQuery> = async (ctx) 
     }
   }
 
-  return await getBlogDetailByDB(ctx.params.title)
-}
+  const [error, data] = await to(request<ArticleDto>(`/blog/detail/${encodeURIComponent(ctx.params.title)}`))
 
-const getBlogDetailByDB = async ($title: string): Promise<GetStaticPropsResult<PageProps>> => {
-
-  const detail = await queryBlogDetail($title)
-
-  // 404
-  if (detail === null) {
+  if (error || !data) {
     return {
       notFound: true,
     }
   }
 
-  const { title, post,  update } = detail
+  const { title, post, update } = data
 
-  const { content } = matter(detail.content)
-
-  const meta = {
-    created: dayjs(post).unix(),
-    updated: dayjs(update).unix(),
-  }
+  const { content } = matter(data.content)
 
   return {
     props: {
       article: {
-        meta,
         title,
         content,
+        meta: {
+          created: post,
+          updated: update,
+        },
       },
     },
   }
 }
 
+interface ArticleItem {
+  title: string
+  post: number
+}
+
 export const getStaticPaths: GetStaticPaths = async () => {
 
-  if (process.env.NODE_ENV === 'development') {
-    return { paths: [], fallback: 'blocking' }
+  if (isDev) {
+    return {
+      paths: [],
+      fallback: 'blocking',
+    }
   }
 
-  const list = await queryBlogList()
+  const [error, data] = await to(request<ArticleItem[]>('/blog/list'))
 
-  // paths: { params: { title: string } }[]
+  const list = (error || !data) ? [] : data
+
   return {
-    paths: list.map((item) => ({ params: { title: item.title }})),
+    paths: list.map((item) => ({ params: { title: item.title } })),
     fallback: 'blocking',
   }
 

@@ -45,6 +45,11 @@ export class BlogController {
   @Get('/detail/:title')
   async getBlogDetail(@Param('title') title: string) {
     const detail = await this.blogService.getBlogDetail(title)
-    return { code: 200, message: 'success', data: detail }
+    const data = {
+      ...detail,
+      post: detail.post.getTime(),
+      update: detail.update.getTime(),
+    }
+    return { code: 200, message: 'success', data }
   }
 }

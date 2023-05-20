@@ -1,9 +1,10 @@
 import dayjs from 'dayjs'
 import React from 'react'
 import Link from 'next/link'
+import to from 'await-to-js'
 import { GetStaticProps, NextPage } from 'next/types'
 
-import { queryBlogList } from '@/dao/blogs'
+import { request } from '@/api/request'
 
 interface Article {
   title: string
@@ -45,7 +46,7 @@ const BlogListPage: NextPage<PageProps> = (props) => {
   }
 
   return (
-    <div className='font-light'>
+    <div className='font-normal'>
       <Link className='float-right hover:underline' href='/blogs/old'>
         旧文章列表
       </Link>
@@ -59,45 +60,15 @@ const BlogListPage: NextPage<PageProps> = (props) => {
 
 export const getStaticProps: GetStaticProps<PageProps> = async () => {
 
-  const blogRecords = await queryBlogList()
+  const [error, data] = await to(request<PageProps['list']>('/blog/list'))
 
-  const list = blogRecords.map(item => {
-    return {
-      title: item.title,
-      post: dayjs(item.post).unix(),
-    }
-  })
+  const list = (error || !data) ? [] : data
 
   return {
     props: {
       list,
     },
   }
-
-  // const files = await readdir(process.env.NEW_BLOG_PATH as string)
-
-  // const articles = await Promise.all(
-  //   files
-  //     .filter(file => file.endsWith('.md'))
-  //     .map(async file => {
-  //       const filename = resolve(process.env.NEW_BLOG_PATH as string, file)
-  //       const source = await readFile(filename, 'utf-8')
-  //       const { data } = matter(source)
-  //       const { create } = data
-  //       const post = dayjs(create).unix()
-  //       const title = file.split('.')[0]
-  //       const article: Article = { title, post }
-  //       return article
-  //     })
-  // )
-
-  // const list = articles.sort((a, b) => b.post - a.post)
-
-  // return {
-  //   props: {
-  //     list,
-  //   },
-  // }
 }
 
 export default BlogListPage

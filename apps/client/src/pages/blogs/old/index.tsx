@@ -3,6 +3,7 @@ import React from 'react'
 import Link from 'next/link'
 import matter from 'gray-matter'
 import { useEffect } from 'react'
+import getConfig from 'next/config'
 import { Icon } from '@iconify/react'
 import { GetStaticProps, NextPage } from 'next/types'
 
@@ -98,39 +99,36 @@ const BlogListPage: NextPage<PageProps> = (props) => {
   }
 
   return (
-    <React.Fragment>
-
-      <div className='max-w-5xl m-auto'>
-        <div className='flex items-center justify-between'>
-          <h1 className='text-6xl font-bold -ml-12'>Blog</h1>
-          <Link href='/blogs' className='border-link -mr-12 flex items-center opacity-60'>
-            <span>新文章列表</span>
-            <Icon className='text-xl' icon='iconamoon:arrow-top-right-1-bold' />
-          </Link>
-        </div>
-        <ul className='mt-8'>
-          {list.map((group) => renderGroup(group))}
-        </ul>
+    <div className='max-w-5xl m-auto'>
+      <div className='flex items-center justify-between'>
+        <h1 className='text-6xl font-bold -ml-12'>Blog</h1>
+        <Link href='/blogs' className='border-link -mr-12 flex items-center opacity-60'>
+          <span>新文章列表</span>
+          <Icon className='text-xl' icon='iconamoon:arrow-top-right-1-bold' />
+        </Link>
       </div>
-    </React.Fragment>
+      <ul className='mt-8'>
+        {list.map((group) => renderGroup(group))}
+      </ul>
+    </div>
   )
 }
 
 export const getStaticProps: GetStaticProps<PageProps> = async () => {
 
-  if (process.env.NODE_ENV === 'production') {
-    return { props: { list: [] } }
-  }
+  const { rootDir } = getConfig().serverRuntimeConfig
 
   const map = new Map<number, Article[]>()
 
-  const files = await readdir(process.env.OLD_BLOG_PATH as string)
+  const oldBlogsDirPath = resolve(rootDir, process.env.OLD_BLOG_PATH as string)
+
+  const files = await readdir(oldBlogsDirPath)
 
   await Promise.all(
     files
       .filter(file => file.endsWith('.md'))
       .map(async file => {
-        const filename = resolve(process.env.OLD_BLOG_PATH as string, file)
+        const filename = resolve(oldBlogsDirPath, file)
         const source = await readFile(filename, 'utf-8')
         const { data } = matter(source)
         const { date } = data
