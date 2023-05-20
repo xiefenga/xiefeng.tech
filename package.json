@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "prepare": "husky install",
-    "build:client": "tsx scripts/build-client.ts"
+    "build:client": "tsx scripts/build-client.ts",
+    "build:server": "tsx scripts/build-server.ts"
   },
   "devDependencies": {
     "@0x1461a0/commitlint-config": "^0.0.5",

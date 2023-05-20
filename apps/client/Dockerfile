@@ -9,7 +9,7 @@ WORKDIR /project
 
 COPY . .
 
-# RUN npm config set registry https://registry.npmmirror.com/ 
+RUN npm config set registry https://registry.npmmirror.com/ 
 RUN yarn global add pnpm 
 
 WORKDIR  /project/apps/client
