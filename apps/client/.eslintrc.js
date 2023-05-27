@@ -1,6 +1,5 @@
 module.exports = {
-  // resolve error: Parsing error : Cannot find module 'next/babel'
-  // https://stackoverflow.com/a/75242860
+  root: true,
   parserOptions: {
     babelOptions: {
       presets: [require.resolve('next/babel')],
