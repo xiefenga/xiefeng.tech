@@ -38,7 +38,7 @@ const BlogListPage: NextPage<PageProps> = (props) => {
             {title}
           </Link>
           <div className='text-lg opacity-60 mt-1'>
-            {dayjs.unix(post).format('YYYY-MM-DD')}
+            {dayjs(post).format('YYYY-MM-DD')}
           </div>
         </li>
       )
