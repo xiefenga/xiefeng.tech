@@ -22,9 +22,9 @@ const Article: React.FC<ArticleProps> = (props) => {
 
   const { created, updated } = meta
 
-  const postDate = dayjs.unix(created).format('YYYY-MM-DD')
+  const postDate = dayjs(created).format('YYYY-MM-DD')
 
-  const updateDate = dayjs.unix(updated).format('YYYY-MM-DD')
+  const updateDate = dayjs(updated).format('YYYY-MM-DD')
 
   return (
     <article>
