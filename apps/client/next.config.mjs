@@ -29,6 +29,7 @@ const nextConfig = {
   },
   publicRuntimeConfig: {
     navRoutes,
+    oldVersion: 'http://old.xiefeng.tech',
     beian: '苏ICP备2020051656号',
     nextjs: 'https://nextjs.org',
     github: 'https://github.com/xiefenga',

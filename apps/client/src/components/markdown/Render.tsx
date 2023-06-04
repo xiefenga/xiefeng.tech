@@ -1,7 +1,8 @@
 import clsx from 'clsx'
-import React from 'react'
+import React, { useMemo } from 'react'
+import remarkGfm from 'remark-gfm'
 import ReactMarkdown from 'react-markdown'
-import { Components } from 'react-markdown'
+import type { Components } from 'react-markdown'
 
 import BlockCode from './BlockCode'
 
@@ -44,9 +45,14 @@ const MarkdownRender: React.FC<MarkdownProps> = (props) => {
 
   const { source, className } = props
 
+  const remarkPlugins = useMemo(() => [remarkGfm], [])
+
   return (
     <div className={clsx('markdown-render-container', className)}>
-      <ReactMarkdown components={customComponents}>
+      <ReactMarkdown
+        components={customComponents}
+        remarkPlugins={remarkPlugins}
+      >
         {source}
       </ReactMarkdown>
     </div>

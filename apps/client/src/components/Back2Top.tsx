@@ -1,8 +1,9 @@
+import clsx from 'clsx'
 import React from 'react'
 import { Icon } from '@iconify/react'
 import debounce from 'lodash.debounce'
 import { useRef, useState } from 'react'
-import { useEventListener } from 'ahooks'
+import { useBoolean, useEventListener } from 'ahooks'
 
 type ScrollStatus = {
   scrolling: boolean
@@ -51,9 +52,14 @@ const Back2Top: React.FC = () => {
 
   const scrollStatus = useRef<ScrollStatus>({ scrolling: false })
 
+  const [footerClose, { set: setFooterClose }] = useBoolean(false)
+
   const handleScroll = debounce(() => {
     const scrollOffset = document.documentElement.scrollTop
+    const scrollHeight = document.documentElement.scrollHeight
     setShowStatus(scrollOffset > 1000)
+    const footerHeight = 110
+    setFooterClose(scrollHeight - (scrollOffset + window.innerHeight) < footerHeight)
   }, 100)
 
   useEventListener('scroll', handleScroll, { target: () => document, passive: true })
@@ -66,9 +72,11 @@ const Back2Top: React.FC = () => {
     }
   }
 
+  const toTopClass = clsx('fixed right-10 bottom-10 transition-transform duration-300	to-top', { '-translate-y-24': footerClose} )
+
   return showStatus
     ? (
-      <div className='fixed right-10 bottom-10 to-top'>
+      <div className={toTopClass}>
         <button className='px-2 w-9' onClick={scroll2Top}>
           <Icon className='text-2xl opacity-60 transition-opacity hover:opacity-100' icon='material-symbols:arrow-upward' />
         </button>

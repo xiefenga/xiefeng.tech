@@ -112,7 +112,7 @@ const TOC: React.FC<TOCProps> = ({ source }) => {
   }
 
   return (
-    <ul className='toc-container'>
+    <ul className='toc-container hidden xl:block'>
       {renderTOC(toc)}
     </ul>
   )
