@@ -54,7 +54,7 @@ jobs:
           # load image and run it
           cd /home/github_actions/xiefeng.tech/server
           imageId=$(docker load -i ${{ steps.build_time.outputs.time }}.tar)
-          docker run -id --name 0x1461a0.me_server -p 3000:3000 $imageId
+          docker run -id -p 3000:3000 --name=0x1461a0.me_server $imageId
   
         
     
