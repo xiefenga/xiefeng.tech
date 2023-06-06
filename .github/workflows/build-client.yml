@@ -1,0 +1,43 @@
+name: Build and Transfer Client Docker Image
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'app/client/**'
+    
+jobs:
+  build: 
+    runs-on: ubuntu-latest
+    steps:    
+    - name: Checkout Repository
+      uses: actions/checkout@v3.5.2
+      
+    - name: Create .env.production
+      run: |
+        echo "SERVER_HOST=${{ secrets.SERVER_HOST }}" > .env.production
+        echo "REVALIDATE_TOKEN=${{ secrets.REVALIDATE_TOKEN }}" >> .env.production
+        
+    - name: Set Build Time
+      id: build_time
+      run: |
+        echo "::set-output name=time::$(date +'%Y-%m-%d_%H-%M-%S')"
+        
+    - name: Build Docker Image
+      run: docker build -f apps/client/Dockerfile -t 0x1461a0.me/client:${{ steps.build_time.outputs.time }} .
+      
+    - name: Save Docker Image
+      run: |
+        docker save 0x1461a0.me/client:${{ steps.build_time.outputs.time }} > client_image_${{ steps.build_time.outputs.time }}.tar
+    
+    - name: Transfer Docker Image to Aliyun
+      uses: appleboy/scp-action@master
+      with:
+        host: xiefeng.tech
+        username: github_actions
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: client_image_${{ steps.build_time.outputs.time }}.tar
+        target: /home/github_actions/client_image_${{ steps.build_time.outputs.time }}.tar
+        
+    
