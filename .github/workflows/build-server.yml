@@ -22,6 +22,14 @@ jobs:
       id: build_time
       run: |
         echo "time=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_OUTPUT
+
+    - name: Create .env 
+      run: |
+        echo "DATABASE_HOST=${{ secrets.SERVER_HOST }}" > apps/server/.env
+        echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> apps/server/.env
+        echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> apps/server/.env
+        echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> apps/server/.env
+        echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> apps/server/.env
         
     - name: Build Docker Image
       run: docker build -f apps/server/Dockerfile -t 0x1461a0.me/server:${{ steps.build_time.outputs.time }} .
