@@ -58,8 +58,8 @@ jobs:
           fi
           # load image and run it
           cd /home/github_actions/xiefeng.tech/client
-          imageId=$(docker load -i ${{ steps.build_time.outputs.time }}.tar)
-          docker run -id -p 3000:3000 --name=0x1461a0.me_client $imageId
+          docker load -i ${{ steps.build_time.outputs.time }}.tar
+          docker run -id -p 3000:3000 --name=0x1461a0.me_client 0x1461a0.me/client:${{ steps.build_time.outputs.time }}
 
         
     
