@@ -19,7 +19,5 @@ module.exports = {
     },
   },
   plugins: [
-    // Iconify plugin
-    // addDynamicIconSelectors(),
   ],
 }
