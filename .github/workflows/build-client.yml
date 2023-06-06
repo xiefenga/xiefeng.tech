@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'apps/client/**'
+  workflow_dispatch: 
     
 jobs:
   build: 
@@ -16,8 +17,8 @@ jobs:
       
     - name: Create .env.production
       run: |
-        echo "SERVER_HOST=${{ secrets.SERVER_HOST }}" > .env.production
-        echo "REVALIDATE_TOKEN=${{ secrets.REVALIDATE_TOKEN }}" >> .env.production
+        echo "SERVER_HOST=${{ secrets.SERVER_HOST }}" > apps/client/.env.production
+        echo "REVALIDATE_TOKEN=${{ secrets.REVALIDATE_TOKEN }}" >> apps/client/.env.production
         
     - name: Set Build Time
       id: build_time
