@@ -1,35 +1,18 @@
-import React from 'react'
 import Link from 'next/link'
 import getConfig from 'next/config'
 import { Icon } from '@iconify/react'
+import React, { useEffect } from 'react'
 import { useLocalStorageState } from 'ahooks'
 
-type Theme = 'light' | 'dark' | 'auto'
+import { NoSSRHOC } from '@/components/NoSSR'
+import DarkThemeIcon from '@/icons/DarkTheme.svg'
+import LightThemeIcon from '@/icons/LightTheme.svg'
 
-const DrakThemeIcon = () => {
-  return (
-    <Icon icon='iconamoon:mode-dark-duotone' />
-  )
-}
-
-const LightThemeIcon = () => {
-  return (
-    <Icon className='text-2xl' icon='iconamoon:mode-light-duotone' />
-  )
-}
-
-const AutoThemeIcon = () => {
-  return (
-    <Icon icon='iconamoon:history-duotone' />
-  )
-}
+type Theme =
+  | 'light'
+  | 'dark'
 
 const ThemeKey = '0x1461A0.me.theme'
-
-interface NavRoute {
-  text: string
-  link: string
-}
 
 const Header = () => {
 
@@ -37,29 +20,26 @@ const Header = () => {
 
   const [theme, setTheme] = useLocalStorageState<Theme>(ThemeKey, { defaultValue: 'light' })
 
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [theme])
+
   const renderThemeIcon = () => {
     switch (theme) {
-      case 'light':
-        return <LightThemeIcon />
       case 'dark':
-        return <DrakThemeIcon />
+        return <DarkThemeIcon />
+      case 'light':
       default:
-        return <AutoThemeIcon />
+        return <LightThemeIcon />
     }
   }
 
   const toogleTheme = () => {
-    switch (theme) {
-      case 'light':
-        setTheme('dark')
-        break
-      case 'dark':
-        setTheme('auto')
-        break
-      default:
-        setTheme('light')
-        break
-    }
+    setTheme(theme === 'light' ? 'dark' : 'light')
   }
 
   return (
@@ -67,12 +47,8 @@ const Header = () => {
       <div className='flex gap-x-5 items-center'>
         <Link className='text-xl' href='/'>0x1461A0</Link>
         <nav className='header-nav grid grid-flow-col gap-x-5 pr-4'>
-          {navRoutes.map((route: NavRoute) => (
-            <Link
-              key={route.text}
-              href={route.link}
-              className='nav-link'
-            >
+          {navRoutes.map((route) => (
+            <Link className='nav-link' key={route.text} href={route.link}>
               {route.text}
             </Link>
           ))}
@@ -81,9 +57,8 @@ const Header = () => {
       <div className='flex gap-x-5 items-center text-xl'>
         <Link className='hidden text-base' target='_blank' href={github}>
           <Icon icon='logos:github-icon' />
-          {/* GitHub */}
         </Link>
-        <button className='w-[24px] h-[24px] flex items-center justify-center overflow-hidden cursor-pointer' onClick={toogleTheme}>
+        <button className='w-[24px] h-[24px] flex items-center justify-center overflow-hidden cursor-pointer text-xl' onClick={toogleTheme}>
           {renderThemeIcon()}
         </button>
       </div>
@@ -91,4 +66,4 @@ const Header = () => {
   )
 }
 
-export default Header
+export default NoSSRHOC(Header)

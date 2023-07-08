@@ -111,7 +111,8 @@
     @apply border-l border-t leading-loose;
 
 
-    th, td {
+    th,
+    td {
       @apply border-b border-r;
     }
   }
@@ -137,5 +138,15 @@
     .block-code-wrapper {
       @apply py-3 px-5 overflow-x-auto;
     }
+  }
+}
+
+.dark {
+  code.inline {
+    @apply bg-slate-500;
+  }
+
+  .block-code-container {
+    background-color: rgb(37, 36, 36);
   }
 }

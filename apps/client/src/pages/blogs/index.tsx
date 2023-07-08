@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import React from 'react'
 import Link from 'next/link'
 import to from 'await-to-js'
+import getConfig from 'next/config'
 import { GetStaticProps, NextPage } from 'next/types'
 
 import { request } from '@/api/request'
@@ -18,6 +19,8 @@ interface PageProps {
 
 
 const BlogListPage: NextPage<PageProps> = (props) => {
+
+  const { oldVersion } = getConfig().publicRuntimeConfig
 
   const { list } = props
 
@@ -47,7 +50,7 @@ const BlogListPage: NextPage<PageProps> = (props) => {
 
   return (
     <div className='font-normal'>
-      <Link className='float-right hover:underline' href='/blogs/old'>
+      <Link className='float-right hover:underline' href={oldVersion}>
         旧文章列表
       </Link>
       <h1 className='text-6xl font-bold'>Blog</h1>

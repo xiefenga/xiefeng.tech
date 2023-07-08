@@ -53,8 +53,9 @@ const TOC: React.FC<TOCProps> = ({ source }) => {
     levels.forEach(level => {
       const headings = document.querySelectorAll<HTMLHeadingElement>(`h${level}:not([data-title])`)
       Array.from(headings).forEach((head, order) => {
-        head.id = head.dataset.id = head.innerText
-        head.dataset.uuid = `h${level}-${head.innerText}-${order}`
+        const text = head.innerText
+        head.id = head.dataset.id = text
+        head.dataset.uuid = `h${level}-${text}-${order}`
       })
     })
 

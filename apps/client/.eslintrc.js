@@ -19,21 +19,6 @@ module.exports = {
         'objects': 'always-multiline',
       },
     ],
-    'no-unused-vars': [
-      'warn',
-      {
-        'vars': 'all',
-        'varsIgnorePattern': '^_',
-        // arguments
-        'args': 'after-used',
-        'argsIgnorePattern': '^_',
-        // destructure
-        'ignoreRestSiblings': false,
-        'destructuredArrayIgnorePattern': '^_',
-        // try catch
-        'caughtErrors': 'all',
-        'caughtErrorsIgnorePattern': '^_',
-      },
-    ],
+    'no-unused-vars': 'off',
   },
 }

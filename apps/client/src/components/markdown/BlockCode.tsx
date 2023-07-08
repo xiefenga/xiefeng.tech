@@ -33,7 +33,8 @@ const BlockCode: React.FC<PropsWithChildren<BlockCodeProps>> = (props) => {
         <SyntaxHighlighter
           codeTagProps={{}}
           language={language}
-          style={HighterStyles.prism}
+          // style={HighterStyles.prism}
+          style={HighterStyles.darcula}
           customStyle={{ background: 'none', margin: 0, padding: 0, lineHeight: 'inherit', overflow: 'initial', fontFamily: 'inherit', border: 'none' }}
         >
           {children as string}

@@ -7,7 +7,7 @@ import CanvasPlum from '../CanvasPlum'
 
 const Layout: React.FC<PropsWithChildren> = (props) => {
   return (
-    <div className='min-h-screen flex flex-col my-0 mx-auto max-w-7xl	px-8'>
+    <div className='min-h-screen flex flex-col my-0 mx-auto max-w-7xl	px-8 dark:text-white'>
       <Header />
       <main className='flex-auto pt-10 flex'>
         <div className='w-full'>

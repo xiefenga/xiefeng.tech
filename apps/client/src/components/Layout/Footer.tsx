@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import getConfig from 'next/config'
-import { Icon } from '@iconify/react'
+import NextLogo from '@/icons/NextLogo.svg'
 
 const Footer: React.FC = () => {
 
@@ -16,8 +16,8 @@ const Footer: React.FC = () => {
     <footer className='mt-32 '>
       <div className='flex items-center justify-end mb-2'>
         <span className='mr-2 uppercase'>Powered by</span>
-        <Link target='_blank' href={nextjs}>
-          <Icon icon='logos:nextjs' />
+        <Link className='dark:invert' target='_blank' href={nextjs}>
+          <NextLogo />
         </Link>
       </div>
       <div className='flex justify-between pb-8 border-t border-gray-300 pt-4 opacity-70'>
