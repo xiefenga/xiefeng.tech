@@ -10,6 +10,10 @@ interface NavRoute {
 
 declare module 'next/config' {
   const getConfit: () => ({
+    serverRuntimeConfig: {
+      rootDir: string
+      sourceDir: string
+    },
     publicRuntimeConfig: {
       navRoutes: NavRoute[]
       oldVersion: string
