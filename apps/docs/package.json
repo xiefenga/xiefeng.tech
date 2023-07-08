@@ -1,0 +1,19 @@
+{
+  "name": "0x1461a0-docs",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/glob": "^8.0.1",
+    "glob": "^8.1.0",
+    "vitepress": "1.0.0-alpha.45",
+    "vue": "^3.2.47"
+  }
+}
