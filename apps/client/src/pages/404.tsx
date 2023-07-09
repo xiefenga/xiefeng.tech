@@ -1,7 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
-import { Icon } from '@iconify/react'
 import { useRouter } from 'next/router'
+
+import RightArrowIcon from '@/icons/RightArrow.svg'
 
 const NotFound = () => {
 
@@ -21,12 +22,12 @@ const NotFound = () => {
         <p className='text-xl py-8'>Nice to meet you tho!</p>
         <div className='pt-4 grid gap-4'>
           <div className='text-xl flex items-center'>
-            <Icon className='mr-2' icon='mi:chevron-right' />
-            <Link className='link' href='/' onClick={goBack}>cd ..</Link>
+            <RightArrowIcon className='mr-2' />
+            <Link className='border-link' href='/' onClick={goBack}>cd ..</Link>
           </div>
           <div className='text-xl flex items-center' >
-            <Icon className='mr-2' icon='mi:chevron-right' />
-            <Link className='link' href='/'>back to home</Link>
+            <RightArrowIcon className='mr-2' />
+            <Link className='border-link' href='/'>back to home</Link>
           </div>
         </div>
       </div>

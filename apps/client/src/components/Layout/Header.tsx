@@ -1,10 +1,9 @@
 import Link from 'next/link'
 import getConfig from 'next/config'
 import { Icon } from '@iconify/react'
-import React, { useEffect } from 'react'
-import { useLocalStorageState } from 'ahooks'
+import React, { useEffect, useState } from 'react'
+import { useLocalStorageState, useMemoizedFn, useMount } from 'ahooks'
 
-import { NoSSRHOC } from '@/components/NoSSR'
 import DarkThemeIcon from '@/icons/DarkTheme.svg'
 import LightThemeIcon from '@/icons/LightTheme.svg'
 
@@ -14,11 +13,45 @@ type Theme =
 
 const ThemeKey = '0x1461A0.me.theme'
 
+const useLazyLocalStorageState = <T,>(key: string, options: { defaultValue?: T }) => {
+  const [state, setState] = useState<T | undefined>(options.defaultValue)
+
+  useMount(() => {
+    try {
+      const raw = localStorage.getItem(key)
+      if (raw) {
+        setState(JSON.parse(raw))
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  const updateState = useMemoizedFn((value?: T) => {
+    setState(value)
+    if (value === undefined) {
+      localStorage.removeItem(key)
+    } else {
+      try {
+        localStorage.setItem(key, JSON.stringify(value))
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  })
+
+  return [state, updateState] as const
+}
+
+const useSSRLocalStorageState = process.env.NODE_ENV === 'development' ? useLazyLocalStorageState : useLocalStorageState
+
 const Header = () => {
 
   const { navRoutes, github } = getConfig().publicRuntimeConfig
 
-  const [theme, setTheme] = useLocalStorageState<Theme>(ThemeKey, { defaultValue: 'light' })
+  useLazyLocalStorageState
+
+  const [theme, setTheme] = useSSRLocalStorageState<Theme>(ThemeKey, { defaultValue: 'light' })
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -66,4 +99,4 @@ const Header = () => {
   )
 }
 
-export default NoSSRHOC(Header)
+export default Header
