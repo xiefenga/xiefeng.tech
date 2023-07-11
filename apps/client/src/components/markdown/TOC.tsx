@@ -1,9 +1,12 @@
+'use client'
 import React from 'react'
 import Link from 'next/link'
 import { unified } from 'unified'
 import { useEffect } from 'react'
 import remarkParse from 'remark-parse'
 import type { Heading, Text } from 'mdast'
+
+import '@/styles/toc.css'
 
 interface NavData {
   id: string
@@ -70,12 +73,16 @@ const TOC: React.FC<TOCProps> = ({ source }) => {
 
   const headingCoutMap = new Map<Level, number>()
 
+  // @ts-expect-error
   const toc = tree.children
+  // @ts-expect-error
     .filter((node): node is Heading => node.type === 'heading')
+    // @ts-expect-error
     .reduce<NavData[]>((navs, node) => {
       const { depth, children } = node
 
-      // 忽略不正常的写法，# 后面只给写文本
+      // 忽略不正常的写法，# 后面只给写文本 
+      // @ts-expect-error
       const text = children.filter((item): item is Text => item.type === 'text').map(item => item.value).join('')
 
       // 生成每个目录唯一 id

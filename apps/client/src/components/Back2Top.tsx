@@ -1,9 +1,11 @@
+'use client'
 import clsx from 'clsx'
 import React from 'react'
-import { Icon } from '@iconify/react'
 import debounce from 'lodash.debounce'
 import { useRef, useState } from 'react'
 import { useBoolean, useEventListener } from 'ahooks'
+
+import UpwardArrowIcon from '@/icons/UpwardArrow.svg'
 
 type ScrollStatus = {
   scrolling: boolean
@@ -78,7 +80,7 @@ const Back2Top: React.FC = () => {
     ? (
       <div className={toTopClass}>
         <button className='px-2 w-9' onClick={scroll2Top}>
-          <Icon className='text-2xl opacity-60 transition-opacity hover:opacity-100' icon='material-symbols:arrow-upward' />
+          <UpwardArrowIcon className='text-2xl opacity-60 transition-opacity hover:opacity-100' />
         </button>
       </div>
     ) : null

@@ -1,6 +1,3 @@
-// export interface ArticleMeta {
-//   create: string
-// }
 
 export interface Article {
   title: string
@@ -23,3 +20,5 @@ export interface Pausable {
   pause: Fn
   resume: Fn
 }
+
+export type Theme = 'light' | 'dark'

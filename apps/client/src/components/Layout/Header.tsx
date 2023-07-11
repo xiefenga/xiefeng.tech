@@ -1,78 +1,25 @@
+import React from 'react'
 import Link from 'next/link'
-import getConfig from 'next/config'
-import { Icon } from '@iconify/react'
-import React, { useEffect, useState } from 'react'
-import { useLocalStorageState, useMemoizedFn, useMount } from 'ahooks'
 
-import DarkThemeIcon from '@/icons/DarkTheme.svg'
-import LightThemeIcon from '@/icons/LightTheme.svg'
+import ThemeButton from '@/components/ThemeButton'
 
-type Theme =
-  | 'light'
-  | 'dark'
+const navRoutes = [
+  { text: 'blogs', link: '/blogs' },
+  { text: 'notes', link: '/notes' },
+  // 备忘录
+  { text: 'memo', link: '/memo' },
+  { text: 'thinks', link: '/thinks' },
+  { text: 'tools', link: '/tools' },
+]
 
-const ThemeKey = '0x1461A0.me.theme'
+const Header: React.FC = () => {
 
-const useLazyLocalStorageState = <T,>(key: string, options: { defaultValue?: T }) => {
-  const [state, setState] = useState<T | undefined>(options.defaultValue)
-
-  useMount(() => {
-    try {
-      const raw = localStorage.getItem(key)
-      if (raw) {
-        setState(JSON.parse(raw))
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  })
-
-  const updateState = useMemoizedFn((value?: T) => {
-    setState(value)
-    if (value === undefined) {
-      localStorage.removeItem(key)
-    } else {
-      try {
-        localStorage.setItem(key, JSON.stringify(value))
-      } catch (error) {
-        console.error(error)
-      }
-    }
-  })
-
-  return [state, updateState] as const
-}
-
-const useSSRLocalStorageState = process.env.NODE_ENV === 'development' ? useLazyLocalStorageState : useLocalStorageState
-
-const Header = () => {
-
-  const { navRoutes, github } = getConfig().publicRuntimeConfig
-
-  useLazyLocalStorageState
-
-  const [theme, setTheme] = useSSRLocalStorageState<Theme>(ThemeKey, { defaultValue: 'light' })
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-  }, [theme])
-
-  const renderThemeIcon = () => {
-    switch (theme) {
-      case 'dark':
-        return <DarkThemeIcon />
-      case 'light':
-      default:
-        return <LightThemeIcon />
-    }
-  }
-
-  const toogleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light')
+  const renderNavs = () => {
+    return navRoutes.map((route) => (
+      <Link key={route.text} href={route.link} className='nav-link'>
+        {route.text}
+      </Link>
+    ))
   }
 
   return (
@@ -80,20 +27,11 @@ const Header = () => {
       <div className='flex gap-x-5 items-center'>
         <Link className='text-xl' href='/'>0x1461A0</Link>
         <nav className='header-nav grid grid-flow-col gap-x-5 pr-4'>
-          {navRoutes.map((route) => (
-            <Link className='nav-link' key={route.text} href={route.link}>
-              {route.text}
-            </Link>
-          ))}
+          {renderNavs()}
         </nav>
       </div>
       <div className='flex gap-x-5 items-center text-xl'>
-        <Link className='hidden text-base' target='_blank' href={github}>
-          <Icon icon='logos:github-icon' />
-        </Link>
-        <button className='w-[24px] h-[24px] flex items-center justify-center overflow-hidden cursor-pointer text-xl' onClick={toogleTheme}>
-          {renderThemeIcon()}
-        </button>
+        <ThemeButton />
       </div>
     </header>
   )

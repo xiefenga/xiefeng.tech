@@ -1,22 +1,16 @@
 import React from 'react'
 import Link from 'next/link'
-import getConfig from 'next/config'
 import NextLogo from '@/icons/NextLogo.svg'
 
 const Footer: React.FC = () => {
 
-  const { publicRuntimeConfig } = getConfig()
-
-  const { beian, nextjs } = publicRuntimeConfig
-
   const currentYear = new Date().getFullYear()
 
   return (
-    // font-medium
-    <footer className='mt-32 '>
+    <footer className='mt-32'>
       <div className='flex items-center justify-end mb-2'>
         <span className='mr-2 uppercase'>Powered by</span>
-        <Link className='dark:invert' target='_blank' href={nextjs}>
+        <Link className='dark:invert' target='_blank' href={process.env.NEXT_PUBLIC_NEXT_URL!}>
           <NextLogo />
         </Link>
       </div>
@@ -36,7 +30,7 @@ const Footer: React.FC = () => {
           className='border-link'
           href='https://beian.miit.gov.cn/'
         >
-          {beian}
+          {process.env.NEXT_PUBLIC_BEIAN_ICP}
         </Link>
       </div>
     </footer>
