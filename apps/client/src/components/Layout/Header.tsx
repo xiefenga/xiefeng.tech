@@ -23,7 +23,7 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className='flex justify-between pt-8 pb-4'>
+    <header className='flex justify-between pt-8 pb-4 animate-header'>
       <div className='flex gap-x-5 items-center'>
         <Link className='text-xl' href='/'>0x1461A0</Link>
         <nav className='header-nav grid grid-flow-col gap-x-5 pr-4'>

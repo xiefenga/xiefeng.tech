@@ -50,7 +50,7 @@ const BlogList = async () => {
   }
 
   return (
-    <div className='font-normal'>
+    <div className='font-normal animate-main'>
       <Link className='float-right hover:underline' href={process.env.NEXT_PUBLIC_OLD_SITE_URL!}>
         旧文章列表
       </Link>

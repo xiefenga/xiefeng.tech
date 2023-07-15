@@ -7,7 +7,7 @@ const BuildPage = () => {
   const buildingTime = Date.now()
 
   return (
-    <div className='flex flex-col h-full'>
+    <div className='flex flex-col h-full animate-main'>
       <div className='grow'></div>
       <div className='leading-loose'>
         <p>

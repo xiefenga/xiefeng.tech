@@ -80,7 +80,7 @@ const BlogDetail = async ({ params }: PageProps) => {
   const { title, content, meta } = post
 
   return (
-    <div className='m-auto max-w-4xl'>
+    <div className='m-auto max-w-4xl animate-main'>
       <PostRender
         meta={meta}
         title={title}

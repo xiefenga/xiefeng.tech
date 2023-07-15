@@ -18,7 +18,7 @@ const HomePage = async () => {
   const source = (error || !data) ? '暂无内容' : data.content
 
   return (
-    <div className='home'>
+    <div className='home animate-main'>
       <MarkdownRender source={source} />
     </div>
   )

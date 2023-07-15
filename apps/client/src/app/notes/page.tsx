@@ -1,8 +1,9 @@
+import DirectoryCard from '@/components/DirectoryCard'
 
 const NotesRootPage = async () => {
   return (
-    <div>
-      
+    <div className='animate-main'>
+      <DirectoryCard />
     </div>
   )
 }
