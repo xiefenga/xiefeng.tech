@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "dev:client": "cd apps/client && npm run dev"
   },
   "devDependencies": {
     "@0x1461a0/commitlint-config": "^0.0.5",
