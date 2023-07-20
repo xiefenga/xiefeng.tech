@@ -16,7 +16,7 @@ interface Article {
 }
 
 const queryBlogList = async () => {
-  const [error, data] = await to(request<Article[]>('/blog/list'))
+  const [error, data] = await to(request<Article[]>('/blog/list', { next: { tags: ['blog/list'] } }))
   return (error || !data) ? [] : data
 }
 

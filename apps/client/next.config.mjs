@@ -1,7 +1,7 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: process.env.LOCAL_TEST ? undefined : 'standalone',
   reactStrictMode: true,
   webpack: (config) => {
     config.module.rules.push({

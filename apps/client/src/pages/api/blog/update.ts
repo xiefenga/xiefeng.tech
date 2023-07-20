@@ -52,6 +52,6 @@ export default async function handler(
       console.log(error)
       return res.status(400).send({ code: 400, message: 'invalid arguments', error })
     }
-    return res.status(500).send({ code: 500, message: 'update blogs faild', error })
+    return res.status(500).send({ code: 500, message: 'update blogs failed', error })
   }
 }

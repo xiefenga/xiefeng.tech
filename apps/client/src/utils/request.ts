@@ -9,7 +9,7 @@ export const request = async <T>(target: string, init?: RequestInit) => {
 
   const resp = await fetch(url, init)
 
-  const json = await resp.json()
+  const json = await resp.json() as { data: T | null, errors?: string[], message?: string }
   
   if (resp.status >= 400 || json.errors) {
     throw new Error(json.message)
