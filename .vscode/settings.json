@@ -2,8 +2,14 @@
   "css.lint.unknownAtRules": "ignore",
   "scss.lint.unknownAtRules": "ignore",
   "cSpell.words": [
+    "BEIAN",
+    "feng",
+    "fira",
+    "Frontmatter",
+    "iconify",
     "mdast",
-    "svgr",
+    "nprogress",
+    "rehype",
     "xiefeng"
   ]
 }

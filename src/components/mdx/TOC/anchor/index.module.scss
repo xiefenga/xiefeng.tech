@@ -1,0 +1,9 @@
+.anchor {
+  width: 200px;
+  max-height: 60%;
+  @apply fixed right-[20px] top-52 z-10 overflow-y-auto overflow-x-hidden text-sm font-medium;
+
+  ul {
+    margin-left: 1rem;
+  }
+}

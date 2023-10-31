@@ -1,0 +1,38 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model post {
+  id           Int      @id @default(autoincrement()) @db.Int
+  title        String   @unique @db.VarChar(255)
+  front_matter String?  @db.VarChar(255)
+  content      String   @db.Text
+  created      DateTime @default(now()) @db.Timestamp(0)
+  updated      DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([title], name: "title")
+}
+
+model meta {
+  type  String @id @db.VarChar(255)
+  value String @db.Text
+}
+
+model note {
+  id           Int      @id @default(autoincrement()) @db.Int
+  path         String   @unique @db.VarChar(255)
+  title        String   @db.VarChar(255)
+  front_matter String?  @db.VarChar(255)
+  content      String   @db.Text
+  created      DateTime @default(now()) @db.Timestamp(0)
+  updated      DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([path], name: "path")
+  @@index([title], name: "title")
+}

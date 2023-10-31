@@ -1,9 +1,0 @@
-.toc-container {
-  width: 200px;
-  max-height: 60%;
-  @apply text-sm font-medium fixed left-[20px] top-1/2 -translate-y-1/3 z-10 overflow-y-auto overflow-x-hidden;
-}
-
-.toc-container a {
-  @apply leading-7 opacity-60 border-b hover:opacity-100 hover:border-gray-500 duration-300 transition-all;
-}
