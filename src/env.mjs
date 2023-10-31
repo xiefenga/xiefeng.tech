@@ -23,6 +23,7 @@ export const env = createEnv({
     JUEJIN_URL: z.string().url(),
     ZHIHU_URL: z.string().url(),
     EMAIL_URL: z.string().email(),
+    SITE_URL: z.string().url().default('http://localhost:3000'),
   },
 
   /**
@@ -49,6 +50,7 @@ export const env = createEnv({
     JUEJIN_URL: process.env.JUEJIN_URL,
     ZHIHU_URL: process.env.ZHIHU_URL,
     EMAIL_URL: process.env.EMAIL_URL,
+    SITE_URL: process.env.SITE_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
