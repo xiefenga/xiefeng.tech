@@ -41,7 +41,11 @@ const BlogList = async () => {
 
   return (
     <div className="mx-auto max-w-5xl animate-main font-normal">
-      <Link className="float-right hover:underline" href={env.LEGACY_SITE_URL}>
+      <Link
+        target="_blank"
+        className="relative z-10 float-right hover:underline"
+        href={env.LEGACY_SITE_URL}
+      >
         旧文章列表
       </Link>
       <div className="relative">
