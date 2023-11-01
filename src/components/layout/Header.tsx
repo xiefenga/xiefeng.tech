@@ -2,7 +2,6 @@ import Link from 'next/link'
 
 import { env } from '@/env.mjs'
 import IconLink from '../IconLink'
-import Icon from '@/components/mdx/Icon'
 import ThemeToggle from '../ThemeToggle'
 
 const Header = () => {
@@ -17,12 +16,15 @@ const Header = () => {
         <Link className="nav-link" href="/post">
           Blogs
         </Link>
+        <Link className="nav-link" href="/weekly">
+          Weekly
+        </Link>
         <Link className="nav-link" href="">
           Projects
         </Link>
         <div className="flex select-none items-center gap-6 text-2xl text-icon">
-          <Icon className="h-6 w-6 cursor-pointer" icon="iconamoon:search-bold" />
-          <IconLink href="/feed" icon="heroicons:rss-solid" />
+          {/* <Icon className="h-6 w-6 cursor-pointer" icon="iconamoon:search-bold" /> */}
+          <IconLink href="/feed.xml" icon="heroicons:rss-solid" />
           <ThemeToggle />
         </div>
       </div>
