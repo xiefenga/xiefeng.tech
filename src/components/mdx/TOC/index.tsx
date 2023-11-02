@@ -9,7 +9,6 @@ import type { Heading, Text } from 'mdast'
 
 import Anchor from './anchor'
 import { TOCItem, AnchorLink, Level } from './interface'
-import { createPortal } from 'react-dom'
 
 interface TableOfContentProps {
   source: string
@@ -63,10 +62,7 @@ const TableOfContent: React.FC<TableOfContentProps> = ({ source }) => {
       return generateTOC(toc, anchor)
     }, [] as TOCItem[])
 
-  return createPortal(
-    <Anchor delay={1200} toc={toc} links={links} offsetTop={500} />,
-    document.body,
-  )
+  return <Anchor delay={1200} toc={toc} links={links} offsetTop={500} />
 }
 
 export default TableOfContent
