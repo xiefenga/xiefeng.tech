@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 
 import { env } from '@/env.mjs'
-import NextLogo from '@/assets/icons/NextLogo.svg'
+import IconLink from '@/components/icon/IconLink'
 
 const Footer = () => {
   const currentYear = dayjs().get('year')
@@ -15,6 +15,7 @@ const Footer = () => {
     <footer className="h-20 px-8 text-sm">
       <div className="flex items-center justify-between border-t border-gray-300 pt-6 opacity-70">
         <div>
+          {/* ICP */}
           <Link target="_blank" className="link-border" href="https://beian.miit.gov.cn/">
             {env.BEIAN_ICP}
           </Link>
@@ -24,11 +25,15 @@ const Footer = () => {
             © {copyrightYear} {env.SITE_AUTHOR}
           </span>
         </div>
+        {/* POWERED BY */}
         <div className="flex items-center">
           <span className="shadow-text mr-2 uppercase">Powered by</span>
-          <Link className="dark:invert" target="_blank" href="https://nextjs.org/">
-            <NextLogo />
-          </Link>
+          <IconLink
+            icon="logos:nextjs"
+            iconClassName="w-16"
+            className="dark:invert"
+            href="https://nextjs.org"
+          />
         </div>
       </div>
     </footer>

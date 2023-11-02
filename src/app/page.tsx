@@ -21,6 +21,7 @@ const getAbout = cache(async () => {
 
 interface IndexFrontMatter {
   title?: string
+  techStack?: string[]
   [key: string]: unknown
 }
 
@@ -29,7 +30,7 @@ const Home = async () => {
 
   const { content, frontmatter } = await compile<IndexFrontMatter>(source)
 
-  const { title = 'Hello' } = frontmatter
+  const { title = 'Hello', techStack = [] } = frontmatter
 
   // const content = [
   //   `I'm 0x1461A0`,
@@ -44,7 +45,7 @@ const Home = async () => {
       <div className="my-8 flex flex-col items-start gap-2 font-mono text-2xl leading-loose">
         {content}
       </div>
-      <TechStack />
+      <TechStack skills={techStack.map((tech) => tech.toLowerCase())} />
       <SocialLinks />
     </div>
   )

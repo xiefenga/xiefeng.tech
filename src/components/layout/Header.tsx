@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { env } from '@/env.mjs'
-import IconLink from '../IconLink'
+import IconLink from '../icon/IconLink'
 import ThemeToggle from '../ThemeToggle'
 
 const Header = () => {
@@ -19,11 +19,10 @@ const Header = () => {
         <Link className="nav-link" href="/weekly">
           Weekly
         </Link>
-        <Link className="nav-link" href="">
+        <Link className="nav-link" href="/projects">
           Projects
         </Link>
         <div className="flex select-none items-center gap-6 text-2xl text-icon">
-          {/* <Icon className="h-6 w-6 cursor-pointer" icon="iconamoon:search-bold" /> */}
           <IconLink href="/feed.xml" icon="heroicons:rss-solid" />
           <ThemeToggle />
         </div>

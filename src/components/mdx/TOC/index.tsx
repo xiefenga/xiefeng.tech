@@ -1,9 +1,11 @@
+'use client'
 import React from 'react'
 import omit from 'lodash.omit'
 import { unified } from 'unified'
 import remarkMDX from 'remark-mdx'
 import remarkParse from 'remark-parse'
 import type { Heading, Text } from 'mdast'
+import { useSize } from 'ahooks'
 
 import Anchor from './anchor'
 import { TOCItem, AnchorLink, Level } from './interface'
@@ -22,6 +24,12 @@ const generateTOC = (links: TOCItem[], link: TOCItem) => {
 }
 
 const TableOfContent: React.FC<TableOfContentProps> = ({ source }) => {
+  const size = useSize(() => document.documentElement)
+
+  if (size && size.width < 1024) {
+    return null
+  }
+
   const processor = unified().use(remarkParse).use(remarkMDX)
 
   const tree = processor.parse(source)

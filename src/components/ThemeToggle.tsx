@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
-import { Icon } from '@iconify/react'
 import { useTheme } from 'next-themes'
+import LocalIcon from '@/components/icon/LocalIcon'
 
 const supportsViewTransition = (document: Document): document is Document & SupportTransition => {
   // @ts-expect-error experimental API
@@ -11,7 +11,7 @@ const supportsViewTransition = (document: Document): document is Document & Supp
 const ThemeToggle = () => {
   const { theme = 'light', setTheme } = useTheme()
 
-  const themeIcon = theme === 'light' ? 'ph:sun-duotone' : 'ph:moon-stars-duotone'
+  const themeIcon = theme === 'light' ? 'ph:sun-duotone' : 'ph:moon-fill'
 
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light'
@@ -43,7 +43,7 @@ const ThemeToggle = () => {
     }
   }
 
-  return <Icon icon={themeIcon} onClick={onClick} className="cursor-pointer" />
+  return <LocalIcon icon={themeIcon} onClick={onClick} className="cursor-pointer" />
 }
 
 export default ThemeToggle

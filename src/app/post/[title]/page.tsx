@@ -46,12 +46,12 @@ const PostPage = async ({ params }: PageProps) => {
         <TableOfContent source={source} />
         <article id="post-content" className="animate-main">
           <h1 className="text-center text-4xl font-bold leading-loose">{title}</h1>
-          <div className="mb-8 border-b border-gray-300 py-2 leading-loose">
-            {/* <div className="flex gap-4">
-              <p>Published: {dayjs(created).format('YYYY/MM/DD')}</p>
-              {updated !== created && <p>Updated: {dayjs(updated).format('YYYY/MM/DD')}</p>}
-            </div> */}
-          </div>
+          {/*<div className="mb-8 border-b border-gray-300 py-2 leading-loose">*/}
+          {/*  /!* <div className="flex gap-4">*/}
+          {/*    <p>Published: {dayjs(created).format('YYYY/MM/DD')}</p>*/}
+          {/*    {updated !== created && <p>Updated: {dayjs(updated).format('YYYY/MM/DD')}</p>}*/}
+          {/*  </div> *!/*/}
+          {/*</div>*/}
           <div>{content}</div>
         </article>
         <License created={created} updated={updated} />

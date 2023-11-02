@@ -1,4 +1,4 @@
-import IconLink from './IconLink'
+import IconLink from './icon/IconLink'
 
 import { env } from '@/env.mjs'
 

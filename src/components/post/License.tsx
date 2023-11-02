@@ -3,7 +3,7 @@ import React from 'react'
 import Link from 'next/link'
 
 import { env } from '@/env.mjs'
-import LicenseIcon from '@/assets/icons/License.svg'
+import LocalIcon from '@/components/icon/LocalIcon'
 
 interface LicenseProps {
   created: number
@@ -46,7 +46,10 @@ const License: React.FC<LicenseProps> = ({ created, updated, author = env.SITE_A
           </Link>
           创作共享协议，转载请署名，图片请转存。
         </p>
-        <LicenseIcon className="absolute -right-8 -top-4 -z-10 scale-110 text-9xl text-[#D4D4D4]" />
+        <LocalIcon
+          icon="ri:creative-commons-line"
+          className="absolute -right-8 -top-4 -z-10 scale-110 text-9xl text-[#D4D4D4]"
+        />
       </div>
       {ifUpdated && (
         <p className="bg-[#FEFBED] p-1 text-[#8F7725]">

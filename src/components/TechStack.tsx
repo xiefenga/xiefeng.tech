@@ -1,49 +1,62 @@
 'use client'
+import React from 'react'
 import { useTheme } from 'next-themes'
 
-import Typescript from '@/assets/icons/skill-icons/Typescript.svg'
-import StyledComponents from '@/assets/icons/skill-icons/StyledComponents.svg'
+import { SVGComponent, Theme } from '@/types'
+import { LOCAL_ICONS } from '@/constants/icons'
 
-import ReactDark from '@/assets/icons/skill-icons/ReactDark.svg'
-import NextjsDark from '@/assets/icons/skill-icons/NextjsDark.svg'
-import NodejsDark from '@/assets/icons/skill-icons/NodejsDark.svg'
-import TailwindcssDark from '@/assets/icons/skill-icons/TailwindcssDark.svg'
+const LOCAL_SKILL_ICONS = Object.keys(LOCAL_ICONS)
+  .filter((key) => key.startsWith('skill-icons:'))
+  .reduce(
+    (memo, item) => ({
+      ...memo,
+      [item.replace('skill-icons:', '')]: LOCAL_ICONS[item]!,
+    }),
+    {} as Record<string, SVGComponent>,
+  )
 
-import ReactLight from '@/assets/icons/skill-icons/ReactLight.svg'
-import NextjsLight from '@/assets/icons/skill-icons/NextjsLight.svg'
-import NodejsLight from '@/assets/icons/skill-icons/NodejsLight.svg'
-import TailwindcssLight from '@/assets/icons/skill-icons/TailwindcssLight.svg'
+const LIGHT_SKILL_ICONS = Object.keys(LOCAL_SKILL_ICONS)
+  .filter((key) => !key.endsWith('-dark'))
+  .reduce(
+    (memo, item) => ({
+      ...memo,
+      [item.replace('-light', '')]: LOCAL_SKILL_ICONS[item]!,
+    }),
+    {} as Record<string, SVGComponent>,
+  )
 
-const icons = {
-  dark: {
-    typescript: Typescript,
-    react: ReactLight,
-    styled: StyledComponents,
-    nodejs: NodejsLight,
-    nextjs: NextjsLight,
-    tailwindcss: TailwindcssLight,
-  },
-  light: {
-    typescript: Typescript,
-    react: ReactDark,
-    styled: StyledComponents,
-    nodejs: NodejsDark,
-    nextjs: NextjsDark,
-    tailwindcss: TailwindcssDark,
-  },
+const DARK_SKILL_ICONS = Object.keys(LOCAL_SKILL_ICONS)
+  .filter((key) => !key.endsWith('-light'))
+  .reduce(
+    (memo, item) => ({
+      ...memo,
+      [item.replace('-dark', '')]: LOCAL_SKILL_ICONS[item]!,
+    }),
+    {} as Record<string, SVGComponent>,
+  )
+
+const SKILL_ICONS = {
+  light: DARK_SKILL_ICONS,
+  dark: LIGHT_SKILL_ICONS,
 }
 
-type Theme = 'light' | 'dark'
+interface TechStackProps {
+  skills?: string[]
+}
 
-const TechStack = () => {
+const TechStack: React.FC<TechStackProps> = ({ skills = [] }) => {
   const { theme = 'light' } = useTheme()
-  return (
-    <div className="flex select-none gap-1">
-      {Object.values(icons[theme as Theme]).map((Icon, index) => (
-        <Icon key={index} />
-      ))}
-    </div>
-  )
+  const ThemedSkillIcons = SKILL_ICONS[theme as Theme]
+  const icons = skills.map((skill) => ThemedSkillIcons[skill] ?? React.Fragment)
+  if (icons.length) {
+    return (
+      <div className="flex select-none gap-1">
+        {Object.values(icons).map((Icon, index) => (
+          <Icon className="h-8 w-8" key={index} />
+        ))}
+      </div>
+    )
+  }
 }
 
 export default TechStack
