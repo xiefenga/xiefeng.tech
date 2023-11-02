@@ -1,14 +1,15 @@
 'use client'
 import React from 'react'
 import omit from 'lodash.omit'
+import { useSize } from 'ahooks'
 import { unified } from 'unified'
 import remarkMDX from 'remark-mdx'
 import remarkParse from 'remark-parse'
 import type { Heading, Text } from 'mdast'
-import { useSize } from 'ahooks'
 
 import Anchor from './anchor'
 import { TOCItem, AnchorLink, Level } from './interface'
+import { createPortal } from 'react-dom'
 
 interface TableOfContentProps {
   source: string
@@ -62,7 +63,10 @@ const TableOfContent: React.FC<TableOfContentProps> = ({ source }) => {
       return generateTOC(toc, anchor)
     }, [] as TOCItem[])
 
-  return <Anchor delay={1200} toc={toc} links={links} offsetTop={500} />
+  return createPortal(
+    <Anchor delay={1200} toc={toc} links={links} offsetTop={500} />,
+    document.body,
+  )
 }
 
 export default TableOfContent

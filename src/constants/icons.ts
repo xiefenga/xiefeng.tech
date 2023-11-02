@@ -6,6 +6,8 @@ import { SVGComponent } from '@/types'
 import AntDesignZhihuOutlined from '@/assets/icons/ant-design/zhihu-outlined.svg'
 import GrommetIconsGithub from '@/assets/icons/grommet-icons/github.svg'
 import HeroiconsRssSolid from '@/assets/icons/heroicons/rss-solid.svg'
+import IconamoonArrowRight2 from '@/assets/icons/iconamoon/arrow-right-2.svg'
+import IconamoonArrowTopRight1Bold from '@/assets/icons/iconamoon/arrow-top-right-1-bold.svg'
 import LogosNextjs from '@/assets/icons/logos/nextjs.svg'
 import MingcuteMailFill from '@/assets/icons/mingcute/mail-fill.svg'
 import PhMoonFill from '@/assets/icons/ph/moon-fill.svg'
@@ -27,6 +29,8 @@ export const LOCAL_ICONS: Record<string, SVGComponent> = {
   'ant-design:zhihu-outlined': AntDesignZhihuOutlined,
   'grommet-icons:github': GrommetIconsGithub,
   'heroicons:rss-solid': HeroiconsRssSolid,
+  'iconamoon:arrow-right-2': IconamoonArrowRight2,
+  'iconamoon:arrow-top-right-1-bold': IconamoonArrowTopRight1Bold,
   'logos:nextjs': LogosNextjs,
   'mingcute:mail-fill': MingcuteMailFill,
   'ph:moon-fill': PhMoonFill,

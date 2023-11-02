@@ -44,7 +44,7 @@ const PostPage = async ({ params }: PageProps) => {
     return (
       <React.Fragment>
         <TableOfContent source={source} />
-        <article id="post-content" className="animate-main">
+        <article id="post-content">
           <h1 className="text-center text-4xl font-bold leading-loose">{title}</h1>
           {/*<div className="mb-8 border-b border-gray-300 py-2 leading-loose">*/}
           {/*  /!* <div className="flex gap-4">*/}
