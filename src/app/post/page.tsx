@@ -4,6 +4,7 @@ import { cache } from 'react'
 
 import { env } from '@/env.mjs'
 import { prisma } from '@/server/db'
+import PageTitle from '@/components/PageTitle'
 
 const getPostList = cache(async () => {
   const list = await prisma.post.findMany({
@@ -43,15 +44,12 @@ const BlogList = async () => {
     <div className="mx-auto max-w-5xl animate-main font-normal">
       <Link
         target="_blank"
-        className="relative z-10 float-right hover:underline"
         href={env.LEGACY_SITE_URL}
+        className="relative z-10 float-right hover:underline"
       >
         旧文章列表
       </Link>
-      <div className="relative">
-        <h1 className="text-6xl font-bold">Posts</h1>
-        <div className="absolute -left-3 bottom-0 -z-10 h-5 w-48 bg-[#C4E7E8] opacity-60 dark:bg-[#1D1E1F]"></div>
-      </div>
+      <PageTitle text="Posts" />
       <ul className="mt-16">{renderList()}</ul>
     </div>
   )

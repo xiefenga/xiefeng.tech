@@ -1,7 +1,12 @@
 import React from 'react'
+import PageTitle from '@/components/PageTitle'
 
 const WeeklyPage = () => {
-  return <div>WeeklyPage</div>
+  return (
+    <div>
+      <PageTitle text="Weekly" />
+    </div>
+  )
 }
 
 export default WeeklyPage

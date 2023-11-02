@@ -1,7 +1,12 @@
 import React from 'react'
+import PageTitle from '@/components/PageTitle'
 
 const ProjectsPage = () => {
-  return <div>ProjectsPage</div>
+  return (
+    <div>
+      <PageTitle text="Projects" />
+    </div>
+  )
 }
 
 export default ProjectsPage
