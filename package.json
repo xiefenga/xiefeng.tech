@@ -15,10 +15,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "@ant-design/cssinjs": "^1.17.2",
+    "@ant-design/icons": "^5.2.6",
     "@iconify/react": "^4.1.1",
+    "@mdxeditor/editor": "^1.6.0",
     "@prisma/client": "^5.1.1",
     "@t3-oss/env-nextjs": "^0.7.0",
     "ahooks": "^3.7.8",
+    "antd": "^5.11.0",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.10",
     "feed": "^4.2.2",

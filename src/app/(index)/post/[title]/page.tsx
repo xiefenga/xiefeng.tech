@@ -1,11 +1,37 @@
-import React from 'react'
+import React, { cache } from 'react'
 import { notFound } from 'next/navigation'
 
 import '@/styles/post.scss'
+import { prisma } from '@/server/db'
 import { compile } from '@/utils/mdx'
+import { getPostList } from '@/server/post'
 import License from '@/components/post/License'
 import TableOfContent from '@/components/mdx/TOC'
-import { getPostDetail, getPostList } from '@/server/post'
+
+const getPostDetail = cache(async (urlTitle: string) => {
+  const post = await prisma.post.findFirst({
+    where: {
+      title: decodeURIComponent(urlTitle),
+    },
+  })
+
+  if (!post) {
+    return null
+  }
+
+  const { title, created, updated, content } = post
+
+  const meta = {
+    created: created.getTime(),
+    updated: updated.getTime(),
+  }
+
+  return {
+    title,
+    content,
+    meta,
+  }
+})
 
 interface PageProps {
   params: {

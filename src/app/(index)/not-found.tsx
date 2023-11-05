@@ -1,3 +1,5 @@
+import SiteLink from '@/components/link/SiteLink'
+
 const NotFound = () => {
   return (
     <div className="relative animate-main px-20">
@@ -5,6 +7,7 @@ const NotFound = () => {
       <div className="my-8 ">
         <p>Page Not Found 🤖</p>
       </div>
+      <SiteLink replace href="/" text="cd /" />
     </div>
   )
 }
