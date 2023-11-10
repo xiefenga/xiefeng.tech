@@ -3,8 +3,8 @@ import slug from 'rehype-slug'
 import remarkGfm from 'remark-gfm'
 import { type MDXRemoteProps } from 'next-mdx-remote/rsc'
 
-import Icon from '@/components/mdx/Icon'
-import CodeBlock from '@/components/mdx/CodeBlock'
+import Icon from '@/components/home/mdx/Icon'
+import CodeBlock from '@/components/home/mdx/CodeBlock'
 
 type ImageProps = React.DetailedHTMLProps<
   React.ImgHTMLAttributes<HTMLImageElement>,

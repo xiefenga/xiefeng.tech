@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 
-import LocalIcon from '@/components/icon/LocalIcon'
+import LocalIcon from '@/components/home/icon/LocalIcon'
 
 interface SiteLinkProps {
   href: string

@@ -2,8 +2,8 @@ import React from 'react'
 
 import '@/styles/index/global.css'
 import Providers from './providers'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
+import Header from '@/components/home/layout/Header'
+import Footer from '@/components/home/layout/Footer'
 
 export const metadata = {
   title: {

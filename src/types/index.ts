@@ -9,3 +9,9 @@ export interface Post {
   title: string
   content: string
 }
+
+export interface NavLink {
+  href: string
+  text: string
+  icon: React.ReactNode
+}

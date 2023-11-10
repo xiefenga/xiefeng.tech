@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import { useTheme } from 'next-themes'
-import LocalIcon from '@/components/icon/LocalIcon'
+import LocalIcon from '@/components/home/icon/LocalIcon'
 
 const supportsViewTransition = (document: Document): document is Document & SupportTransition => {
   // @ts-expect-error experimental API

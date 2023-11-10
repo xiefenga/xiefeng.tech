@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import LocalIcon from '@/components/icon/LocalIcon'
+import LocalIcon from '@/components/home/icon/LocalIcon'
 
 interface IconLinkProps {
   icon: string

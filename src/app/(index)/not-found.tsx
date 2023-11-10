@@ -1,4 +1,4 @@
-import SiteLink from '@/components/link/SiteLink'
+import SiteLink from '@/components/home/link/SiteLink'
 
 const NotFound = () => {
   return (

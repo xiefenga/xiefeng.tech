@@ -3,8 +3,8 @@ import { cache } from 'react'
 
 import { prisma } from '@/server/db'
 import { compile } from '@/utils/mdx'
-import TechStack from '@/components/TechStack'
-import SocialLinks from '@/components/SocialLinks'
+import TechStack from '@/components/home/TechStack'
+import SocialLinks from '@/components/home/SocialLinks'
 
 const getAbout = cache(async () => {
   const about = await prisma.meta.findFirst({

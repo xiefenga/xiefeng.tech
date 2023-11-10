@@ -1,8 +1,9 @@
+import React from 'react'
 import { prisma } from '@/server/db'
 import { notFound } from 'next/navigation'
-import PostEdit from '@/components/admin/PostEdit'
+import PostDetail from '@ui/admin/post-detail'
 
-interface PostDetailtPageProps {
+interface PostDetailPageProps {
   params: {
     id: string
   }
@@ -17,7 +18,7 @@ const getPostById = async (id: string) => {
   return post
 }
 
-export const generateMetadata = async ({ params }: PostDetailtPageProps) => {
+export const generateMetadata = async ({ params }: PostDetailPageProps) => {
   const post = await getPostById(params.id)
   if (!post) {
     notFound()
@@ -27,18 +28,33 @@ export const generateMetadata = async ({ params }: PostDetailtPageProps) => {
   }
 }
 
-const PostDetailtPage = async ({ params }: PostDetailtPageProps) => {
+const PostDetailPage = async ({ params }: PostDetailPageProps) => {
   const post = await getPostById(params.id)
 
   if (!post) {
-    return <div>404</div>
+    notFound()
   }
 
   return (
-    <div>
-      <PostEdit post={post} />
-    </div>
+    <React.Fragment>
+      <PostDetail
+        post={post}
+        onSave={async (title, content) => {
+          'use server'
+          await prisma.post.update({
+            where: {
+              id: post.id,
+            },
+            data: {
+              title,
+              content,
+              updated: new Date(),
+            },
+          })
+        }}
+      />
+    </React.Fragment>
   )
 }
 
-export default PostDetailtPage
+export default PostDetailPage

@@ -4,7 +4,7 @@ import { cache } from 'react'
 
 import { env } from '@/env.mjs'
 import { prisma } from '@/server/db'
-import PageTitle from '@/components/PageTitle'
+import PageTitle from '@/components/home/PageTitle'
 
 const getPostList = cache(async () => {
   const list = await prisma.post.findMany({

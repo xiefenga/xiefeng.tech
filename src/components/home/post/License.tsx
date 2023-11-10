@@ -3,7 +3,7 @@ import React from 'react'
 import Link from 'next/link'
 
 import { env } from '@/env.mjs'
-import LocalIcon from '@/components/icon/LocalIcon'
+import LocalIcon from '@/components/home/icon/LocalIcon'
 
 interface LicenseProps {
   created: number

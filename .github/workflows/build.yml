@@ -20,6 +20,10 @@ jobs:
         run: |
           cp .env.example .env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+          echo "USERNAME=${{ secrets.USERNAME }}" >> .env
+          echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
+          echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> .env
+          echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env
 
       - name: Parse Current Building Time
         id: build_time

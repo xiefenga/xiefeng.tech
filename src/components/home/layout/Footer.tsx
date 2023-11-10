@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 
 import { env } from '@/env.mjs'
-import IconLink from '@/components/icon/IconLink'
+import IconLink from '@/components/home/icon/IconLink'
 
 const Footer = () => {
   const currentYear = dayjs().get('year')
