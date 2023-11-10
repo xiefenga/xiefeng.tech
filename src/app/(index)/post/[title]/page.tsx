@@ -5,8 +5,8 @@ import '@/styles/post.scss'
 import { prisma } from '@/server/db'
 import { compile } from '@/utils/mdx'
 import { getPostList } from '@/server/post'
-import License from '@/components/post/License'
-import TableOfContent from '@/components/mdx/TOC'
+import License from '@/components/home/post/License'
+import TableOfContent from '@/components/home/mdx/TOC'
 
 const getPostDetail = cache(async (urlTitle: string) => {
   const post = await prisma.post.findFirst({

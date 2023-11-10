@@ -7,6 +7,9 @@ await import('./src/env.mjs')
 /** @type {import("next").NextConfig} */
 const config = {
   output: 'standalone',
+  experimental: {
+    webpackBuildWorker: true,
+  },
   webpack: (config) => {
     config.module.rules.push({
       test: /\.svg$/,
