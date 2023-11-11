@@ -20,7 +20,7 @@ export const {
     Credentials({
       async authorize(credentials) {
         const { username, password } = credentials
-        if (username === env.USERNAME && password === env.PASSWORD) {
+        if (username === env.ADMIN_ACCOUNT && password === env.ADMIN_PASSWORD) {
           return {
             id: username,
             name: 'admin',
