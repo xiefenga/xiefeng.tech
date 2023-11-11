@@ -1,9 +1,10 @@
 import { getPostList } from '@/server/post'
 import PostList from '@/components/admin/PostList'
+import { unstable_noStore } from 'next/cache'
 
 const ServerPostList = async () => {
+  unstable_noStore()
   const list = await getPostList()
-  await new Promise((resolve) => setTimeout(resolve, 1000))
 
   return (
     <PostList
