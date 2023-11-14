@@ -2,6 +2,7 @@ import React from 'react'
 import { prisma } from '@/server/db'
 import { notFound } from 'next/navigation'
 import PostDetail from '@ui/admin/post-detail'
+import { revalidatePath } from 'next/cache'
 
 interface PostDetailPageProps {
   params: {
@@ -51,6 +52,12 @@ const PostDetailPage = async ({ params }: PostDetailPageProps) => {
               updated: new Date(),
             },
           })
+          // 清除路由缓存
+          revalidatePath('/admin/post')
+          revalidatePath(`/admin/post/${post.id}`)
+          revalidatePath('/post')
+          revalidatePath(`/post/${title}`)
+          // revalidatePath(`/post/${post.title}`)
         }}
       />
     </React.Fragment>

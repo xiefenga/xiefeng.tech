@@ -1,7 +1,8 @@
 import React from 'react'
+import { Skeleton } from 'antd'
 
 const Loading = () => {
-  return <div>Loading...</div>
+  return <Skeleton active />
 }
 
 export default Loading

@@ -4,7 +4,7 @@ import PostListSkeleton from '@ui/admin/post-list/Skeleton'
 
 export const dynamic = 'force-dynamic'
 
-// TODO: fix route memo
+// TODO: clean route memo always
 const PostPage = () => {
   return (
     <div>

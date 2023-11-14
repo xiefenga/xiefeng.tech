@@ -1,19 +1,18 @@
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import { cache } from 'react'
 
 import { env } from '@/env.mjs'
 import { prisma } from '@/server/db'
 import PageTitle from '@/components/home/PageTitle'
 
-const getPostList = cache(async () => {
+const getPostList = async () => {
   const list = await prisma.post.findMany({
     orderBy: {
       created: 'desc',
     },
   })
   return list
-})
+}
 
 const BlogList = async () => {
   const list = await getPostList()
