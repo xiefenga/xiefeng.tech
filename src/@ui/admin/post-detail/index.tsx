@@ -1,11 +1,12 @@
 'use client'
-import React, { useRef, useState } from 'react'
-import { Button, Space, Typography, Upload, message } from 'antd'
+import { useRequest } from 'ahooks'
 import dynamic from 'next/dynamic'
+import React, { useRef, useState } from 'react'
+import { Button, Space, Typography, message } from 'antd'
 
 import { Post } from '@/types'
 import { EditorRef } from '@/components/editor'
-import { useRequest } from 'ahooks'
+import FileSelector from '@/components/FileSelector'
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
@@ -46,9 +47,28 @@ const PostDetail: React.FC<PostDetailProps> = ({ post, onSave }) => {
           </Typography.Title>
         </div>
         <Space>
-          <Upload>
+          <FileSelector
+            onChange={(files) => {
+              if (!files || !files.length) {
+                return
+              }
+              const file = files[0]!
+              if (!title.trim()) {
+                setTitle(file.name)
+              }
+              const reader = new FileReader()
+              reader.onload = () => {
+                if (!editorRef.current) {
+                  message.error('获取编辑器实例失败')
+                  return
+                }
+                editorRef.current?.monaco.setValue(reader.result as string)
+              }
+              reader.readAsText(file)
+            }}
+          >
             <Button>上传</Button>
-          </Upload>
+          </FileSelector>
           <Button
             type="primary"
             loading={loading ? { delay: 200 } : loading}
