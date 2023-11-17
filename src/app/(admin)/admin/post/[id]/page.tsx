@@ -1,8 +1,9 @@
 import React from 'react'
-import { prisma } from '@/server/db'
 import { notFound } from 'next/navigation'
-import PostDetail from '@ui/admin/post-detail'
 import { revalidatePath } from 'next/cache'
+
+import { prisma } from '@/server/db'
+import PostEdit from '@/components/PostEdit'
 
 interface PostDetailPageProps {
   params: {
@@ -38,7 +39,7 @@ const PostDetailPage = async ({ params }: PostDetailPageProps) => {
 
   return (
     <React.Fragment>
-      <PostDetail
+      <PostEdit
         post={post}
         onSave={async (title, content) => {
           'use server'

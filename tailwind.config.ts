@@ -1,3 +1,4 @@
+import daisyui from 'daisyui'
 import forms from '@tailwindcss/forms'
 import { type Config } from 'tailwindcss'
 
@@ -47,5 +48,5 @@ export default {
       },
     },
   },
-  plugins: [forms],
+  plugins: [forms, daisyui],
 } satisfies Config

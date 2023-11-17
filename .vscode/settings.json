@@ -3,6 +3,7 @@
   "scss.lint.unknownAtRules": "ignore",
   "cSpell.words": [
     "BEIAN",
+    "daisyui",
     "feng",
     "fira",
     "Frontmatter",
