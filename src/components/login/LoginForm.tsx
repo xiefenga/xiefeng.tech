@@ -48,20 +48,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ login }) => {
   }, [state])
 
   return (
-    <div className="mx-auto w-[500px] translate-y-24 rounded border px-4 py-8">
-      <h1 className="pb-8 text-center text-4xl leading-loose">登录</h1>
+    <div className="mx-auto w-[600px] translate-y-32 rounded border px-4 py-8">
+      <h1 className="pb-8 text-center text-4xl font-bold leading-loose">登录</h1>
       <form className="flex flex-col items-center" action={dispatch}>
-        <div className="relative pb-6">
-          <div className="flex w-96 items-center">
-            <label className="mr-2 w-14 text-right" htmlFor="username">
+        <div className="relative w-full px-10 pb-6">
+          <div className="flex w-full items-center">
+            <label className="mr-2 w-24 text-right text-xl" htmlFor="username">
               用户名
+              <abbr className="text-orange-300 no-underline" title="required">
+                *
+              </abbr>
             </label>
             <input
               required
               type="text"
               id="username"
               name="username"
-              className="flex-grow rounded px-2 py-1"
+              placeholder="请输入..."
+              className="input input-bordered flex-grow"
             />
           </div>
           {state.errors.username && (
@@ -70,17 +74,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ login }) => {
             </div>
           )}
         </div>
-        <div className="relative pb-6">
-          <div className="flex w-96 items-center">
-            <label className="mr-2 w-14 text-right" htmlFor="password">
+        <div className="relative w-full px-10 pb-6">
+          <div className="flex w-full items-center">
+            <label className="mr-2 w-24 text-right text-xl" htmlFor="password">
               密码
+              <abbr className="text-orange-300 no-underline" title="required">
+                *
+              </abbr>
             </label>
             <input
               required
               id="password"
               type="password"
               name="password"
-              className="flex-grow rounded px-2 py-1"
+              placeholder="请输入..."
+              className="input input-bordered flex-grow"
             />
           </div>
           {state.errors.password && (
@@ -89,10 +97,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ login }) => {
             </div>
           )}
         </div>
-        <button
-          type="submit"
-          className="mt-2 rounded bg-gray-100 px-10 py-2 transition-[background] hover:bg-gray-300"
-        >
+        <button type="submit" className="btn btn-primary mt-4 px-10 text-xl">
           登录
         </button>
       </form>
