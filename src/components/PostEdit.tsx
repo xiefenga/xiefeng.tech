@@ -1,12 +1,13 @@
 'use client'
-import { useRequest } from 'ahooks'
+import { message } from 'antd'
 import dynamic from 'next/dynamic'
+import { useRequest } from 'ahooks'
 import React, { useRef, useState } from 'react'
-import { Button, Space, Typography, message } from 'antd'
 
 import { Post } from '@/types'
 import { EditorRef } from '@/components/editor'
 import FileSelector from '@/components/FileSelector'
+import EditableTitle from '@/components/EditableTitle'
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
@@ -15,6 +16,7 @@ interface PostEditProps {
   onSave: (title: string, content: string) => Promise<void>
 }
 
+// TODO: imporve editor
 const PostEdit: React.FC<PostEditProps> = ({ post, onSave }) => {
   const [title, setTitle] = useState(post?.title ?? '')
 
@@ -30,66 +32,51 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSave }) => {
     },
   })
 
+  const onFileChange = (files: FileList | null) => {
+    if (!files || !files.length) {
+      return
+    }
+    const file = files[0]!
+    if (!title.trim()) {
+      setTitle(file.name)
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (!editorRef.current) {
+        message.error('获取编辑器实例失败')
+        return
+      }
+      editorRef.current?.monaco.setValue(reader.result as string)
+    }
+    reader.readAsText(file)
+  }
+
+  const onClick = () => {
+    if (!editorRef.current) {
+      message.error('获取编辑器实例失败')
+      return
+    } else if (!title.trim()) {
+      message.error('请输入标题')
+      return
+    }
+    run(editorRef.current.getValue())
+  }
+
   return (
     <div className="flex h-full flex-col">
       <div className="mb-4 flex items-center px-2">
-        <div className="flex h-12 flex-grow items-center">
-          <Typography.Title
-            editable={{
-              text: title,
-              onChange: setTitle,
-              triggerType: ['text'],
-            }}
-            level={2}
-            className="!m-0 flex h-full w-full items-center"
-          >
-            {title.trim() ? (
-              <span>{title}</span>
-            ) : (
-              <span className="text-xl text-gray-400">请输入标题...</span>
-            )}
-          </Typography.Title>
+        <div className="flex h-12 flex-grow items-center pr-2">
+          <EditableTitle title={title} onChange={setTitle} />
         </div>
-        <Space>
-          <FileSelector
-            onChange={(files) => {
-              if (!files || !files.length) {
-                return
-              }
-              const file = files[0]!
-              if (!title.trim()) {
-                setTitle(file.name)
-              }
-              const reader = new FileReader()
-              reader.onload = () => {
-                if (!editorRef.current) {
-                  message.error('获取编辑器实例失败')
-                  return
-                }
-                editorRef.current?.monaco.setValue(reader.result as string)
-              }
-              reader.readAsText(file)
-            }}
-          >
-            <Button>上传</Button>
+        <div className="flex gap-2">
+          <FileSelector onChange={onFileChange}>
+            <button className="btn btn-neutral btn-sm">上传</button>
           </FileSelector>
-          <Button
-            type="primary"
-            loading={loading ? { delay: 200 } : loading}
-            onClick={() => {
-              if (!editorRef.current) {
-                message.error('获取编辑器实例失败')
-                return
-              } else if (!title.trim()) {
-                message.error('请输入标题')
-                return
-              }
-              run(editorRef.current.getValue())
-            }}
-          >
+          <button className="btn btn-primary btn-sm" onClick={onClick}>
+            {loading && <span className="loading loading-spinner"></span>}
             保存
-          </Button>
-        </Space>
+          </button>
+        </div>
       </div>
       <div className="flex-grow">
         <Editor
