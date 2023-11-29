@@ -48,5 +48,8 @@ export default {
       },
     },
   },
+  daisyui: {
+    themes: ['light'],
+  },
   plugins: [forms, daisyui],
 } satisfies Config

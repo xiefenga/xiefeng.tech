@@ -14,7 +14,7 @@ const links: NavLink[] = [
 
 const SideNav = () => {
   return (
-    <div className="w-[250px] flex-shrink-0 bg-white">
+    <div className="w-[250px] flex-shrink-0 bg-base-100">
       <NavMenu links={links} />
     </div>
   )

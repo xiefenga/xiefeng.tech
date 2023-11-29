@@ -4,7 +4,7 @@ import Header from '@ui/admin/layout/header'
 
 const AdminLayout = ({ children }: React.PropsWithChildren) => {
   return (
-    <div className="flex h-screen flex-col bg-[#f5f5f5]">
+    <div className="flex h-screen flex-col bg-base-300">
       <Header />
       <div className="flex h-[calc(100vh-64px)]">
         <SideNav />

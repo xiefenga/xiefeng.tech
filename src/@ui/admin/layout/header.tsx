@@ -4,8 +4,8 @@ import Image from 'next/image'
 
 const Header = () => {
   return (
-    <div className="navbar h-16 flex-shrink-0 bg-base-100 px-8">
-      <Link href="/admin" className="btn btn-ghost text-xl">
+    <div className="navbar h-16 flex-shrink-0 bg-base-200 px-8">
+      <Link href="/admin" className="text-xl font-bold">
         站点管理
       </Link>
       <div className="dropdown dropdown-end ml-auto">
@@ -16,14 +16,6 @@ const Header = () => {
             </div>
           </div>
         </label>
-        {/* <ul
-          tabIndex={0}
-          className="menu menu-sm dropdown-content bg-base-100 z-10 w-20 rounded p-2 shadow"
-        >
-          <li>
-            <Logout />
-          </li>
-        </ul> */}
       </div>
     </div>
   )

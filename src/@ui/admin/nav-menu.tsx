@@ -20,7 +20,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ links }) => {
           <Link
             href={item.href}
             className={clsx(
-              'm-1 flex h-10 items-center gap-2 rounded px-4 leading-10',
+              'm-1 flex h-10 items-center gap-2 rounded px-4 leading-10 text-black hover:text-black',
               pathname.startsWith(item.href) && '!bg-sky-100 !text-blue-600',
             )}
           >
