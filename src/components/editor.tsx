@@ -1,9 +1,9 @@
 'use client'
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
+import { useMemoizedFn } from 'ahooks'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js'
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution'
 import 'monaco-editor/esm/vs/basic-languages/mdx/mdx.contribution'
-import { useMemoizedFn } from 'ahooks'
 
 export interface EditorRef {
   getValue: () => string
@@ -18,13 +18,13 @@ interface EditorProps {
 }
 
 const Editor: React.FC<EditorProps> = ({ value, language, onChange, editorRef }) => {
-  const monacoRef = useRef<HTMLDivElement>(null)
+  const monacoRef = React.useRef<HTMLDivElement>(null)
 
-  const instanceRef = useRef<monaco.editor.IStandaloneCodeEditor>()
+  const instanceRef = React.useRef<monaco.editor.IStandaloneCodeEditor>()
 
   const memoOnChange = useMemoizedFn((value: string) => onChange?.(value))
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!monacoRef.current) {
       return
     }
