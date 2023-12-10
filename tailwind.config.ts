@@ -49,7 +49,7 @@ export default {
     },
   },
   daisyui: {
-    themes: ['light'],
+    // themes: ['light'],
   },
   plugins: [forms, daisyui],
 } satisfies Config
