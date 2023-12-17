@@ -8,9 +8,15 @@ interface ErrorProps {
 
 export default function Error({ error }: ErrorProps) {
   return (
-    <div className="error">
-      <h1>error</h1>
-      <p>{error.stack}</p>
+    <div className="p-4">
+      <details className="border p-2">
+        <summary>
+          <span className="text-red-500">
+            {error.name} {error.message}
+          </span>
+        </summary>
+        <pre className="overflow-x-auto p-4">{error.stack}</pre>
+      </details>
     </div>
   )
 }

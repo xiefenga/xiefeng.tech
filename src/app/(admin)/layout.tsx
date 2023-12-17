@@ -5,20 +5,22 @@ import StyledComponentsRegistry from './AntdRegistry'
 
 const AdminRootLayout = ({ children }: React.PropsWithChildren) => {
   return (
-    <StyledComponentsRegistry>
-      <ConfigProvider
-        locale={zhCN}
-        theme={{
-          components: {
-            Layout: {
-              headerBg: '#fff',
+    <body daisyui-root="">
+      <StyledComponentsRegistry>
+        <ConfigProvider
+          locale={zhCN}
+          theme={{
+            components: {
+              Layout: {
+                headerBg: '#fff',
+              },
             },
-          },
-        }}
-      >
-        {children}
-      </ConfigProvider>
-    </StyledComponentsRegistry>
+          }}
+        >
+          {children}
+        </ConfigProvider>
+      </StyledComponentsRegistry>
+    </body>
   )
 }
 

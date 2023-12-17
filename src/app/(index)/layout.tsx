@@ -17,13 +17,15 @@ export const metadata = {
 
 const RootLayout = ({ children }: React.PropsWithChildren) => {
   return (
-    <Providers>
-      <div className="flex min-h-screen flex-col">
-        <Header />
-        <main className="flex-grow px-20 py-10">{children}</main>
-        <Footer />
-      </div>
-    </Providers>
+    <body className="font-sans">
+      <Providers>
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-grow px-20 py-10">{children}</main>
+          <Footer />
+        </div>
+      </Providers>
+    </body>
   )
 }
 

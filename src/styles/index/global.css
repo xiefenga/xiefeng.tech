@@ -1,26 +1,3 @@
-:root {
-    --site-background: #FCFCFC;
-    /* --site-background: #fff; */
-    --inline-code-background-color: #e4e4e499;
-    /* --block-code-background-color: #f6f8fa99; */
-    /* --block-code-background-color: #dbe4ec99; */
-    --block-code-background-color: #e8e9e999;
-    --code-lang-background-color: #404040;
-    --code-lang-text-color: #fff;
-
-    --icon-color: #888;
-}
-
-:root[data-theme="dark"] {
-    /* --site-background: #1a202c; */
-    --site-background: #2a2b2d;
-    /* --site-background: #050505; */
-    /* --inline-code-background-color: #2d2d2c99; */
-    --inline-code-background-color: #43424299;
-    --block-code-background-color: #1e1e1e99;
-    --code-lang-background-color: #D4D4D4;
-    --code-lang-text-color: #525252;
-}
 
 body {
     font-family: 'Noto Sans TC', sans-serif;

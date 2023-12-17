@@ -11,7 +11,7 @@ const RootLayout = ({ children }: React.PropsWithChildren) => {
       suppressHydrationWarning
       className={clsx(inter.variable, firaMono.variable, virgil.variable)}
     >
-      <body className="font-sans">{children}</body>
+      {children}
     </html>
   )
 }

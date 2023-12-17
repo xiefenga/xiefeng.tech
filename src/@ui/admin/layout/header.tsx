@@ -5,7 +5,7 @@ import Image from 'next/image'
 const Header = () => {
   return (
     <div className="navbar h-16 flex-shrink-0 bg-base-200 px-8">
-      <Link href="/admin" className="text-xl font-bold">
+      <Link href="/admin" className="btn btn-ghost text-xl font-bold">
         站点管理
       </Link>
       <div className="dropdown dropdown-end ml-auto">

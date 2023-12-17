@@ -1,13 +1,18 @@
 'use client'
+import React from 'react'
 import { message } from 'antd'
 import dynamic from 'next/dynamic'
-import { useRequest } from 'ahooks'
-import React, { useRef, useState } from 'react'
+import { MDXRemote } from 'next-mdx-remote'
+import { useAsyncEffect, useRequest } from 'ahooks'
+import { serialize } from 'next-mdx-remote/serialize'
 
+import '@/styles/post.scss'
 import { Post } from '@/types'
+import { COMPONENT_MAP } from '@/constants/mdx'
 import { EditorRef } from '@/components/editor'
 import FileSelector from '@/components/FileSelector'
 import EditableTitle from '@/components/EditableTitle'
+import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types'
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
@@ -18,9 +23,23 @@ interface PostEditProps {
 
 // TODO: imporve editor
 const PostEdit: React.FC<PostEditProps> = ({ post, onSave }) => {
-  const [title, setTitle] = useState(post?.title ?? '')
+  const [title, setTitle] = React.useState(post?.title ?? '')
 
-  const editorRef = useRef<EditorRef>()
+  const [content, setContent] = React.useState(post?.content ?? '')
+
+  const [mdxSource, setMdxSource] = React.useState<MDXRemoteSerializeResult>()
+
+  useAsyncEffect(async () => {
+    const mdxSource = await serialize(content, {
+      mdxOptions: {
+        development: process.env.NODE_ENV === 'development',
+      },
+    })
+    console.log(mdxSource.compiledSource)
+    setMdxSource(mdxSource)
+  }, [content])
+
+  const editorRef = React.useRef<EditorRef>()
 
   const { run, loading } = useRequest(async (content: string) => await onSave(title, content), {
     manual: true,
@@ -51,17 +70,6 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSave }) => {
     reader.readAsText(file)
   }
 
-  const onClick = () => {
-    if (!editorRef.current) {
-      message.error('获取编辑器实例失败')
-      return
-    } else if (!title.trim()) {
-      message.error('请输入标题')
-      return
-    }
-    run(editorRef.current.getValue())
-  }
-
   return (
     <div className="flex h-full flex-col">
       <div className="mb-4 flex items-center px-2">
@@ -72,18 +80,26 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSave }) => {
           <FileSelector onChange={onFileChange}>
             <button className="btn btn-neutral btn-sm">上传</button>
           </FileSelector>
-          <button className="btn btn-primary btn-sm" onClick={onClick}>
+          <button className="btn btn-primary btn-sm" onClick={() => run(content)}>
             {loading && <span className="loading loading-spinner"></span>}
             保存
           </button>
         </div>
       </div>
-      <div className="flex-grow">
-        <Editor
-          language="mdx"
-          value={post?.content ?? ''}
-          editorRef={(ref) => (editorRef.current = ref)}
-        />
+      <div className="flex h-0 flex-grow">
+        <div className="h-full w-1/2">
+          <Editor
+            language="mdx"
+            value={post?.content ?? ''}
+            onChange={(content) => setContent(content)}
+            editorRef={(ref) => (editorRef.current = ref)}
+          />
+        </div>
+        <div className="h-full w-1/2  bg-[var(--site-background)] py-2">
+          <article id="post-content" className="h-full overflow-auto px-6">
+            {mdxSource && <MDXRemote {...mdxSource} components={COMPONENT_MAP} />}
+          </article>
+        </div>
       </div>
     </div>
   )
