@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
 import { useClickAway } from 'ahooks'
+import { Input } from '@/components/ui/input'
 
 interface EditableTitleProps {
   title: string
@@ -17,18 +18,19 @@ const EditableTitle: React.FC<EditableTitleProps> = ({ title, onChange }) => {
   useClickAway(() => setStatus('view'), inputRef)
 
   return (
-    <div className="w-full">
+    <div className="h-full w-full">
       {status === 'view' && (
-        <span className="text-2xl font-bold" onClick={() => setStatus('edit')}>
-          {title}
-        </span>
+        <div className="h-full text-2xl font-bold" onClick={() => setStatus('edit')}>
+          {title || <span className="text-base text-muted-foreground">请输入标题</span>}
+        </div>
       )}
       {status === 'edit' && (
-        <input
+        <Input
+          autoFocus
           ref={inputRef}
           defaultValue={title}
           placeholder="请输入..."
-          className="input input-bordered w-full text-xl"
+          className="w-full border-0 text-xl"
           onKeyDown={(e) => {
             const value = (e.target as HTMLInputElement).value.trim()
             if (e.code === 'Enter' && value) {

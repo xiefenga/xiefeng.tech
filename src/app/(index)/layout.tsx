@@ -1,4 +1,6 @@
+import clsx from 'clsx'
 import React from 'react'
+import { firaMono, inter, virgil } from '@/constants/fonts'
 
 import '@/styles/index/global.css'
 import Providers from './providers'
@@ -17,15 +19,21 @@ export const metadata = {
 
 const RootLayout = ({ children }: React.PropsWithChildren) => {
   return (
-    <body className="font-sans">
-      <Providers>
-        <div className="flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-grow px-20 py-10">{children}</main>
-          <Footer />
-        </div>
-      </Providers>
-    </body>
+    <html
+      lang="zh-CN"
+      suppressHydrationWarning
+      className={clsx(inter.variable, firaMono.variable, virgil.variable)}
+    >
+      <body className="font-sans">
+        <Providers>
+          <div className="flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-grow px-20 py-10">{children}</main>
+            <Footer />
+          </div>
+        </Providers>
+      </body>
+    </html>
   )
 }
 

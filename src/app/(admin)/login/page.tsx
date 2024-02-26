@@ -1,5 +1,5 @@
 import { signIn } from '@/auth'
-import LoginForm from '@ui/login/LoginForm'
+import LoginForm from '@/components/LoginForm'
 
 export const metadata = {
   title: '后台登录',

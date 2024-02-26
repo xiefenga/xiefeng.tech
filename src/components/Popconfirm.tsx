@@ -1,30 +1,44 @@
 'use client'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+
 interface PopconfirmProps {
-  // TODO: placement
   title: React.ReactNode
-  onConfirm?: () => void
+  description?: React.ReactNode
+  onConfirm?: () => void | Promise<void>
 }
 
 const Popconfirm: React.FC<React.PropsWithChildren<PopconfirmProps>> = ({
   children,
   title,
+  description,
   onConfirm,
 }) => {
+  const [open, setOpen] = React.useState(false)
+
+  const onConfirmClick = async () => {
+    await onConfirm?.()
+    setOpen(false)
+  }
+
   return (
-    <div className="dropdown dropdown-end">
-      {children}
-      <div tabIndex={0} className="dropdown-content z-[1] rounded-md bg-base-100 p-3 shadow">
-        <p className="mb-3 whitespace-nowrap text-sm leading-loose">{title}</p>
-        <div className="flex justify-end gap-2">
-          <button className="btn btn-xs">取消</button>
-          <button className="btn btn-primary btn-xs" onClick={onConfirm}>
-            确定
-          </button>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverContent side="top" align="end" alignOffset={-50} className="w-auto">
+        <h4 className="text-base font-medium">{title}</h4>
+        <p className="py-1 text-sm">{description}</p>
+        <div className="mt-2 flex justify-end gap-2">
+          <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>
+            取消
+          </Button>
+          <Button size="sm" onClick={onConfirmClick}>
+            确认
+          </Button>
         </div>
-      </div>
-    </div>
+      </PopoverContent>
+    </Popover>
   )
 }
 

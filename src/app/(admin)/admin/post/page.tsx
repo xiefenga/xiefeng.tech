@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { Suspense } from 'react'
 
-import PostList from '@ui/admin/post-list'
-import PostListSkeleton from '@ui/admin/post-list/Skeleton'
+import { Button } from '@/components/ui/button'
+import PostList from '@/components/admin/post-list'
+import PostListSkeleton from '@/components/PostListSkeleton'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,9 +18,9 @@ const PostPage = () => {
     <div>
       <div className="flex items-center justify-between px-2 pb-2">
         <h1 className="text-2xl font-bold leading-loose">文章列表</h1>
-        <Link href="/admin/post/add" className="btn btn-primary btn-sm">
-          新增
-        </Link>
+        <Button asChild>
+          <Link href="/admin/post/add">新增</Link>
+        </Button>
       </div>
       <Suspense fallback={<PostListSkeleton />}>
         <PostList />

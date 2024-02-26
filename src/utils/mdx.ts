@@ -11,6 +11,7 @@ export const compile = async <T extends Record<string, unknown>>(
       ...COMPONENT_MAP,
       ...components,
     },
+    // @ts-expect-error ignore
     options: COMPILE_OPTIONS,
   })
 }

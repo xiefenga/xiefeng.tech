@@ -1,6 +1,7 @@
 import React from 'react'
 import slug from 'rehype-slug'
 import remarkGfm from 'remark-gfm'
+import rehypeShiki from '@shikijs/rehype'
 import { type MDXRemoteProps } from 'next-mdx-remote/rsc'
 
 import Icon from '@/components/home/mdx/Icon'
@@ -29,25 +30,25 @@ export const COMPONENT_MAP: NonNullable<MDXRemoteProps['components']> = {
     return <Image {...props} draggable={false} alt="" />
   },
   pre: (props) => {
-    interface CodeProps {
-      className?: `language-${string}`
-      children: string
-    }
     if (
-      React.isValidElement<CodeProps>(props.children) &&
+      React.isValidElement(props.children) &&
       typeof props.children.type === 'function' &&
       props.children.type.name === 'code'
     ) {
-      const { className, children } = props.children.props
-      let language = 'plan text'
-      if (className?.startsWith('language-')) {
-        language = className.replace(/language-/, '').trim()
-      }
-      return <CodeBlock code={children} language={language} />
+      const { className = '' } = props.children.props
+      const language = className.includes('language-')
+        ? className.replace(/language-/, '').trim()
+        : 'plan text'
+      return <CodeBlock pre={props} language={language} />
     }
     return <pre {...props} />
   },
-  code: (props) => <code className="inline-code" {...props} />,
+  code: (props) => {
+    if (typeof props.children === 'string') {
+      return <code className="inline-code" {...props} />
+    }
+    return <code {...props} />
+  },
   // TODO add table style support
   table: (props) => <table {...props} className="my-2" />,
 }
@@ -55,7 +56,19 @@ export const COMPONENT_MAP: NonNullable<MDXRemoteProps['components']> = {
 export const COMPILE_OPTIONS = {
   parseFrontmatter: true,
   mdxOptions: {
-    rehypePlugins: [slug],
+    rehypePlugins: [
+      slug,
+      [
+        rehypeShiki,
+        {
+          addLanguageClass: true,
+          themes: {
+            light: 'vitesse-light',
+            dark: 'vitesse-dark',
+          },
+        },
+      ],
+    ],
     // remark-gfm use v3 https://github.com/hashicorp/next-mdx-remote/issues/403#issuecomment-1749540574
     remarkPlugins: [remarkGfm],
   },

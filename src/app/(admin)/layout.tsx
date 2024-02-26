@@ -1,26 +1,13 @@
 import React from 'react'
-import zhCN from 'antd/locale/zh_CN'
-import { ConfigProvider } from 'antd'
-import StyledComponentsRegistry from './AntdRegistry'
+import { inter } from '@/constants/fonts'
+
+import '@/styles/admin/global.css'
 
 const AdminRootLayout = ({ children }: React.PropsWithChildren) => {
   return (
-    <body daisyui-root="">
-      <StyledComponentsRegistry>
-        <ConfigProvider
-          locale={zhCN}
-          theme={{
-            components: {
-              Layout: {
-                headerBg: '#fff',
-              },
-            },
-          }}
-        >
-          {children}
-        </ConfigProvider>
-      </StyledComponentsRegistry>
-    </body>
+    <html lang="zh-CN" suppressHydrationWarning>
+      <body className={inter.variable}>{children}</body>
+    </html>
   )
 }
 

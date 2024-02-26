@@ -7,8 +7,14 @@ await import('./src/env.mjs')
 /** @type {import("next").NextConfig} */
 const config = {
   output: 'standalone',
-  experimental: {
-    webpackBuildWorker: true,
+  redirects: async () => {
+    return [
+      {
+        source: '/admin',
+        destination: '/admin/post',
+        permanent: false
+      }
+    ]
   },
   webpack: (config) => {
     config.module.rules.push({
