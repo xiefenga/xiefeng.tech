@@ -3,6 +3,7 @@ import React from 'react'
 import Link from 'next/link'
 
 import { env } from '@/env.mjs'
+import OutdatedNotice from './OutdatedNotice'
 import LocalIcon from '@/components/home/icon/LocalIcon'
 
 interface LicenseProps {
@@ -12,14 +13,6 @@ interface LicenseProps {
 }
 
 const License: React.FC<LicenseProps> = ({ created, updated, author = env.SITE_AUTHOR }) => {
-  const current = dayjs().valueOf()
-
-  const diff = current - updated
-
-  const diffDays = Math.floor(diff / (1000 * 60 * 60 * 24))
-
-  const ifUpdated = diffDays > 0
-
   return (
     <div className="mt-12 text-sm leading-loose text-[#4A4A4A]">
       <div className="relative flex h-24 flex-col justify-between overflow-hidden border p-2 ">
@@ -30,7 +23,7 @@ const License: React.FC<LicenseProps> = ({ created, updated, author = env.SITE_A
             <span className="w-24">Updated on</span>
           </div>
           <div className="flex">
-            <span className="w-24">{author}</span>
+            <span className="w-24 font-virgil">{author}</span>
             <span className="w-24">{dayjs(created).format('YYYY-MM-DD')}</span>
             <span className="w-24">{dayjs(updated).format('YYYY-MM-DD')}</span>
           </div>
@@ -51,11 +44,7 @@ const License: React.FC<LicenseProps> = ({ created, updated, author = env.SITE_A
           className="absolute -right-8 -top-4 -z-10 scale-110 text-9xl text-[#D4D4D4]"
         />
       </div>
-      {ifUpdated && (
-        <p className="bg-[#FEFBED] p-1 text-[#8F7725]">
-          本文最后更新于 {diffDays} 天前，文中所描述的信息可能已发生改变
-        </p>
-      )}
+      <OutdatedNotice updated={updated} />
     </div>
   )
 }
