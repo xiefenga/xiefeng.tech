@@ -2,20 +2,25 @@
 import React from 'react'
 import { toast } from 'sonner'
 import dynamic from 'next/dynamic'
-import { MDXRemote } from 'next-mdx-remote'
 import { useAsyncEffect, useRequest } from 'ahooks'
 import { serialize } from 'next-mdx-remote/serialize'
 
 import '@/styles/post.scss'
 import { Post } from '@/types'
-import { COMPONENT_MAP } from '@/constants/mdx'
+import { COMPONENT_MAP, MDX_OPTIONS } from '@/constants/mdx'
 import { EditorRef } from '@/components/editor'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import FileSelector from '@/components/FileSelector'
 import EditableTitle from '@/components/EditableTitle'
 import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types'
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
+import { MDXRemote } from 'next-mdx-remote'
 
-const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
+const Editor = dynamic(() => import('@/components/editor'), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full" />,
+})
 
 interface PostEditProps {
   post?: Post
@@ -32,7 +37,10 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSave }) => {
 
   useAsyncEffect(async () => {
     const mdxSource = await serialize(content, {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       mdxOptions: {
+        ...MDX_OPTIONS,
         development: process.env.NODE_ENV === 'development',
       },
     })
@@ -72,7 +80,7 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSave }) => {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="mb-4 flex items-center px-2">
+      <div className="mb-2 flex items-center px-2 pb-1">
         <div className="flex h-12 flex-grow items-center pr-2">
           <EditableTitle title={title} onChange={setTitle} />
         </div>
@@ -86,20 +94,26 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSave }) => {
           </Button>
         </div>
       </div>
-      <div className="flex h-0 flex-grow">
-        <div className="h-full w-1/2">
-          <Editor
-            language="mdx"
-            value={post?.content ?? ''}
-            onChange={(content) => setContent(content)}
-            editorRef={(ref) => (editorRef.current = ref)}
-          />
-        </div>
-        <div className="h-full w-1/2  bg-[var(--site-background)] py-2">
-          <article id="post-content" className="h-full overflow-auto px-6">
-            {mdxSource && <MDXRemote {...mdxSource} components={COMPONENT_MAP} />}
-          </article>
-        </div>
+      <div className="flex h-0 flex-grow gap-1">
+        <ResizablePanelGroup direction="horizontal">
+          <ResizablePanel defaultSize={40}>
+            <Editor
+              language="mdx"
+              value={post?.content ?? ''}
+              onChange={(content) => setContent(content)}
+              editorRef={(ref) => (editorRef.current = ref)}
+            />
+          </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel defaultSize={60}>
+            <article
+              id="post-content"
+              className="h-full overflow-auto bg-[var(--site-background)] px-6"
+            >
+              {mdxSource && <MDXRemote {...mdxSource} components={COMPONENT_MAP} />}
+            </article>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </div>
   )

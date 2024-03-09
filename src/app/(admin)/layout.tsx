@@ -1,12 +1,21 @@
 import React from 'react'
-import { inter } from '@/constants/fonts'
+import { Toaster } from '@/components/ui/sonner'
+import { firaMono, inter, virgil } from '@/constants/fonts'
 
 import '@/styles/admin/global.css'
+import clsx from 'clsx'
 
 const AdminRootLayout = ({ children }: React.PropsWithChildren) => {
   return (
-    <html lang="zh-CN" suppressHydrationWarning>
-      <body className={inter.variable}>{children}</body>
+    <html
+      lang="zh-CN"
+      suppressHydrationWarning
+      className={clsx(inter.variable, firaMono.variable, virgil.variable)}
+    >
+      <body className="font-sans">
+        {children}
+        <Toaster position="top-center" />
+      </body>
     </html>
   )
 }

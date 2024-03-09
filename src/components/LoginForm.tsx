@@ -2,11 +2,12 @@
 import React from 'react'
 import { toast } from 'sonner'
 import { useFormState } from 'react-dom'
+import { useRouter } from 'next/navigation'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 type State = {
   errors: {
@@ -21,6 +22,7 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ login }) => {
+  const router = useRouter()
   const action = async (_: State, formData: FormData) => {
     const username = formData.get('username')
     const password = formData.get('password')
@@ -36,6 +38,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ login }) => {
     if (Object.keys(state.errors).length === 0) {
       try {
         await login(username!.toString(), password!.toString())
+        toast.success('登录成功')
+        router.push('/admin')
       } catch (error) {
         state.message = '用户名或密码错误'
       }
@@ -47,9 +51,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ login }) => {
 
   React.useEffect(() => {
     if (state.message) {
-      toast.error(state.message, {
-        position: 'top-center',
-      })
+      toast.error(state.message)
     }
   }, [state])
 

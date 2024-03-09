@@ -53,6 +53,23 @@ export const COMPONENT_MAP: NonNullable<MDXRemoteProps['components']> = {
   table: (props) => <table {...props} className="my-2" />,
 }
 
+export const MDX_OPTIONS = {
+  rehypePlugins: [
+    slug,
+    [
+      rehypeShiki,
+      {
+        addLanguageClass: true,
+        themes: {
+          light: 'vitesse-light',
+          dark: 'vitesse-dark',
+        },
+      },
+    ],
+  ],
+  remarkPlugins: [remarkGfm],
+}
+
 export const COMPILE_OPTIONS = {
   parseFrontmatter: true,
   mdxOptions: {

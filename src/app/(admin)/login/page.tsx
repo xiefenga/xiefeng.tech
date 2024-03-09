@@ -12,7 +12,7 @@ const LoginPage = () => {
       <LoginForm
         login={async (username, password) => {
           'use server'
-          await signIn('credentials', { username, password, redirectTo: '/admin' })
+          await signIn('credentials', { username, password, redirect: false })
         }}
       />
     </div>

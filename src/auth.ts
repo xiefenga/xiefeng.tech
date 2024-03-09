@@ -1,7 +1,8 @@
 import NextAuth from 'next-auth'
+import Github from 'next-auth/providers/github'
 import Credentials from 'next-auth/providers/credentials'
 
-import { env } from './env.mjs'
+import { prisma } from '@/server/db'
 
 export const {
   handlers: { GET, POST },
@@ -18,16 +19,27 @@ export const {
     },
   },
   providers: [
+    Github,
     Credentials({
       async authorize(credentials) {
-        const { username, password } = credentials
-        if (username === env.ADMIN_ACCOUNT && password === env.ADMIN_PASSWORD) {
-          return {
-            id: username,
-            name: 'admin',
-          }
+        const { username, password } = credentials as Record<string, string>
+        if (!username || !password) {
+          return null
         }
-        return null
+        const user = await prisma.user.findUnique({
+          where: {
+            username,
+            password,
+          },
+        })
+        if (!user) {
+          return null
+        }
+        return {
+          id: user.id.toString(),
+          image: user.avatar,
+          name: user.username,
+        }
       },
     }),
   ],

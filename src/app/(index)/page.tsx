@@ -32,13 +32,6 @@ const Home = async () => {
 
   const { title = 'Hello', techStack = [] } = frontmatter
 
-  // const content = [
-  //   `I'm 0x1461A0`,
-  //   `A Web <Developer /> living in Nanjing`,
-  //   `Love computers and programming, Strive to become a lifelong learner`,
-  //   // 这是我的个人博客，记录一些学习和生活的东西
-  // ]
-
   return (
     <div className="mx-auto max-w-5xl animate-main">
       <h2 className={clsx('text-5xl font-bold leading-loose')}>{title}</h2>
