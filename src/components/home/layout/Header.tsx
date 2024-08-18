@@ -16,9 +16,9 @@ const Header = () => {
         <Link className="nav-link" href="/post">
           Blogs
         </Link>
-        {/*<Link className="nav-link" href="/projects">*/}
-        {/*  Projects*/}
-        {/*</Link>*/}
+        <Link className="nav-link" href="/projects">
+          Projects
+        </Link>
         {/*<Link className="nav-link" href="/weekly">*/}
         {/*  Weekly*/}
         {/*</Link>*/}

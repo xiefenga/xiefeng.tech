@@ -22,9 +22,8 @@ const AddPostPage = () => {
           },
         })
         // 清除路由缓存
-        revalidatePath('/admin/post')
         revalidatePath('/post')
-        revalidatePath(`/post/${title}`)
+        revalidatePath(`/post/${encodeURIComponent(title)}`)
       }}
     />
   )

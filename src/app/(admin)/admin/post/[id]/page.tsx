@@ -54,11 +54,9 @@ const PostDetailPage = async ({ params }: PostDetailPageProps) => {
             },
           })
           // 清除路由缓存
-          revalidatePath('/admin/post')
-          revalidatePath(`/admin/post/${post.id}`)
           revalidatePath('/post')
-          revalidatePath(`/post/${title}`)
-          // revalidatePath(`/post/${post.title}`)
+          revalidatePath(`/post/${encodeURIComponent(title)}`)
+          revalidatePath(`/post/${encodeURIComponent(post.title)}`)
         }}
       />
     </React.Fragment>

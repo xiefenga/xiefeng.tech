@@ -40,7 +40,7 @@ const BlogList = async () => {
   }
 
   return (
-    <div className="mx-auto max-w-5xl animate-main font-normal">
+    <div className="mx-auto max-w-5xl font-normal">
       <Link
         target="_blank"
         href={env.LEGACY_SITE_URL}

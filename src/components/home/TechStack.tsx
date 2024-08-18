@@ -45,9 +45,30 @@ interface TechStackProps {
 }
 
 const TechStack: React.FC<TechStackProps> = ({ skills = [] }) => {
-  const { theme = 'light' } = useTheme()
+  const { theme } = useTheme()
+
+  const [mounted, setMounted] = React.useState(false)
+
+  // useEffect only runs on the client, so now we can safely show the UI
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    if (skills.length) {
+      return (
+        <div className="flex select-none gap-1">
+          {Object.values(skills).map((Icon, index) => (
+            <div className="h-8 w-8" key={index} />
+          ))}
+        </div>
+      )
+    }
+  }
+
   const ThemedSkillIcons = SKILL_ICONS[theme as Theme]
   const icons = skills.map((skill) => ThemedSkillIcons[skill] ?? React.Fragment)
+
   if (icons.length) {
     return (
       <div className="flex select-none gap-1">

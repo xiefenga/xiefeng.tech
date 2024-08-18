@@ -7,7 +7,7 @@ const Header = async () => {
   return (
     <div className="bg-base-200 flex h-16 flex-shrink-0 items-center border-b px-8">
       <Link href="/admin" className="btn btn-ghost text-xl font-bold">
-        博客后台管理
+        博客管理后台
       </Link>
       <div className="ml-auto">
         <User />

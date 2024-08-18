@@ -9,7 +9,18 @@ const supportsViewTransition = (document: Document): document is Document & Supp
 }
 
 const ThemeToggle = () => {
-  const { theme = 'light', setTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
+
+  const [mounted, setMounted] = React.useState(false)
+
+  // useEffect only runs on the client, so now we can safely show the UI
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return <div className="h-6 w-6"></div>
+  }
 
   const themeIcon = theme === 'light' ? 'ph:sun-duotone' : 'ph:moon-fill'
 

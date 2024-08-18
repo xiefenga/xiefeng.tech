@@ -33,7 +33,7 @@ const Home = async () => {
   const { title = 'Hello', techStack = [] } = frontmatter
 
   return (
-    <div className="mx-auto max-w-5xl animate-main">
+    <div className="mx-auto max-w-5xl">
       <h2 className={clsx('text-5xl font-bold leading-loose')}>{title}</h2>
       <div className="my-8 flex flex-col items-start gap-2 font-mono text-2xl leading-loose">
         {content}

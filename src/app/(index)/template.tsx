@@ -1,7 +1,7 @@
 import React from 'react'
 
-const Layout = ({ children }: React.PropsWithChildren) => {
+const Template = ({ children }: React.PropsWithChildren) => {
   return <div className="animate-main">{children}</div>
 }
 
-export default Layout
+export default Template
