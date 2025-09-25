@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+  binaryTargets = ["native", "linux-musl", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -46,12 +46,12 @@ model user {
 }
 
 model project {
-  id       Int      @id @default(autoincrement()) @db.Int
-  order    Int      @unique @db.Int // 排序
-  name     String   @unique @db.VarChar(255)
-  desc     String   @db.VarChar(255)
-  role     String   @db.VarChar(255)
-  link     String?   @db.VarChar(255)
-  image    String?   @db.VarChar(255)
-  tech     String   @db.VarChar(255)
+  id    Int     @id @default(autoincrement()) @db.Int
+  order Int     @unique @db.Int // 排序
+  name  String  @unique @db.VarChar(255)
+  desc  String  @db.VarChar(255)
+  role  String  @db.VarChar(255)
+  link  String? @db.VarChar(255)
+  image String? @db.VarChar(255)
+  tech  String  @db.VarChar(255)
 }
