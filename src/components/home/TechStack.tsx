@@ -66,7 +66,7 @@ const TechStack: React.FC<TechStackProps> = ({ skills = [] }) => {
     }
   }
 
-  const ThemedSkillIcons = SKILL_ICONS[theme as Theme]
+  const ThemedSkillIcons = SKILL_ICONS[theme as Theme] || {}
   const icons = skills.map((skill) => ThemedSkillIcons[skill] ?? React.Fragment)
 
   if (icons.length) {
