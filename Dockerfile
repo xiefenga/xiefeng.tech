@@ -27,6 +27,7 @@ COPY . .
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
+RUN apk add --no-cache openssl
 
 RUN yarn build
 
