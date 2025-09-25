@@ -40,7 +40,7 @@ jobs:
       - name: Transfer Docker Image to Aliyun
         uses: appleboy/scp-action@master
         with:
-          host: xiefeng.tech
+          host: 120.26.219.173
           username: github_actions
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: ${{ steps.build_time.outputs.time }}.tar
@@ -49,7 +49,7 @@ jobs:
       - name: Update Service on Aliyun
         uses: appleboy/ssh-action@master
         with:
-          host: xiefeng.tech
+          host: 120.26.219.173
           username: github_actions
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
